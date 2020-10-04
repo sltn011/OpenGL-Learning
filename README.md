@@ -1,5 +1,7 @@
 # OpenGL-Learning
-My code from learning OpenGL with book from https://learnopengl.com/    
+My code from learning OpenGL with book from https://learnopengl.com/  
+  
+![Cubes](https://github.com/sltn011/OpenGL-Learning/blob/main/images/cubes.png)  
   
 OpenGLTools is a library by me that encapsulates some of boilerplate OpenGL code  
 Mesh classes can be used to load 3D models from files  
