@@ -1,10 +1,12 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
+#include <iostream>
+#include <cmath>
 
 #include "GLFWInitRAII.hpp"
 #include "Shader.hpp"
-#include "Mesh.hpp"
 #include "CameraFree.hpp"
+#include "Mesh.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -91,7 +93,9 @@ void clearScreen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Also clears depth buffer
 }
 
-int main() {
+int main
+(
+) {
     // Initialize GLFW
     OGL::GLFWInitRAII glfwInitializer;
 
@@ -103,7 +107,9 @@ int main() {
     // Create window
     GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Model Renderer", nullptr, nullptr);
     if (!window) {
-        throw OGL::Exception("Error creating window!");
+        std::cout << "Error creating window!" << std::endl;
+        glfwTerminate();
+        return 2;
     }
 
     // Set window as current context
@@ -120,15 +126,52 @@ int main() {
 
     // Load OpenGL functions pointer given by GLFW
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        throw OGL::Exception("Error initializing GLAD!");
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return 3;
     }
 
-    OGL::Shader shaderProgramm("shaders/6-ModelRendererVertex.txt", "shaders/6-ModelRendererFragment.txt");
+    OGL::Shader shaderProgramm("shaders/7-texModelRenderVertex.txt", "shaders/7-texModelRenderFragment.txt");
 
-    OGL::ColoredMesh model;
-    if (!model.readFromFile("models/teapot.ply")) {
-        throw OGL::Exception("Error loading model from .ply file!");
+    // Textures
+    // Creating texture id
+    unsigned int texture1, texture2;
+    glGenTextures(1, &texture1);
+    
+    // Load texture image using stb library
+    int width, height, nrChannels;
+
+    stbi_set_flip_vertically_on_load(true);
+
+    unsigned char *data;
+    data = stbi_load("textures/dog.jpg", &width, &height, &nrChannels, 0);
+    if (!data) {
+        throw OGL::Exception("Error loading texture!");
     }
+
+    // Bind texture so next texture calls use this object
+    glBindTexture(GL_TEXTURE_2D, texture1);
+
+    // Wrap around - S = X, T = Y, Z = R
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // Texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    // Generate texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    // Generate mipmap
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
+
+    OGL::TexturedMesh model;
+    model.readFromFile("models/dog.obj");
+
+    auto modelData = model.getVBOData();
+    size_t dataSize = model.sizeVBO();
 
     // Initialization code - done once(unless objects change a lot)
     // 1. Create and Bind Vertex Array Object
@@ -146,36 +189,28 @@ int main() {
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-    auto VBOData = model.getVBOData();
-    size_t vboSize = model.sizeVBO();
+    // 4. Copy vertices and indices to buffers
+    glBufferData(GL_ARRAY_BUFFER, dataSize, modelData.get(), GL_STATIC_DRAW);
 
-    auto EBOData = model.getEBOData();
-    size_t eboSize = model.sizeEBO();
-
-    glBufferData(GL_ARRAY_BUFFER, vboSize, VBOData.get(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, eboSize, EBOData.get(), GL_STATIC_DRAW);
-
-    // 0 - Vertex
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) + sizeof(OGL::RGBA), (void*)0);
-
-    // 1 - Texture
-    //
-
-    // 2 - Color
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) + sizeof(OGL::RGBA), (void*)(sizeof(glm::vec3)));
-
+    // 5. Tell OpenGL how to interpret vertices data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OGL::TexturedVertex), (void*)0);
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(OGL::TexturedVertex), (void*)(sizeof(glm::vec3)));
+    glEnableVertexAttribArray(1);
 
-    shaderProgramm.use();
+    shaderProgramm.use(); // MUST!!!
+    shaderProgramm.setUniformInt("myTexture1", 0);
 
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
+
+    shaderProgramm.use();
 
     glm::mat4 projection(1.0f);
     projection = glm::perspective(glm::radians(45.0f), (float)((float)Screen::width / (float)Screen::height), 0.1f, 100.0f);
     shaderProgramm.setUniformMatrix4("projection", projection, false);
 
+    // 6. Render loop
     while (!glfwWindowShouldClose(window)) {
 
         float currentFrameTime = glfwGetTime();
@@ -193,13 +228,16 @@ int main() {
 
         shaderProgramm.setUniformMatrix4("view", view, false);
         
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
         glBindVertexArray(VAO);
 
-        glm::mat4 modelMatr(1.0f);
-        modelMatr = glm::rotate(modelMatr, glm::radians(-90.0f), {1.0f, 0.0f, 0.0f});
-        shaderProgramm.setUniformMatrix4("model", modelMatr, false);
+        glm::mat4 modelMat(1.0f);
+        modelMat = glm::scale(modelMat, {0.1f, 0.1f, 0.1f});
+        modelMat = glm::rotate(modelMat, glm::radians(-90.0f), {1.0f, 0.0f, 0.0f});
+        shaderProgramm.setUniformMatrix4("model", modelMat, false);
 
-        glDrawElements(GL_TRIANGLES, model.numElements(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, model.numVertices());
 
         // Swap front and back buffers
         glfwSwapBuffers(window);

@@ -19,9 +19,16 @@ namespace OGL {
     };
 
     struct Triangle {
-        int a;
-        int b;
-        int c;
+        int v[3];
+    };
+
+    struct TexturedVertex {
+        glm::vec3 vert;
+        glm::vec2 text;
+    };
+
+    struct TexturedTriangle {
+        TexturedVertex v[3];
     };
 
     class BasicMesh {
@@ -111,6 +118,47 @@ namespace OGL {
         ) const override;
     };
 
+    // Trash, only works for triangulated textured .obj models
+    // and ignores all concepts of my other classes
+    // wont use it later 
+    class TexturedMesh : public BasicMesh {
+    protected:
+        std::vector<TexturedTriangle> m_texVertex;
+
+        static void writeTexturedTriangleData
+        ( uint8_t *dest
+        , TexturedTriangle const src
+        );
+
+    public:
+        bool readFromFile
+        ( std::string const &filePath
+        ) override;
+
+        std::unique_ptr<uint8_t[]> getVBOData
+        (
+        ) const override;
+
+        size_t sizeVBO
+        (
+        ) const override;
+
+        std::unique_ptr<uint8_t[]> getEBOData
+        (
+        ) const override;
+
+        size_t sizeEBO
+        (
+        ) const override;
+
+        size_t numElements
+        (
+        ) const override;
+
+        size_t numVertices
+        (
+        ) const;
+    };
 }
 
 #endif // OGL_MESH_H

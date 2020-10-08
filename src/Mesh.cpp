@@ -86,7 +86,7 @@ namespace OGL {
             int vertsInFace;
             ss >> vertsInFace; // Always 3 for now
             Triangle t;
-            ss >> t.a >> t.b >> t.c;
+            ss >> t.v[0] >> t.v[1] >> t.v[2];
             m_faces.push_back(t);
         }
         return true;
@@ -138,6 +138,122 @@ namespace OGL {
     (
     ) const {
         return 3 * m_faces.size();
+    }
+
+    void TexturedMesh::writeTexturedTriangleData
+    ( uint8_t *dest
+    , TexturedTriangle const src
+    ) {
+        writeData(dest, (uint8_t*)&src, sizeof(src));
+    }
+
+    bool TexturedMesh::readFromFile
+    ( std::string const &filePath
+    ) {
+        std::ifstream f(filePath);
+        if (!f.is_open()) {
+            return false;
+        }
+        
+        std::string buf;
+        
+        std::vector<glm::vec3> verts;
+        std::vector<glm::vec2> texts;
+
+        while (std::getline(f, buf)) {
+
+            std::stringstream ss(std::move(buf));
+
+            char lineType;
+            ss >> lineType;
+
+            switch (lineType) {
+            case 'v': {
+                char next;
+                ss.read(&next, 1);
+                if (next == 't') {
+                    glm::vec2 text;
+                    ss >> text.x >> text.y;
+                    texts.push_back(text);
+                }
+                else {
+                    glm::vec3 vert;
+                    ss >> vert.x >> vert.y >> vert.z;
+                    verts.push_back(vert);
+                }
+                break;
+            }
+
+            case 'f': {
+                std::string tokens[6];
+                int tokensCount = -1;
+                char c;
+                while(ss.read(&c, 1)) {
+                    if (c == ' ' || c == '/') {
+                        ++tokensCount;
+                    }
+                    else {
+                        tokens[tokensCount].append(1, c);
+                    }
+                }
+                TexturedTriangle tt;
+                for (int i = 0; i < 3; ++i) {
+                    tt.v[i].vert = verts[std::stoi(tokens[2 * i]) - 1];
+                    tt.v[i].text = texts[std::stoi(tokens[2 * i + 1]) - 1];
+                }
+                m_texVertex.push_back(tt);
+                break;
+            }
+
+            default: {
+                break;
+            }
+            }
+        }
+        return true;
+    }
+
+    std::unique_ptr<uint8_t[]> TexturedMesh::getVBOData
+    (
+    ) const {
+        size_t dataSize = sizeVBO();
+        size_t blockSize = sizeof(*m_texVertex.data());
+        size_t numBlocks = dataSize / blockSize;
+        std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
+        for (size_t i = 0; i < numBlocks; ++i) {
+            writeTexturedTriangleData(data.get() + i * blockSize, m_texVertex[i]);
+        }
+        return data;
+    }
+
+    size_t TexturedMesh::sizeVBO
+    (
+    ) const {
+        return m_texVertex.size() * sizeof(*m_texVertex.data());
+    }
+
+    std::unique_ptr<uint8_t[]> TexturedMesh::getEBOData
+    (
+    ) const {
+        return nullptr;
+    }
+
+    size_t TexturedMesh::sizeEBO
+    (
+    ) const {
+        return 0;
+    }
+
+    size_t TexturedMesh::numElements
+    (
+    ) const {
+        return 0;
+    }
+
+    size_t TexturedMesh::numVertices
+    (
+    ) const {
+        return 3 * m_texVertex.size();
     }
 
 } // OGL

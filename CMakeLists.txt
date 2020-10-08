@@ -65,6 +65,7 @@ add_executable(8-Transformations example/8-Transformations.cpp)
 add_executable(9-3DCube example/9-3DCube.cpp)
 add_executable(10-Camera example/10-Camera.cpp)
 add_executable(11-ModelRenderer example/11-ModelRenderer.cpp)
+add_executable(12-ModelRendererTextured example/12-ModelRendererTextured.cpp)
 
 # Linkning libraries for executable
 target_link_libraries(1-HelloWindow glad glfw)
@@ -78,3 +79,4 @@ target_link_libraries(8-Transformations glad glfw OpenGLTools)
 target_link_libraries(9-3DCube glad glfw OpenGLTools)
 target_link_libraries(10-Camera glad glfw OpenGLTools)
 target_link_libraries(11-ModelRenderer glad glfw OpenGLTools)
+target_link_libraries(12-ModelRendererTextured glad glfw OpenGLTools)
