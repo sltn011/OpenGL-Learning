@@ -68,7 +68,7 @@ int main
     // Set dimensions of rendering window - callback gets called when window first time created
     //glViewport(0, 0, Screen::width, Screen::height)
 
-    OGL::Shader shaderProgramm("shaders/1-vertex.txt", "shaders/1-fragment.txt");
+    OGL::Shader shaderProgramm("shaders/1-vertex.vert", "shaders/1-fragment.frag");
 
     // Triangle vertices
     float trVertices[] = {

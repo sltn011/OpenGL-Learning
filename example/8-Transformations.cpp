@@ -73,7 +73,7 @@ int main
         return 3;
     }
 
-    OGL::Shader shaderProgramm("shaders/4-texVertexTrans.txt", "shaders/4-texFragmentTrans.txt");
+    OGL::Shader shaderProgramm("shaders/4-texTrans.vert", "shaders/4-texTrans.frag");
 
     // Rectangle vertices
     float recVertices[] = {

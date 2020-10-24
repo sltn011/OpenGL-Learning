@@ -130,7 +130,7 @@ int main
         return 3;
     }
 
-    OGL::Shader shaderProgramm("shaders/7-texModelRenderVertex.txt", "shaders/7-texModelRenderFragment.txt");
+    OGL::Shader shaderProgramm("shaders/7-texModelRender.vert", "shaders/7-texModelRender.frag");
 
     // Textures
     // Creating texture id

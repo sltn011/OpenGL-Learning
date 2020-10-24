@@ -141,7 +141,7 @@ int main
         return 3;
     }
 
-    OGL::Shader shaderProgramm("shaders/3-texVertexExercise.txt", "shaders/3-texFragmentExercise.txt");
+    OGL::Shader shaderProgramm("shaders/3-texExercise.vert", "shaders/3-texExercise.frag");
 
     // Rectangle vertices
     float recVertices[] = {

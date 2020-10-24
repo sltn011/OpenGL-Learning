@@ -15,8 +15,8 @@
 #include "glm/gtc/type_ptr.hpp"
 
 enum Screen {
-    width = 1000,
-    height = 800
+    width = 1920,
+    height = 1080
 };
 
 namespace System {
@@ -118,7 +118,7 @@ int main
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create window
-    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Hello, 3D", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Hello, 3D", glfwGetPrimaryMonitor(), nullptr);
     if (!window) {
         std::cout << "Error creating window!" << std::endl;
         glfwTerminate();
@@ -143,7 +143,7 @@ int main
         return 3;
     }
 
-    OGL::Shader shaderProgramm("shaders/5-3dVertex.txt", "shaders/5-3dFragment.txt");
+    OGL::Shader shaderProgramm("shaders/5-3d.vert", "shaders/5-3d.frag");
 
     // Rectangle vertices
     float vertices[] = {
@@ -305,7 +305,7 @@ int main
     // 6. Render loop
     while (!glfwWindowShouldClose(window)) {
 
-        float currentFrameTime = glfwGetTime();
+        float currentFrameTime = (float)glfwGetTime();
         System::deltaTime = currentFrameTime - System::lastFrameTime;
         System::lastFrameTime = currentFrameTime;
 

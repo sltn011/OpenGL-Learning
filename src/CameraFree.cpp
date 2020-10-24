@@ -1,3 +1,4 @@
+#include "..\include\CameraFree.hpp"
 #include "CameraFree.hpp"
 
 namespace OGL {
@@ -24,6 +25,24 @@ namespace OGL {
     (
     ) const {
         return glm::lookAt(m_position, m_position + m_forward, m_up);
+    }
+
+    glm::vec3 CameraFree::getPos
+    (
+    ) const {
+        return m_position;
+    }
+
+    glm::vec3 CameraFree::getForward
+    (
+    ) const {
+        return m_forward;
+    }
+
+    glm::vec3 CameraFree::getUp
+    (
+    ) const {
+        return m_up;
     }
 
     void CameraFree::processMoveInput

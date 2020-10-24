@@ -39,6 +39,18 @@ namespace OGL {
         (
         ) const;
 
+        glm::vec3 getPos
+        (
+        ) const;
+
+        glm::vec3 getForward
+        (
+        ) const;
+
+        glm::vec3 getUp
+        (
+        ) const;
+
         void processMoveInput
         ( CameraMovementDirection dir
         , float deltaTime

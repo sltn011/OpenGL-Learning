@@ -7,18 +7,18 @@ project(OpenGLLearning)
 
 # USER DEFINED VARIABLES!!!
 # Path to directory with GLFW Source
-set(PATH_TO_GLFW_SOURCE "/home/sltn011/Documents/cpp/OpenGL Libs/GLFW" CACHE PATH "Path to directory with GLFW source")
+set(PATH_TO_GLFW_SOURCE "D:/OpenGL/Libs/GLFW_3.3.2" CACHE PATH "Path to directory with GLFW source")
 set(PATH_TO_GLFW_BUILT "${PATH_TO_GLFW_SOURCE}/build" CACHE PATH "Path to directory with GLFW built files")
 
 # Path to directory with GLAD Source
-set(PATH_TO_GLAD_SOURCE "/home/sltn011/Documents/cpp/OpenGL Libs/GLAD" CACHE PATH "Path to directory with GLAD source")
+set(PATH_TO_GLAD_SOURCE "D:/OpenGL/Libs/GLAD" CACHE PATH "Path to directory with GLAD source")
 set(PATH_TO_GLAD_BUILT "${PATH_TO_GLAD_SOURCE}/build" CACHE PATH "Path to directory with GLAD built files")
 
 # Path to directory with GLM library headers
-set(PATH_TO_GLM_INCLUDES "/home/sltn011/Documents/cpp/OpenGL Libs/GLM" CACHE PATH "Path to directory with GLM headers")
+set(PATH_TO_GLM_INCLUDES "D:/OpenGL/Libs/GLM_0.9.9.8" CACHE PATH "Path to directory with GLM headers")
 
 # Path to directory with STB Image library headers
-set(PATH_TO_STB_INCLUDE "/home/sltn011/Documents/cpp/OpenGL Libs/STBImage" CACHE PATH "Path to directory with STB header")
+set(PATH_TO_STB_INCLUDE "D:/OpenGL/Libs/STB_Image" CACHE PATH "Path to directory with STB header")
 
 
 
@@ -66,6 +66,8 @@ add_executable(9-3DCube example/9-3DCube.cpp)
 add_executable(10-Camera example/10-Camera.cpp)
 add_executable(11-ModelRenderer example/11-ModelRenderer.cpp)
 add_executable(12-ModelRendererTextured example/12-ModelRendererTextured.cpp)
+add_executable(13-LightBasics example/13-LightBasics.cpp)
+add_executable(14-SimpleLightTypes example/14-SimpleLightTypes.cpp)
 
 # Linkning libraries for executable
 target_link_libraries(1-HelloWindow glad glfw)
@@ -80,3 +82,5 @@ target_link_libraries(9-3DCube glad glfw OpenGLTools)
 target_link_libraries(10-Camera glad glfw OpenGLTools)
 target_link_libraries(11-ModelRenderer glad glfw OpenGLTools)
 target_link_libraries(12-ModelRendererTextured glad glfw OpenGLTools)
+target_link_libraries(13-LightBasics glad glfw OpenGLTools)
+target_link_libraries(14-SimpleLightTypes glad glfw OpenGLTools)

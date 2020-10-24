@@ -77,6 +77,11 @@ namespace OGL {
         , glm::mat4 const &matrix
         , bool doTranspose
         );
+
+        void setUniformVec3
+        ( std::string const &name
+        , glm::vec3 const &vec
+        );
     };
 
 } // OGL

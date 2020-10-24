@@ -45,7 +45,7 @@ namespace OGL {
         glAttachShader(m_programmID, fragmentShaderID);
         glLinkProgram(m_programmID);
         if (!programmCorrectlyLinked(m_programmID)) {
-            reportShaderCompileError(m_programmID);
+            reportProgrammLinkError(m_programmID);
         }
 
         glDeleteShader(vertexShaderID);
@@ -100,6 +100,14 @@ namespace OGL {
         glUniformMatrix4fv(matrLoc, 1, doTranspose, glm::value_ptr(matrix));
     }
 
+    void Shader::setUniformVec3
+    ( std::string const &name
+    , glm::vec3 const &vec
+    ) {
+        unsigned int vecLocation = glGetUniformLocation(m_programmID, name.c_str());
+        glUniform3fv(vecLocation, 1, &vec[0]);
+    }
+
     unsigned int Shader::compileGLShader
     ( char const *sourceCode
     , int shaderType
@@ -131,7 +139,7 @@ namespace OGL {
     ) {
         int correctness;
         glGetProgramiv(programmId, GL_LINK_STATUS, &correctness);
-        return correctness = GL_TRUE;
+        return correctness == GL_TRUE;
     }
 
     void Shader::reportProgrammLinkError

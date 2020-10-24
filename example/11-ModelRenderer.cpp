@@ -123,7 +123,7 @@ int main() {
         throw OGL::Exception("Error initializing GLAD!");
     }
 
-    OGL::Shader shaderProgramm("shaders/6-ModelRendererVertex.txt", "shaders/6-ModelRendererFragment.txt");
+    OGL::Shader shaderProgramm("shaders/6-ModelRenderer.vert", "shaders/6-ModelRenderer.frag");
 
     OGL::ColoredMesh model;
     if (!model.readFromFile("models/teapot.ply")) {
