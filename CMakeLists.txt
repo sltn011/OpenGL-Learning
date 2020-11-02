@@ -20,6 +20,75 @@ set(PATH_TO_GLM_INCLUDES "D:/OpenGL/Libs/GLM_0.9.9.8" CACHE PATH "Path to direct
 # Path to directory with STB Image library headers
 set(PATH_TO_STB_INCLUDE "D:/OpenGL/Libs/STB_Image" CACHE PATH "Path to directory with STB header")
 
+# Path to directory with Assimp Source
+set(PATH_TO_ASSIMP_SOURCE "D:/OpenGL/Libs/assimp-5.0.1" CACHE PATH "Path to directory with Assimp source")
+set(PATH_TO_ASSIMP_BUILT "${PATH_TO_ASSIMP_SOURCE}/build" CACHE PATH "Path to directory with Assimp built files")
+
+SET (ASSIMP_BUILD_TESTS CACHE BOOL OFF)
+SET (ASSIMP_BUILD_NO_EXPORT CACHE BOOL ON)
+SET (ASSIMP_BUILD_ASSIMP_TOOLS CACHE BOOL OFF)
+
+SET (ASSIMP_BUILD_AMF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_ASE_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_3D_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_3DS_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_AC_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_ACE_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_ASSBIN_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_B3D_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_BVH_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_DXF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_CSM_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_HMP_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_IRRMESH_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_IRR_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_LWO_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_LWS_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MD2_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MD3_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MD5_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MDC_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MDL_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_NFF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_NDO_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_OFF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_OGRE_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_OPENGEX_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MS3D_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_COB_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_BLEND_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_IFC_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_XGL_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_FBX_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_Q3D_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_Q3BSP_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_RAW_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_SIB_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_SMD_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_STL_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_TERRAGEN_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_X_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_X3D_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_GLTF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_3MF_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_MMD_IMPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_STEP_IMPORTER CACHE BOOL OFF)
+
+SET (ASSIMP_BUILD_ASSBIN_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_ASSXML_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_COLLADA_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_OPENGEX_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_PLY_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_FBX_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_STL_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_X_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_X3D_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_GLTF_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_3MF_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_ASSJSON_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_STEP_EXPORTER CACHE BOOL OFF)
+SET (ASSIMP_BUILD_3DS_EXPORTER CACHE BOOL OFF)
+
 
 
 # Set directory where executables are created
@@ -39,9 +108,24 @@ add_subdirectory(${PATH_TO_GLFW_SOURCE} ${PATH_TO_GLFW_BUILT})
 # Include GLAD Source to be built
 add_subdirectory(${PATH_TO_GLAD_SOURCE} ${PATH_TO_GLAD_BUILT})
 
-add_library(OpenGLTools STATIC src/GLFWInitRAII src/Shader.cpp src/Exception.cpp src/CameraFree.cpp src/Mesh.cpp)
+# Include Assimp Source to be built
+add_subdirectory(${PATH_TO_ASSIMP_SOURCE} ${PATH_TO_ASSIMP_BUILT})
+
+
+
+add_library(OpenGLTools STATIC 
+        src/Utils.cpp
+        src/GLFWInitRAII.cpp
+        src/Shader.cpp
+        src/Exception.cpp
+        src/CameraFree.cpp
+        src/Mesh.cpp
+        src/Model.cpp
+)
 
 target_include_directories(OpenGLTools PUBLIC include)
+
+target_link_libraries(OpenGLTools)
 
 # Compiler commands
 #add_definitions("-lglfw3 -lGL -lX11 -lXrandr -lXildl -lpthread")
@@ -52,8 +136,11 @@ include_directories("${PATH_TO_GLFW_SOURCE}/include")
 include_directories("${PATH_TO_GLAD_SOURCE}/include")
 include_directories(${PATH_TO_GLM_INCLUDES})
 include_directories(${PATH_TO_STB_INCLUDE})
+include_directories("${PATH_TO_ASSIMP_SOURCE}/include")
+include_directories("${PATH_TO_ASSIMP_BUILT}/include")
 
 # Executable location
+add_executable(0-ModelRenderer example/0-ModelRenderer.cpp)
 add_executable(1-HelloWindow example/1-HelloWindow.cpp)
 add_executable(2-HelloTriangle example/2-HelloTriangle.cpp)
 add_executable(3-HelloRectangle example/3-HelloRectangle.cpp)
@@ -64,12 +151,11 @@ add_executable(7-TextureExercise example/7-TextureExercise.cpp)
 add_executable(8-Transformations example/8-Transformations.cpp)
 add_executable(9-3DCube example/9-3DCube.cpp)
 add_executable(10-Camera example/10-Camera.cpp)
-add_executable(11-ModelRenderer example/11-ModelRenderer.cpp)
-add_executable(12-ModelRendererTextured example/12-ModelRendererTextured.cpp)
-add_executable(13-LightBasics example/13-LightBasics.cpp)
-add_executable(14-SimpleLightTypes example/14-SimpleLightTypes.cpp)
+add_executable(11-LightBasics example/11-LightBasics.cpp)
+add_executable(12-SimpleLightTypes example/12-SimpleLightTypes.cpp)
 
 # Linkning libraries for executable
+target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)
 target_link_libraries(2-HelloTriangle glad glfw)
 target_link_libraries(3-HelloRectangle glad glfw)
@@ -80,7 +166,5 @@ target_link_libraries(7-TextureExercise glad glfw OpenGLTools)
 target_link_libraries(8-Transformations glad glfw OpenGLTools)
 target_link_libraries(9-3DCube glad glfw OpenGLTools)
 target_link_libraries(10-Camera glad glfw OpenGLTools)
-target_link_libraries(11-ModelRenderer glad glfw OpenGLTools)
-target_link_libraries(12-ModelRendererTextured glad glfw OpenGLTools)
-target_link_libraries(13-LightBasics glad glfw OpenGLTools)
-target_link_libraries(14-SimpleLightTypes glad glfw OpenGLTools)
+target_link_libraries(11-LightBasics glad glfw OpenGLTools)
+target_link_libraries(12-SimpleLightTypes glad glfw OpenGLTools)

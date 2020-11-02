@@ -1,4 +1,3 @@
-#include "..\include\CameraFree.hpp"
 #include "CameraFree.hpp"
 
 namespace OGL {
