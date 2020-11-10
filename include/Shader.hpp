@@ -75,7 +75,7 @@ namespace OGL {
         void setUniformMatrix4
         ( std::string const &name
         , glm::mat4 const &matrix
-        , bool doTranspose
+        , bool doTranspose = false
         );
 
         void setUniformVec3
