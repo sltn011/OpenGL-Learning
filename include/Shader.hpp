@@ -39,6 +39,10 @@ namespace OGL {
         ( unsigned int programmId
         );
 
+        void warnInvalidUniformLocation
+        ( std::string const &name
+        );
+
     public:
         Shader
         ( char const *vertexSourcePath
@@ -57,28 +61,28 @@ namespace OGL {
         (
         );
 
-        void setUniformBool
+        bool setUniformBool
         ( std::string const &name
         , bool val
         );
 
-        void setUniformInt
+        bool setUniformInt
         ( std::string const &name
         , int val
         );
 
-        void setUniformFloat
+        bool setUniformFloat
         ( std::string const &name
         , float val
         );
 
-        void setUniformMatrix4
+        bool setUniformMatrix4
         ( std::string const &name
         , glm::mat4 const &matrix
         , bool doTranspose = false
         );
 
-        void setUniformVec3
+        bool setUniformVec3
         ( std::string const &name
         , glm::vec3 const &vec
         );

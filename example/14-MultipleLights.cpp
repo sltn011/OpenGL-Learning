@@ -6,6 +6,9 @@
 #include "GLFWInitRAII.hpp"
 #include "Shader.hpp"
 #include "CameraFree.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -281,10 +284,10 @@ int main
 
     glm::vec3 pointLightPos[2] = { {2.0f, 1.75f, 1.75f}, {-3.0f, -1.5f, -2.0f} };
     glm::vec3 pointLightColor[2] = { {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} };
-    
-    glm::vec3 flashLightColor = { 1.0f, 1.0f, 1.0f };
-    float cutOffAngle = 8.0f;
-    float cutOffOuterAngle = 12.0f;
+
+    OGL::DirectionalLight directionalLight{ directionalLightDir, directionalLightColor };
+    OGL::PointLight pointLights[2] = { {pointLightPos[0], pointLightColor[0]}, {pointLightPos[1], pointLightColor[1]} };
+    OGL::SpotLight spotLight;
 
     glm::mat4 model(1.0f);
 
@@ -307,28 +310,19 @@ int main
     crateShader.setUniformVec3("material.diffuse", { 0.85f, 0.85f, 0.85f });
     crateShader.setUniformVec3("material.specular", { 0.95f, 0.95f, 0.95f });
     
-    crateShader.setUniformVec3("dirLight.color", directionalLightColor);
-    crateShader.setUniformVec3("dirLight.direction", directionalLightDir);
+    directionalLight.loadInShader(crateShader);
 
     for (size_t i = 0; i < sizeof(pointLightPos) / sizeof(*pointLightPos); ++i) {
-        crateShader.setUniformVec3("pointLight[" + std::to_string(i) + "].color", pointLightColor[i]);
-        crateShader.setUniformVec3("pointLight[" + std::to_string(i) + "].pos", pointLightPos[i]);
-        crateShader.setUniformFloat("pointLight[" + std::to_string(i) + "].attConst", 1.0f);
-        crateShader.setUniformFloat("pointLight[" + std::to_string(i) + "].attLinear", 0.12f);
-        crateShader.setUniformFloat("pointLight[" + std::to_string(i) + "].attQuad", 0.05f);
+        pointLights[i].loadInShader(crateShader, i);
     }
 
-    crateShader.setUniformVec3("flashLight.color", flashLightColor);
-    crateShader.setUniformFloat("flashLight.cutOff", std::cos(glm::radians(cutOffAngle)));
-    crateShader.setUniformFloat("flashLight.cutOffOuter", std::cos(glm::radians(cutOffOuterAngle)));
-    crateShader.setUniformFloat("flashLight.attConst", 1.0f);
-    crateShader.setUniformFloat("flashLight.attLinear", 0.007f);
-    crateShader.setUniformFloat("flashLight.attQuad", 0.0002f);
+    spotLight.m_attenuationConst = 1.0f;
+    spotLight.m_attenuationLinear = 0.007f;
+    spotLight.m_attenuationQuadratic = 0.0002f;
 
+    spotLight.loadInShader(crateShader);
     
     crateShader.setUniformMatrix4("projection", projection);
-    
-    
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -361,7 +355,11 @@ int main
         crateShader.use();
         crateShader.setUniformMatrix4("view", view);
         crateShader.setUniformVec3("viewerPos", freeCam.getPos());
-        crateShader.setUniformVec3("viewerDir", freeCam.getForward());
+
+        spotLight.m_position = freeCam.getPos();
+        spotLight.m_direction = freeCam.getForward();
+        spotLight.loadInShader(crateShader);
+
         for (int i = 0; i < sizeof(cubePosition) / sizeof(cubePosition[0]); ++i) {
             glm::mat4 cratePos = glm::translate(model, cubePosition[i]);
             cratePos = glm::rotate(cratePos, (float)i, glm::normalize(glm::vec3{ 1.0f, 0.3f, 0.5f }));

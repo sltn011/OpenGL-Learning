@@ -121,6 +121,10 @@ add_library(OpenGLTools STATIC
         src/CameraFree.cpp
         src/Mesh.cpp
         src/Model.cpp
+        src/BasicLight.cpp
+        src/DirectionalLight.cpp
+        src/PointLight.cpp
+        src/SpotLight.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)

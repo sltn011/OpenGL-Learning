@@ -70,42 +70,70 @@ namespace OGL {
         glUseProgram(m_programmID);
     }
 
-    void Shader::setUniformBool
+    bool Shader::setUniformBool
     ( std::string const &name
     , bool val
     ) {
-        glUniform1i(glGetUniformLocation(m_programmID, name.c_str()), (int)val);
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            warnInvalidUniformLocation(name);
+            return false;
+        }
+        glUniform1i(loc, (int)val);
+        return true;
     }
 
-    void Shader::setUniformInt
+    bool Shader::setUniformInt
     ( std::string const &name
     , int val
     ) {
-        glUniform1i(glGetUniformLocation(m_programmID, name.c_str()), val);
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            warnInvalidUniformLocation(name);
+            return false;
+        }
+        glUniform1i(loc, val);
+        return true;
     }
 
-    void Shader::setUniformFloat
+    bool Shader::setUniformFloat
     ( std::string const &name
     , float val
     ) {
-        glUniform1f(glGetUniformLocation(m_programmID, name.c_str()), val);
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            warnInvalidUniformLocation(name);
+            return false;
+        }
+        glUniform1f(loc, val);
+        return true;
     }
 
-    void Shader::setUniformMatrix4
+    bool Shader::setUniformMatrix4
     ( std::string const &name
     , glm::mat4 const &matrix
     , bool doTranspose
     ) {
-        unsigned int matrLoc = glGetUniformLocation(m_programmID, name.c_str());
-        glUniformMatrix4fv(matrLoc, 1, doTranspose, glm::value_ptr(matrix));
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            warnInvalidUniformLocation(name);
+            return false;
+        }
+        glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(matrix));
+        return true;
     }
 
-    void Shader::setUniformVec3
+    bool Shader::setUniformVec3
     ( std::string const &name
     , glm::vec3 const &vec
     ) {
-        unsigned int vecLocation = glGetUniformLocation(m_programmID, name.c_str());
-        glUniform3fv(vecLocation, 1, &vec[0]);
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            warnInvalidUniformLocation(name);
+            return false;
+        }
+        glUniform3fv(loc, 1, &vec[0]);
+        return true;
     }
 
     unsigned int Shader::compileGLShader
@@ -148,6 +176,12 @@ namespace OGL {
         std::string infoLog(512, ' ');
         glGetProgramInfoLog(programmId, infoLog.size(), nullptr, infoLog.data());
         throw Exception(infoLog);
+    }
+
+    void Shader::warnInvalidUniformLocation
+    ( std::string const &name
+    ) {
+        std::cerr << "No uniform object with name \"" << name << "\" in shader " << m_programmID << std::endl;
     }
 
 } // OGL
