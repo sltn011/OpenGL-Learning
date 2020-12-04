@@ -118,7 +118,9 @@ add_library(OpenGLTools STATIC
         src/GLFWInitRAII.cpp
         src/Shader.cpp
         src/Exception.cpp
+        src/BasicCamera.cpp
         src/CameraFree.cpp
+        src/CameraFirstPerson.cpp
         src/Mesh.cpp
         src/Model.cpp
         src/BasicLight.cpp

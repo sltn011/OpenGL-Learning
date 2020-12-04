@@ -50,6 +50,8 @@ namespace OGL {
 
         glDeleteShader(vertexShaderID);
         glDeleteShader(fragmentShaderID);
+
+        m_showWarnings = false;
     }
 
     Shader::~Shader
@@ -70,13 +72,21 @@ namespace OGL {
         glUseProgram(m_programmID);
     }
 
+    void Shader::showWarnings
+    ( bool value
+    ) {
+        m_showWarnings = value;
+    }
+
     bool Shader::setUniformBool
     ( std::string const &name
     , bool val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            warnInvalidUniformLocation(name);
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
             return false;
         }
         glUniform1i(loc, (int)val);
@@ -89,7 +99,9 @@ namespace OGL {
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            warnInvalidUniformLocation(name);
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
             return false;
         }
         glUniform1i(loc, val);
@@ -102,7 +114,9 @@ namespace OGL {
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            warnInvalidUniformLocation(name);
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
             return false;
         }
         glUniform1f(loc, val);
@@ -116,7 +130,9 @@ namespace OGL {
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            warnInvalidUniformLocation(name);
+            if(m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
             return false;
         }
         glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(matrix));
@@ -129,7 +145,9 @@ namespace OGL {
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            warnInvalidUniformLocation(name);
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
             return false;
         }
         glUniform3fv(loc, 1, &vec[0]);

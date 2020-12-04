@@ -1,13 +1,13 @@
-#ifndef OGL_CAMERAFREE_H
-#define OGL_CAMERAFREE_H
+#ifndef OGL_CAMERAFIRSTPERSON_H
+#define OGL_CAMERAFIRSTPERSON_H
 
 #include "BasicCamera.hpp"
 
 namespace OGL {
 
-    class CameraFree : public BasicCamera {
+    class CameraFirstPerson : public BasicCamera {
     public:
-        CameraFree
+        CameraFirstPerson
         ( glm::vec3 positionVec
         , glm::vec3 forwardVec
         , glm::vec3 worldUpVec
@@ -32,4 +32,4 @@ namespace OGL {
 
 } // OGL
 
-#endif // OGL_CAMERAFREE_H
+#endif // OGL_CAMERAFIRSTPERSON_H

@@ -31,6 +31,7 @@ uniform vec3 viewerPos;
 void main()
 {
 	vec3 texColor = vec3(texture(material.textureDiffuse1, texCoords));
+	vec3 specColor = vec3(texture(material.textureSpecular1, texCoords));
 
     // Ambient
 	vec3 ambient = lightColor * material.colorAmbient * texColor;
@@ -45,7 +46,7 @@ void main()
 	vec3 viewDir = normalize(vertPos - viewerPos);
 	vec3 reflectedLight = reflect(lightDir, norm);
 	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), material.specularExponent);
-	vec3 specular = lightColor * (spec * material.colorSpecular) * texColor;
+	vec3 specular = lightColor * (spec * material.colorSpecular) * texColor * specColor;
 
 	vec3 result = ambient + diffuse + specular;
 

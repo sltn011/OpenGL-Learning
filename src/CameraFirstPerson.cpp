@@ -1,15 +1,15 @@
-#include "CameraFree.hpp"
+#include "CameraFirstPerson.hpp"
 
 namespace OGL {
 
-    CameraFree::CameraFree
-    ( glm::vec3 positionVec
+    CameraFirstPerson::CameraFirstPerson
+    (glm::vec3 positionVec
     , glm::vec3 forwardVec
     , glm::vec3 worldUpVec
     , float moveSpeed
     , float yawAngle
     , float pitchAngle
-    ) 
+    )
     : BasicCamera
     { positionVec
     , forwardVec
@@ -22,17 +22,19 @@ namespace OGL {
         updateVectors();
     }
 
-    void CameraFree::processMoveInput
+    void CameraFirstPerson::processMoveInput
     ( CameraMovementDirection dir
     , float deltaTime
     ) {
+        glm::vec3 forward = m_forward;
+        forward.y = m_position.y;
         switch (dir) {
         case CameraMovementDirection::Forward:
-            m_position += m_forward * m_speed * deltaTime;
+            m_position += forward * m_speed * deltaTime;
             break;
 
         case CameraMovementDirection::Backward:
-            m_position -= m_forward * m_speed * deltaTime;
+            m_position -= forward * m_speed * deltaTime;
             break;
 
         case CameraMovementDirection::Left:
@@ -43,20 +45,12 @@ namespace OGL {
             m_position += m_right * m_speed * deltaTime;
             break;
 
-        case CameraMovementDirection::Up:
-            m_position += m_up * m_speed * deltaTime;
-            break;
-
-        case CameraMovementDirection::Down:
-            m_position -= m_up * m_speed * deltaTime;
-            break;
-
         default:
             break;
         }
     }
 
-    void CameraFree::processRotateInput
+    void CameraFirstPerson::processRotateInput
     ( float xOffset
     , float yOffset
     , float sensitivity

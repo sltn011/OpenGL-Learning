@@ -17,6 +17,7 @@ namespace OGL {
 
     class Shader {
         unsigned int m_programmID;
+        bool         m_showWarnings;
 
         unsigned int compileGLShader
         ( char const *sourceCode
@@ -59,6 +60,10 @@ namespace OGL {
 
         void use 
         (
+        );
+
+        void showWarnings
+        ( bool value
         );
 
         bool setUniformBool
