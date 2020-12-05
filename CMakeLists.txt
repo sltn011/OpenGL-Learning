@@ -123,6 +123,7 @@ add_library(OpenGLTools STATIC
         src/CameraFirstPerson.cpp
         src/Mesh.cpp
         src/Model.cpp
+        src/Object.cpp
         src/BasicLight.cpp
         src/DirectionalLight.cpp
         src/PointLight.cpp
@@ -145,7 +146,12 @@ include_directories(${PATH_TO_STB_INCLUDE})
 include_directories("${PATH_TO_ASSIMP_SOURCE}/include")
 include_directories("${PATH_TO_ASSIMP_BUILT}/include")
 
+# Engines folder
+include_directories(engines)
+
 # Executable location
+add_executable(01-Engine1Tests example/01-Engine1Tests.cpp)
+
 add_executable(0-ModelRenderer example/0-ModelRenderer.cpp)
 add_executable(1-HelloWindow example/1-HelloWindow.cpp)
 add_executable(2-HelloTriangle example/2-HelloTriangle.cpp)
@@ -163,6 +169,8 @@ add_executable(13-LightCasters example/13-LightCasters.cpp)
 add_executable(14-MultipleLights example/14-MultipleLights.cpp)
 
 # Linkning libraries for executable
+target_link_libraries(01-Engine1Tests glad glfw OpenGLTools assimp)
+
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)
 target_link_libraries(2-HelloTriangle glad glfw)

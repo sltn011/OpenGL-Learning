@@ -3,7 +3,7 @@
 
 #include "GLFWInitRAII.hpp"
 #include "CameraFree.hpp"
-#include "Model.hpp"
+#include "Object.hpp"
 
 #include "stb_image.h"
 
@@ -117,7 +117,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Model Renderer", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Model Renderer", glfwGetPrimaryMonitor(), nullptr);
     if (!window) {
         throw OGL::Exception("Error creating window!");
     }
@@ -140,10 +140,20 @@ int main() {
 
     OGL::Model myModel("models/Backpack/backpack.obj");
 
+    OGL::Object myObject(myModel);
+    myObject.m_postiton = glm::vec3{ 0.0f, 0.0f, -2.0f };
+    myObject.m_scale = 1.2f;
+    myObject.m_rotationAngleRadians = glm::radians(-45.0f);
+    myObject.m_rotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
+
     glEnable(GL_DEPTH_TEST);
 
     glm::vec3 lightPos{ 3.0f, 2.5f, 2.0f };
     glm::vec3 lightColor{ 1.0f, 1.0f, 1.0f };
+
+    shader.use();
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)Screen::width / (float)Screen::height, 0.1f, 100.0f);
+    shader.setUniformMatrix4("projection", projection, false);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrameTime = (float)glfwGetTime();
@@ -155,22 +165,17 @@ int main() {
 
         shader.use();
         glm::mat4 view = freeCam.getViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)Screen::width / (float)Screen::height, 0.1f, 100.0f);
-        glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3{ 0.0f, 0.0f, -2.0f });
-        model = glm::scale(model, glm::vec3{ 0.2f, 0.2f, 0.2f });
-
-        shader.setUniformMatrix4("model", model, false);
+        
         shader.setUniformMatrix4("view", view, false);
-        shader.setUniformMatrix4("projection", projection, false);
-
+        
         shader.setUniformVec3("lightPos", lightPos);
         shader.setUniformVec3("lightColor", lightColor);
         shader.setUniformVec3("viewerPos", freeCam.getPos());
 
-        myModel.draw(shader);
+        myObject.draw(shader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    return 0;
 }
