@@ -9,12 +9,14 @@ uniform vec3 viewerPos;
 out vec4 fragColor;
 
 struct Material {
-	sampler2D diffuseTex;
-	sampler2D specularTex;
+	sampler2D textureDiffuse1;
+	sampler2D textureSpecular1;
 
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
+	vec3 colorAmbient;
+	vec3 colorDiffuse;
+	vec3 colorSpecular;
+
+	float specularExponent;
 };
 
 struct DirectionalLight {
@@ -82,8 +84,8 @@ void main() {
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 diffuseCol = vec3(texture(material.diffuseTex, vertexTex));
-	vec3 specularCol = vec3(texture(material.specularTex, vertexTex));
+	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
 	vec3 diffuse = diffuseComponent(material, light, normal) * diffuseCol;
@@ -93,8 +95,8 @@ vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	vec3 diffuseCol = vec3(texture(material.diffuseTex, vertexTex));
-	vec3 specularCol = vec3(texture(material.specularTex, vertexTex));
+	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
 
@@ -111,8 +113,8 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexP
 
 	vec3 lightDir = normalize(vertexPos - light.position);
 
-	vec3 diffuseCol = vec3(texture(material.diffuseTex, vertexTex));
-	vec3 specularCol = vec3(texture(material.specularTex, vertexTex));
+	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float lightrayAngleCos = dot(normalize(light.direction), lightDir);
 	float fadingCoefficient = cutOffCos - cutOffOuterCos;
@@ -144,44 +146,44 @@ float attenuationCoefficient(SpotLight light, vec3 vertexPos) {
 }
 
 vec3 ambientComponent(Material material, vec3 lightColor) {
-	return material.ambient * lightColor;
+	return material.colorAmbient * lightColor;
 }
 
 vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal) {
 	vec3 lightDir = normalize(light.direction);
 	float diff = -min(0.0, dot(lightDir, normal));
-	return diff * material.diffuse * light.color;
+	return diff * material.colorDiffuse * light.color;
 }
 
 vec3 diffuseComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal) {
 	vec3 lightDir = normalize(vertexPos - light.position);
 	float diff = -min(0.0, dot(lightDir, normal));
-	return diff * material.diffuse * light.color;
+	return diff * material.colorDiffuse * light.color;
 }
 
 vec3 diffuseComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal) {
 	vec3 lightDir = normalize(vertexPos - light.position);
 	float diff = -min(0.0, dot(lightDir, normal));
-	return diff * material.diffuse * light.color;
+	return diff * material.colorDiffuse * light.color;
 }
 
 vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir) {
 	vec3 lightDir = normalize(light.direction);
 	vec3 reflectedLight = normalize(reflect(lightDir, normal));
-	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), 32);
-	return spec * material.specular * light.color;
+	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), material.specularExponent);
+	return spec * material.colorSpecular * light.color;
 }
 
 vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir) {
 	vec3 lightDir = normalize(vertexPos - light.position);
 	vec3 reflectedLight = normalize(reflect(lightDir, normal));
-	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), 32);
-	return spec * material.specular * light.color;
+	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), material.specularExponent);
+	return spec * material.colorSpecular * light.color;
 }
 
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir) {
 	vec3 lightDir = normalize(vertexPos - light.position);
 	vec3 reflectedLight = normalize(reflect(lightDir, normal));
-	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), 32);
-	return spec * material.specular * light.color;
+	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), material.specularExponent);
+	return spec * material.colorSpecular * light.color;
 }

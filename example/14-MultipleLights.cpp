@@ -304,11 +304,12 @@ int main
     glBindVertexArray(crateVAO);
     crateShader.use();
 
-    crateShader.setUniformInt("material.diffuseTex", 0);
-    crateShader.setUniformInt("material.specularTex", 1);
-    crateShader.setUniformVec3("material.ambient", { 0.05f, 0.05f, 0.05f });
-    crateShader.setUniformVec3("material.diffuse", { 0.85f, 0.85f, 0.85f });
-    crateShader.setUniformVec3("material.specular", { 0.95f, 0.95f, 0.95f });
+    crateShader.setUniformInt("material.textureDiffuse1", 0);
+    crateShader.setUniformInt("material.textureSpecular1", 1);
+    crateShader.setUniformVec3("material.colorAmbient", { 0.05f, 0.05f, 0.05f });
+    crateShader.setUniformVec3("material.colorDiffuse", { 0.85f, 0.85f, 0.85f });
+    crateShader.setUniformVec3("material.colorSpecular", { 0.95f, 0.95f, 0.95f });
+    crateShader.setUniformFloat("material.specularExponent", 32);
     
     directionalLight.loadInShader(crateShader);
 

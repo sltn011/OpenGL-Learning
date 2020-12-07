@@ -15,7 +15,7 @@ namespace OGL::E1 {
         System::lastMouseXPos = static_cast<float>(xpos);
         System::lastMouseYPos = static_cast<float>(ypos);
         
-        GameCamera::cam->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
+        GameCamera::inst->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
     }
 
 } // OGL::E1
