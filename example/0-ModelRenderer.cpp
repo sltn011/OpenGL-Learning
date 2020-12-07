@@ -63,7 +63,7 @@ void windowResizeCallback
 }
 
 void processInput
-(GLFWwindow *window
+( GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -106,7 +106,6 @@ void mouseCallback
 void clearScreen
 (
 ) {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -147,6 +146,7 @@ int main() {
     myObject.m_rotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glm::vec3 lightPos{ 3.0f, 2.5f, 2.0f };
     glm::vec3 lightColor{ 1.0f, 1.0f, 1.0f };
@@ -160,7 +160,6 @@ int main() {
         System::deltaTime = currentFrameTime - System::lastFrameTime;
         System::lastFrameTime = currentFrameTime;
 
-        processInput(window);
         clearScreen();
 
         shader.use();
