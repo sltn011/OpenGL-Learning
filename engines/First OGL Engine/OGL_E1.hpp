@@ -33,7 +33,7 @@ namespace OGL::E1 {
         Engine1Base
         ( int          screenWidth
         , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.1"
+        , std::string  title = "Engine1_v.0.1.2"
         , bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -100,6 +100,93 @@ namespace OGL::E1 {
             if (!userDestroy()) {
                 throw Exception("Error clearing resources");
             }
+        }
+
+        void addModel
+        ( char const *path
+        , size_t modelId
+        ) {
+            m_modelsTable[modelId] = OGL::E1::factory<OGL::Model>(path);
+        }
+
+        // Returns index of created object in m_objects
+        size_t addObject
+        ( size_t modelID
+        , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
+        , float scale = 1.0f
+        , float rotationAngleRadians = 0.0f
+        , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
+        ) {
+            m_objects.emplace_back(
+                factory<Object>(
+                    *m_modelsTable[modelID].get(),
+                    pos,
+                    scale,
+                    rotationAngleRadians,
+                    rotationAxis
+                )
+            );
+            return m_objects.size() - 1;
+        }
+
+        // Returns index of created dir light in m_dirLights
+        size_t addDirLight
+        ( glm::vec3 direction
+        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
+        ) {
+            m_dirLights.emplace_back(
+                factory<DirectionalLight>(
+                    direction,
+                    color
+                )
+            );
+            return m_dirLights.size() - 1;
+        }
+
+        // Returns index of created point light in m_pointLights
+        size_t addPointLight
+        ( glm::vec3 position
+        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
+        , float attenuationConst = 1.0f
+        , float attenuationLinear = 0.09f
+        , float attenuationQuadratic = 0.032f
+        ) {
+            m_pointLights.emplace_back(
+                factory<PointLight>(
+                    position,
+                    color,
+                    attenuationConst,
+                    attenuationLinear,
+                    attenuationQuadratic
+                )
+            );
+            return m_pointLights.size() - 1;
+        }
+
+        // Returns index of created spot light in m_spotLights
+        size_t addSpotLight
+        ( glm::vec3 position
+        , glm::vec3 direction
+        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
+        , float cutOffAngleRadians = glm::radians(8.0f)
+        , float cutOffOuterAngleRadians = glm::radians(12.0f)
+        , float attenuationConst = 1.0f
+        , float attenuationLinear = 0.09f
+        , float attenuationQuadratic = 0.032f
+        ) {
+            m_spotLights.emplace_back(
+                factory<SpotLight>(
+                    position,
+                    direction,
+                    color,
+                    cutOffAngleRadians,
+                    cutOffOuterAngleRadians,
+                    attenuationConst,
+                    attenuationLinear,
+                    attenuationQuadratic
+                )
+            );
+            return m_spotLights.size() - 1;
         }
 
         void setClearColor

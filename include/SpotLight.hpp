@@ -17,8 +17,8 @@ namespace OGL {
         ( glm::vec3 position = glm::vec3{ 0.0f, 0.0f, 0.0f }
         , glm::vec3 direction = glm::vec3{ 0.0f, 1.0f, 1.0f }
         , glm::vec3 color = glm::vec3{ 1.0f, 1.0f, 1.0f }
-        , float cutOffAngle = glm::radians(8.0f)
-        , float cutOffOuterAngle = glm::radians(12.0f)
+        , float cutOffAngleRadians = glm::radians(8.0f)
+        , float cutOffOuterAngleRadians = glm::radians(12.0f)
         , float attenuationConst = 1.0f
         , float attenuationLinear = 0.09f
         , float attenuationQuadratic = 0.032f

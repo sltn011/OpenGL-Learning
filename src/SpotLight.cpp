@@ -6,16 +6,16 @@ namespace OGL {
     ( glm::vec3 position
     , glm::vec3 direction
     , glm::vec3 color
-    , float cutOffAngle
-    , float cutOffOuterAngle
+    , float cutOffAngleRadians
+    , float cutOffOuterAngleRadians
     , float attenuationConst
     , float attenuationLinear
     , float attenuationQuadratic
     )
     : PointLight{position, color, attenuationConst, attenuationLinear, attenuationQuadratic}
     , m_direction{direction}
-    , m_cutOffAngle{ cutOffAngle }
-    , m_cutOffOuterAngle{ cutOffOuterAngle }
+    , m_cutOffAngle{ cutOffAngleRadians }
+    , m_cutOffOuterAngle{ cutOffOuterAngleRadians }
     {
     }
 

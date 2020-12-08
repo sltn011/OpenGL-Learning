@@ -22,7 +22,7 @@ namespace OGL::E1 {
     using smartPointLPtr = std::unique_ptr<PointLight>;
     using smartSpotLPtr  = std::unique_ptr<SpotLight>;
 
-    using modelsTable    = std::unordered_map<uint32_t, smartModelPtr>;
+    using modelsTable    = std::unordered_map<size_t, smartModelPtr>;
     using gameObjects    = std::vector<smartObjPtr>;
     using dirLights      = std::vector<smartDirLPtr>;
     using pointLights    = std::vector<smartPointLPtr>;

@@ -30,50 +30,28 @@ public:
         m_shaders[0].setUniformMatrix4("projection", m_projection);
 
         // Objects
-        m_modelsTable[0] = OGL::E1::factory<OGL::Model>("models/Backpack/backpack.obj");
+        addModel("models/Backpack/backpack.obj", 0);
 
-        m_objects.emplace_back(OGL::E1::factory<OGL::Object>(*m_modelsTable[0].get()));
-        m_objects[0]->m_postiton = glm::vec3{ 0.0f, 0.0f, -2.0f };
-        m_objects[0]->m_scale = 0.25f;
-        m_objects[0]->m_rotationAngleRadians = glm::radians(-45.0f);
-        m_objects[0]->m_rotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
+        glm::vec3 positions[] = { { 0.0f, 0.0f, -2.0f }, { 1.0f, -2.0f, -3.0f }, { -1.0f, -0.5f, -1.0f }, { 0.0f, 1.5f, -0.75f }, { 1.0f, 0.0f, -4.0f } };
+        float     scales[] = { 0.25f, 0.25f, 0.35f, 0.25f, 0.65f };
+        float     rotationRadians[] = { glm::radians(-45.0f), glm::radians(125.0f), glm::radians(0.0f), glm::radians(30.0f), glm::radians(9.0f) };
+        glm::vec3 rotationAxes[] = { { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.35f, 0.0f }, { 0.0f, 1.0f, 0.0f } };
 
-        m_objects.emplace_back(OGL::E1::factory<OGL::Object>(*m_modelsTable[0].get()));
-        m_objects[1]->m_postiton = glm::vec3{ 1.0f, -2.0f, -3.0f };
-        m_objects[1]->m_scale = 0.25f;
-        m_objects[1]->m_rotationAngleRadians = glm::radians(125.0f);
-        m_objects[1]->m_rotationAxis = glm::vec3(1.0f, 1.0f, 0.0f);
-
-        m_objects.emplace_back(OGL::E1::factory<OGL::Object>(*m_modelsTable[0].get()));
-        m_objects[2]->m_postiton = glm::vec3{ -1.0f, -0.5f, -1.0f };
-        m_objects[2]->m_scale = 0.35f;
-        m_objects[2]->m_rotationAngleRadians = glm::radians(0.0f);
-        m_objects[2]->m_rotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
-
-        m_objects.emplace_back(OGL::E1::factory<OGL::Object>(*m_modelsTable[0].get()));
-        m_objects[3]->m_postiton = glm::vec3{ 0.0f, 1.5f, -0.75f };
-        m_objects[3]->m_scale = 0.25f;
-        m_objects[3]->m_rotationAngleRadians = glm::radians(30.0f);
-        m_objects[3]->m_rotationAxis = glm::vec3(1.0f, 0.35f, 0.0f);
-
-        m_objects.emplace_back(OGL::E1::factory<OGL::Object>(*m_modelsTable[0].get()));
-        m_objects[4]->m_postiton = glm::vec3{ 1.0f, 0.0f, -4.0f };
-        m_objects[4]->m_scale = 0.65f;
-        m_objects[4]->m_rotationAngleRadians = glm::radians(9.0f);
-        m_objects[4]->m_rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+        for (int i = 0; i < 5; ++i) {
+            addObject(0, positions[i], scales[i], rotationRadians[i], rotationAxes[i]);
+        }
 
         // Lights
         glm::vec3 directionalLightDir{ -2.0f, -1.5f, 2.0f };
         glm::vec3 directionalLightColor{ 0.0f, 0.5f, 0.0f };
         glm::vec3 pointLightPos[2] = { {2.0f, 1.75f, 1.75f}, {-3.0f, -1.5f, -2.0f} };
         glm::vec3 pointLightColor[2] = { {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} };
-        m_dirLights.emplace_back(OGL::E1::factory<OGL::DirectionalLight>(directionalLightDir, directionalLightColor));
+        
+        addDirLight(directionalLightDir, directionalLightColor);
         for (int i = 0; i < 2; ++i) {
-            m_pointLights.emplace_back(OGL::E1::factory<OGL::PointLight>(pointLightPos[i], pointLightColor[i]));
+            addPointLight(pointLightPos[i], pointLightColor[i]);
         }
-        m_spotLights.emplace_back(OGL::E1::factory<OGL::SpotLight>());
-        m_spotLights[0]->m_cutOffAngle = glm::radians(15.0f);
-        m_spotLights[0]->m_cutOffOuterAngle = glm::radians(25.0f);
+        addSpotLight({}, {}, {1.0f, 1.0f, 1.0f}, glm::radians(15.0f), glm::radians(25.0f));
 
         return true;
     }
@@ -113,7 +91,7 @@ public:
 int main() {
     stbi_set_flip_vertically_on_load(true);
 
-    Test t(1400, 1000);
+    Test t(1920, 1080);
     t.setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     t.start();
     return 0;
