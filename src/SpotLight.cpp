@@ -25,7 +25,7 @@ namespace OGL {
         std::string objName = "spotLight";
         shader.setUniformVec3(objName + ".color", m_color);
         shader.setUniformVec3(objName + ".position", m_position);
-        shader.setUniformVec3(objName + ".direction", m_direction);
+        shader.setUniformVec3(objName + ".direction", glm::normalize(m_direction));
         shader.setUniformFloat(objName + ".attenuationConst", m_attenuationConst);
         shader.setUniformFloat(objName + ".attenuationLinear", m_attenuationLinear);
         shader.setUniformFloat(objName + ".attenuationQuadratic", m_attenuationQuadratic);

@@ -19,7 +19,7 @@ public:
             0.0f
         );
 
-        m_shaders.emplace_back("shaders/11-multLightsObj.vert", "shaders/11-multLightsObj.frag");
+        m_shaders.emplace_back("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
@@ -28,30 +28,30 @@ public:
 
         m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("projection", m_projection);
-
+        
         // Objects
-        addModel("models/Backpack/backpack.obj", 0);
+        addModel("models/Playground/playground.obj", 0);
 
-        glm::vec3 positions[] = { { 0.0f, 0.0f, -2.0f }, { 1.0f, -2.0f, -3.0f }, { -1.0f, -0.5f, -1.0f }, { 0.0f, 1.5f, -0.75f }, { 1.0f, 0.0f, -4.0f } };
-        float     scales[] = { 0.25f, 0.25f, 0.35f, 0.25f, 0.65f };
-        float     rotationRadians[] = { glm::radians(-45.0f), glm::radians(125.0f), glm::radians(0.0f), glm::radians(30.0f), glm::radians(9.0f) };
-        glm::vec3 rotationAxes[] = { { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.35f, 0.0f }, { 0.0f, 1.0f, 0.0f } };
+        glm::vec3 positions[] = { { 0.0f, 0.0f, 0.0f } };
+        float     scales[] = { 0.1f };
+        float     rotationRadians[] = { glm::radians(0.0f) };
+        glm::vec3 rotationAxes[] = { { 0.0f, 1.0f, 0.0f } };
 
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 1; ++i) {
             addObject(0, positions[i], scales[i], rotationRadians[i], rotationAxes[i]);
         }
 
         // Lights
-        glm::vec3 directionalLightDir{ -2.0f, -1.5f, 2.0f };
-        glm::vec3 directionalLightColor{ 0.0f, 0.5f, 0.0f };
-        glm::vec3 pointLightPos[2] = { {2.0f, 1.75f, 1.75f}, {-3.0f, -1.5f, -2.0f} };
-        glm::vec3 pointLightColor[2] = { {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} };
+        glm::vec3 directionalLightDir{ 0.1f, -1.0f, 0.2f };
+        glm::vec3 directionalLightColor{ 0.15f, 0.15f, 0.15f };
+        //glm::vec3 pointLightPos[2] = { {-1.0f, 2.0f, 1.6f}, {-3.0f, 1.5f, -2.0f} };
+        //glm::vec3 pointLightColor[2] = { {0.0f, 0.0f, 0.2f}, {0.2f, 0.0f, 0.0f} };
         
         addDirLight(directionalLightDir, directionalLightColor);
-        for (int i = 0; i < 2; ++i) {
-            addPointLight(pointLightPos[i], pointLightColor[i]);
-        }
-        addSpotLight({}, {}, {1.0f, 1.0f, 1.0f}, glm::radians(15.0f), glm::radians(25.0f));
+        //for (int i = 0; i < 2; ++i) {
+        //    addPointLight(pointLightPos[i], pointLightColor[i]);
+        //}
+        addSpotLight({}, {}, {0.75f, 0.75f, 0.75f}, glm::radians(22.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
 
         return true;
     }
@@ -63,20 +63,24 @@ public:
 
         m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
+        m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
 
         // Update flashlight
         m_spotLights[0]->m_position = OGL::E1::GameCamera::inst->getPos();
         m_spotLights[0]->m_direction = OGL::E1::GameCamera::inst->getForward();
 
         // Load lights
-        for (auto &l : m_dirLights) {
-            l->loadInShader(m_shaders[0]);
+        m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());
+        for (size_t i = 0; i < m_dirLights.size(); ++i) {
+            m_dirLights[i]->loadInShader(m_shaders[0], i);
         }
+        m_shaders[0].setUniformInt("numPointLights", (int)m_pointLights.size());
         for (size_t i = 0; i < m_pointLights.size(); ++i) {
             m_pointLights[i]->loadInShader(m_shaders[0], i);
         }
-        for (auto &l : m_spotLights) {
-            l->loadInShader(m_shaders[0]);
+        m_shaders[0].setUniformInt("numSpotLights", (int)m_spotLights.size());
+        for (size_t i = 0; i < m_spotLights.size(); ++i) {
+            m_spotLights[i]->loadInShader(m_shaders[0], i);
         }
 
         // Draw objects

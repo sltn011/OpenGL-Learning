@@ -15,7 +15,7 @@ namespace OGL {
     ) {
         std::string objName = "directionalLight";
         shader.setUniformVec3(objName + ".color", m_color);
-        shader.setUniformVec3(objName + ".direction", m_direction);
+        shader.setUniformVec3(objName + ".direction", glm::normalize(m_direction));
     }
 
     void DirectionalLight::loadInShader
@@ -24,7 +24,7 @@ namespace OGL {
     ) {
         std::string objName = "directionalLight[" + std::to_string(indexInArray) + "]";
         shader.setUniformVec3(objName + ".color", m_color);
-        shader.setUniformVec3(objName + ".direction", m_direction);
+        shader.setUniformVec3(objName + ".direction", glm::normalize(m_direction));
     }
 
 } // OGL

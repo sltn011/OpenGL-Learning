@@ -48,11 +48,17 @@ struct SpotLight {
 
 uniform Material material;
 
-#define NUM_POINT_LIGHTS 2
+#define MAX_DIR_LIGHTS   4
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS  4
 
-uniform DirectionalLight directionalLight;
-uniform PointLight pointLight[NUM_POINT_LIGHTS];
-uniform SpotLight spotLight;
+uniform int numDirLights;
+uniform int numPointLights;
+uniform int numSpotLights;
+
+uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
+uniform PointLight pointLight[MAX_POINT_LIGHTS];
+uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos);
@@ -73,12 +79,17 @@ void main() {
 	vec3 norm = normalize(vertexNorm);
 	vec3 viewDir = normalize(vertexPos - viewerPos);
 
-	vec3 res = calculateDirectLight(directionalLight, norm, viewDir);
+	vec3 res = vec3(0.0, 0.0, 0.0);
 
-	for (int i = 0; i < NUM_POINT_LIGHTS; ++i) {
+	for (int i = 0; i < numDirLights; ++i) {
+		res += calculateDirectLight(directionalLight[i], norm, viewDir);
+	}
+	for (int i = 0; i < numPointLights; ++i) {
 		res += calculatePointLight(pointLight[i], norm, viewDir, vertexPos);
 	}
-	res += calculateSpotLight(spotLight, norm, viewDir, vertexPos);
+	for (int i = 0; i < numSpotLights; ++i) {
+		res += calculateSpotLight(spotLight[i], norm, viewDir, vertexPos);
+	}
 
 	fragColor = vec4(res, 1.0);
 }
