@@ -220,29 +220,29 @@ namespace OGL::E1 {
         }
 
         virtual void processInput
-        (
+        ( float speedMult = 1.0f
         ) {
             if (glfwGetKey(m_window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
                 glfwSetWindowShouldClose(m_window, true);
             }
 
             if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime);
+                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime * speedMult);
             }
 
         }

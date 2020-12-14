@@ -31,27 +31,27 @@ public:
         
         // Objects
         addModel("models/Playground/playground.obj", 0);
+        addModel("models/Crate/crate.obj", 1);
 
-        glm::vec3 positions[] = { { 0.0f, 0.0f, 0.0f } };
-        float     scales[] = { 0.1f };
-        float     rotationRadians[] = { glm::radians(0.0f) };
-        glm::vec3 rotationAxes[] = { { 0.0f, 1.0f, 0.0f } };
+        glm::vec3 playgroundPosition = { 0.0f, 0.0f, 0.0f };
+        float     playgroundScale = 0.1f;
+        float     playgroundRotationRadians = glm::radians(0.0f);
+        glm::vec3 playgroundRotationAxes = { 0.0f, 1.0f, 0.0f };
+        addObject(0, playgroundPosition, playgroundScale, playgroundRotationRadians, playgroundRotationAxes);
 
-        for (int i = 0; i < 1; ++i) {
-            addObject(0, positions[i], scales[i], rotationRadians[i], rotationAxes[i]);
+        glm::vec3 cratesPosition[] = { { -0.8f, -0.0955f, -0.75f }, { -0.5f, -0.0855f, -1.0f }, { -0.35f, -0.0955f, -0.65f }, { -0.87f, -0.0955f, -1.1f } };
+        float     cratesScale[] = { { 0.055f }, { 0.065f }, { 0.055f }, { 0.055f } };
+        float     cratesRotationRadians[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
+        for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
+            addObject(1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
         }
 
         // Lights
-        glm::vec3 directionalLightDir{ 0.1f, -1.0f, 0.2f };
-        glm::vec3 directionalLightColor{ 0.15f, 0.15f, 0.15f };
-        //glm::vec3 pointLightPos[2] = { {-1.0f, 2.0f, 1.6f}, {-3.0f, 1.5f, -2.0f} };
-        //glm::vec3 pointLightColor[2] = { {0.0f, 0.0f, 0.2f}, {0.2f, 0.0f, 0.0f} };
+        glm::vec3 directionalLightDir{ -0.7f, -1.0f, -0.65f };
+        glm::vec3 directionalLightColor{ 0.75f, 0.75f, 0.60f };
         
         addDirLight(directionalLightDir, directionalLightColor);
-        //for (int i = 0; i < 2; ++i) {
-        //    addPointLight(pointLightPos[i], pointLightColor[i]);
-        //}
-        addSpotLight({}, {}, {0.75f, 0.75f, 0.75f}, glm::radians(22.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
+        //addSpotLight({}, {}, { 1.0f, 1.0f, 1.0f }, glm::radians(23.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
 
         return true;
     }
@@ -59,15 +59,17 @@ public:
     bool userFrameUpdate
     ( float elapsedTime
     ) override {
-        processInput();
+        processInput(0.5f);
 
         m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
         m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
 
         // Update flashlight
-        m_spotLights[0]->m_position = OGL::E1::GameCamera::inst->getPos();
-        m_spotLights[0]->m_direction = OGL::E1::GameCamera::inst->getForward();
+        if (m_spotLights.size() != 0) {
+            m_spotLights[0]->m_position = OGL::E1::GameCamera::inst->getPos();
+            m_spotLights[0]->m_direction = OGL::E1::GameCamera::inst->getForward();
+        }
 
         // Load lights
         m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());

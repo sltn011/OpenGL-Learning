@@ -132,12 +132,11 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexP
 	float intensity = clamp((lightrayAngleCos - cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
-		
-    vec3 ambient = ambientComponent(material, light.color);
+
     vec3 diffuse = diffuseComponent(material, light, vertexPos, normal) * diffuseCol;
     vec3 specular = specularComponent(material, light, vertexPos, normal, viewDir) * specularCol;
     
-    return (ambient + diffuse + specular) * attenuation * intensity;
+    return (diffuse + specular) * attenuation * intensity;
 }
 
 float attenuationCoefficient(PointLight light, vec3 vertexPos) {
