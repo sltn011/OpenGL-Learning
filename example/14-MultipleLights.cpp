@@ -311,7 +311,7 @@ int main
     crateShader.setUniformVec3("material.colorSpecular", { 0.95f, 0.95f, 0.95f });
     crateShader.setUniformFloat("material.specularExponent", 32);
     
-    directionalLight.loadInShader(crateShader);
+    directionalLight.loadInShader(crateShader, 0);
 
     for (size_t i = 0; i < sizeof(pointLightPos) / sizeof(*pointLightPos); ++i) {
         pointLights[i].loadInShader(crateShader, i);
@@ -321,9 +321,13 @@ int main
     spotLight.m_attenuationLinear = 0.007f;
     spotLight.m_attenuationQuadratic = 0.0002f;
 
-    spotLight.loadInShader(crateShader);
+    spotLight.loadInShader(crateShader, 0);
     
     crateShader.setUniformMatrix4("projection", projection);
+    
+    crateShader.setUniformInt("numDirLights", 1);
+    crateShader.setUniformInt("numPointLights", 2);
+    crateShader.setUniformInt("numSpotLights", 1);
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -359,7 +363,7 @@ int main
 
         spotLight.m_position = freeCam.getPos();
         spotLight.m_direction = freeCam.getForward();
-        spotLight.loadInShader(crateShader);
+        spotLight.loadInShader(crateShader, 0);
 
         for (int i = 0; i < sizeof(cubePosition) / sizeof(cubePosition[0]); ++i) {
             glm::mat4 cratePos = glm::translate(model, cubePosition[i]);

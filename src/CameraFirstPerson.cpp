@@ -28,6 +28,7 @@ namespace OGL {
     ) {
         glm::vec3 forward = m_forward;
         forward.y = m_position.y;
+        forward = glm::normalize(forward);
         switch (dir) {
         case CameraMovementDirection::Forward:
             m_position += forward * m_speed * deltaTime;

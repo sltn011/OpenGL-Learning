@@ -50,6 +50,22 @@ namespace OGL {
         , char const *fragmentSourcePath
         );
 
+        Shader
+        ( Shader const &rhs
+        ) = delete;
+
+        Shader
+        ( Shader &&rhs
+        );
+
+        Shader &operator=
+        ( Shader const &rhs
+        ) = delete;
+
+        Shader &operator=
+        ( Shader &&rhs
+        );
+
         ~Shader
         (
         );

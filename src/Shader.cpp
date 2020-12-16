@@ -54,6 +54,22 @@ namespace OGL {
         m_showWarnings = false;
     }
 
+    Shader::Shader
+    ( Shader &&rhs
+    ) {
+        m_programmID = rhs.m_programmID;
+        rhs.m_programmID = 0;
+        m_showWarnings = rhs.m_showWarnings;
+    }
+
+    Shader &Shader::operator=
+    ( Shader &&rhs
+    ) {
+        std::swap(m_programmID, rhs.m_programmID);
+        std::swap(m_showWarnings, rhs.m_showWarnings);
+        return *this;
+    }
+
     Shader::~Shader
     (
     ) {

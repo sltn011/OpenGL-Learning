@@ -1,25 +1,29 @@
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1_for_learning_examples/OGL_E1.hpp"
+#include <iostream>
+#include <fstream>
 
+int shaderNum = 0;
 
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(int width, int height) : Engine1Base{ width, height } {}
-
+    
     glm::mat4 m_projection;
 
     bool userCreate
     (
     ) override {
         OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
-            glm::vec3{0.0f, 0.0f, 0.0f}, 
+            glm::vec3{ 0.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
-            1.0f, 
-            -90.0f, 
+            1.0f,
+            -90.0f,
             0.0f
         );
 
-        m_shaders.emplace_back("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
+        m_shaders.emplace_back("shaders/12-depthBufferTest.vert", "shaders/12-depthBufferTest.frag");
+        m_shaders.emplace_back("shaders/12-depthBufferTest.vert", "shaders/12-depthBufferVizualizer.frag");
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
@@ -28,6 +32,9 @@ public:
 
         m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("projection", m_projection);
+
+        m_shaders[1].use();
+        m_shaders[1].setUniformMatrix4("projection", m_projection);
         
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -48,11 +55,11 @@ public:
 
         // Lights
         glm::vec3 directionalLightDir{ -0.7f, -1.0f, -0.65f };
-        glm::vec3 directionalLightColor{ 0.75f, 0.75f, 0.60f };
-        
+        glm::vec3 directionalLightColor{ 1.75f, 1.75f, 1.60f };
+
         addDirLight(directionalLightDir, directionalLightColor);
         //addSpotLight({}, {}, { 1.0f, 1.0f, 1.0f }, glm::radians(23.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
-        
+
         return true;
     }
 
@@ -61,38 +68,46 @@ public:
     ) override {
         processInput(0.5f);
 
-        m_shaders[0].use();
-        m_shaders[0].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
-        m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
+        m_shaders[shaderNum].use();
+        m_shaders[shaderNum].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
+
+        if (shaderNum == 0) {
+            m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
+        }
 
         // Update flashlight
-        if (m_spotLights.size() != 0) {
+        if (shaderNum == 0 && m_spotLights.size() != 0) {
             m_spotLights[0]->m_position = OGL::E1::GameCamera::inst->getPos();
             m_spotLights[0]->m_direction = OGL::E1::GameCamera::inst->getForward();
         }
 
         // Load lights
-        m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());
-        for (size_t i = 0; i < m_dirLights.size(); ++i) {
-            m_dirLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numPointLights", (int)m_pointLights.size());
-        for (size_t i = 0; i < m_pointLights.size(); ++i) {
-            m_pointLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numSpotLights", (int)m_spotLights.size());
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[0], i);
+        if (shaderNum == 0) {
+            m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());
+            for (size_t i = 0; i < m_dirLights.size(); ++i) {
+                m_dirLights[i]->loadInShader(m_shaders[0], i);
+            }
+            m_shaders[0].setUniformInt("numPointLights", (int)m_pointLights.size());
+            for (size_t i = 0; i < m_pointLights.size(); ++i) {
+                m_pointLights[i]->loadInShader(m_shaders[0], i);
+            }
+            m_shaders[0].setUniformInt("numSpotLights", (int)m_spotLights.size());
+            for (size_t i = 0; i < m_spotLights.size(); ++i) {
+                m_spotLights[i]->loadInShader(m_shaders[0], i);
+            }
         }
 
         // Draw objects
         for (auto &obj : m_objects) {
-            obj->draw(m_shaders[0]);
+            obj->draw(m_shaders[shaderNum]);
         }
 
         return true;
     }
 };
+
+// Press 1 for glDepthFunc switch
+// Press 2 to switch between normal shader and depth visualizer shader
 
 int main() {
     stbi_set_flip_vertically_on_load(true);
