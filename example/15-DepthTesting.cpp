@@ -1,4 +1,4 @@
-#include "OGL_E1_for_learning_examples/OGL_E1.hpp"
+#include "OGL_E1_for_learning_examples/15-OGL_E1.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -107,7 +107,6 @@ public:
 };
 
 // Press 1 for glDepthFunc switch
-// Press 2 to switch between normal shader and depth visualizer shader
 
 int main() {
     stbi_set_flip_vertically_on_load(true);

@@ -48,7 +48,7 @@ public:
 
         // Lights
         glm::vec3 directionalLightDir{ -0.7f, -1.0f, -0.65f };
-        glm::vec3 directionalLightColor{ 0.75f, 0.75f, 0.60f };
+        glm::vec3 directionalLightColor{ 1.75f, 1.75f, 1.60f };
         
         addDirLight(directionalLightDir, directionalLightColor);
         //addSpotLight({}, {}, { 1.0f, 1.0f, 1.0f }, glm::radians(23.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
