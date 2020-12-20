@@ -168,6 +168,7 @@ add_executable(12-SimpleLightTypes example/12-SimpleLightTypes.cpp)
 add_executable(13-LightCasters example/13-LightCasters.cpp)
 add_executable(14-MultipleLights example/14-MultipleLights.cpp)
 add_executable(15-DepthTesting example/15-DepthTesting.cpp)
+add_executable(16-StencilTesting example/16-StencilTesting.cpp)
 
 # Linkning libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OpenGLTools assimp)
@@ -188,3 +189,4 @@ target_link_libraries(12-SimpleLightTypes glad glfw OpenGLTools)
 target_link_libraries(13-LightCasters glad glfw OpenGLTools)
 target_link_libraries(14-MultipleLights glad glfw OpenGLTools)
 target_link_libraries(15-DepthTesting glad glfw OpenGLTools assimp)
+target_link_libraries(16-StencilTesting glad glfw OpenGLTools assimp)
