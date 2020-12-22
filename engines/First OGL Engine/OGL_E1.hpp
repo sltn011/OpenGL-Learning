@@ -33,7 +33,7 @@ namespace OGL::E1 {
         Engine1Base
         ( int          screenWidth
         , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.2"
+        , std::string  title = "Engine1_v.0.1.3"
         , bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -112,12 +112,13 @@ namespace OGL::E1 {
         // Returns index of created object in m_objects
         size_t addObject
         ( size_t modelID
+        , size_t groupID = 0
         , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
         , float scale = 1.0f
         , float rotationAngleRadians = 0.0f
         , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_objects.emplace_back(
+            m_objects[groupID].emplace_back(
                 factory<Object>(
                     *m_modelsTable[modelID].get(),
                     pos,
@@ -126,7 +127,7 @@ namespace OGL::E1 {
                     rotationAxis
                 )
             );
-            return m_objects.size() - 1;
+            return m_objects[groupID].size() - 1;
         }
 
         // Returns index of created dir light in m_dirLights
