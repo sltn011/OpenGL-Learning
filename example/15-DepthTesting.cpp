@@ -1,4 +1,4 @@
-#include "OGL_E1_for_learning_examples/15-OGL_E1.hpp"
+#include "OGL_E1_for_learning_examples/15-DepthTesting/OGL_E1.hpp"
 #include <iostream>
 #include <fstream>
 

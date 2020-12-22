@@ -1,4 +1,4 @@
-#include "OGL_E1_for_learning_examples/16-OGL_E1.hpp"
+#include "OGL_E1_for_learning_examples/16-StencilTesting/OGL_E1.hpp"
 #include <iostream>
 #include <fstream>
 
