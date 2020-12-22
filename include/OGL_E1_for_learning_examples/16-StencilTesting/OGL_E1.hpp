@@ -8,12 +8,12 @@
 #include "Object.hpp"
 #include "Shader.hpp"
 
-#include "OGL_E1_for_learning_examples/Utils/EngineTypes.hpp"
-#include "OGL_E1_for_learning_examples/Utils/Events.hpp"
-#include "OGL_E1_for_learning_examples/Utils/16-callbacks.hpp"
-#include "OGL_E1_for_learning_examples/Utils/GameCamera.hpp"
-#include "OGL_E1_for_learning_examples/Utils/System.hpp"
-#include "OGL_E1_for_learning_examples/Utils/factory.hpp"
+#include "Utils/EngineTypes.hpp"
+#include "Utils/Events.hpp"
+#include "Utils/callbacks.hpp"
+#include "Utils/GameCamera.hpp"
+#include "Utils/System.hpp"
+#include "Utils/factory.hpp"
 
 #include "stb_image.h"
 
