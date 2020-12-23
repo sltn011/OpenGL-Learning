@@ -80,6 +80,11 @@ void main() {
 	vec3 viewDir = normalize(vertexPos - viewerPos);
 
 	vec3 res = vec3(0.0, 0.0, 0.0);
+	float alpha = vec4(texture(material.textureDiffuse1, vertexTex)).a;
+	
+	if (alpha < 0.1) {
+		discard;
+	}
 
 	for (int i = 0; i < numDirLights; ++i) {
 		res += calculateDirectLight(directionalLight[i], norm, viewDir);
@@ -91,7 +96,7 @@ void main() {
 		res += calculateSpotLight(spotLight[i], norm, viewDir, vertexPos);
 	}
 
-	fragColor = vec4(res, 1.0);
+	fragColor = vec4(res, alpha);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {

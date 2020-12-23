@@ -1,4 +1,5 @@
 #include "First OGL Engine/OGL_E1.hpp"
+#include <map>
 
 
 class Test : public OGL::E1::Engine1Base {
@@ -32,6 +33,7 @@ public:
         // Objects
         addModel("models/Playground/playground.obj", 0);
         addModel("models/Crate/crate.obj", 1);
+        addModel("models/Window/window.obj", 2);
 
         glm::vec3 playgroundPosition = { 0.0f, 0.0f, 0.0f };
         float     playgroundScale = 0.1f;
@@ -44,6 +46,13 @@ public:
         float     cratesRotationRadians[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
         for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
             addObject(1, 1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
+        }
+
+        glm::vec3 windowsPosition[] = { { 0.8f, -0.05f, 0.75f }, { 0.5f, -0.05f, 1.0f }, { 0.35f, -0.05f, 0.65f }, { 0.87f, -0.05f, 1.1f } };
+        float     windowsScale[] = { 0.1f, 0.1f, 0.1f, 0.1f };
+        float     windowsRotation[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
+        for (size_t i = 0; i < sizeof(windowsPosition) / sizeof(windowsPosition[0]); ++i) {
+            addObject(2, 2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
         }
 
         // Lights
@@ -85,11 +94,23 @@ public:
             m_spotLights[i]->loadInShader(m_shaders[0], i);
         }
 
-        // Draw objects
-        for (auto &objGroup : m_objects) {
-            for (auto &obj : objGroup.second) {
+        // Draw normal objects
+        for (size_t group = 0; group < 2; ++group) { // Draw playground and boxes
+            for (auto &obj : m_objects[group]) {
                 obj->draw(m_shaders[0]);
             }
+        }
+
+        // Sort transparent objects by distance to player using map
+        std::map<float, OGL::E1::smartObjPtr const&> map;
+        for (auto const &obj : m_objects[2]) {
+            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->m_postiton);
+            map.emplace(dist, obj);
+        }
+
+        // Draw transparent windows starting from farthes to closest
+        for (auto windowIt = map.rbegin(); windowIt != map.rend(); ++windowIt) {
+            windowIt->second->draw(m_shaders[0]);
         }
 
         return true;
