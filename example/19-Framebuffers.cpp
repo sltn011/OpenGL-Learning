@@ -1,11 +1,20 @@
-#include "OGL_E1_for_learning_examples/18-FaceCulling/OGL_E1.hpp"
+#include "OGL_E1_for_learning_examples/19-Framebuffers/OGL_E1.hpp"
 #include <map>
+
+int postprocessMode = 0;
 
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(int width, int height) : Engine1Base{ width, height } {}
 
     glm::mat4 m_projection;
+
+    unsigned int m_fbo; // Frame buffer object
+    unsigned int m_texture; // Texture for color buffer
+    unsigned int m_rbo; // Renderbuffer object for depth and stencil buffers
+
+    unsigned int m_quadVAO;
+    unsigned int m_quadVBO;
 
     bool userCreate
     (
@@ -17,9 +26,10 @@ public:
             1.0f,
             -90.0f,
             0.0f
-            );
+        );
 
-        m_shaders.emplace_back("shaders/14-blending.vert", "shaders/14-blending.frag");
+        m_shaders.emplace_back("shaders/15-Framebuffer_ToFBO.vert", "shaders/15-Framebuffer_ToFBO.frag");
+        m_shaders.emplace_back("shaders/15-Framebuffer_ToScreen.vert", "shaders/15-Framebuffer_ToScreen.frag");
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
@@ -63,6 +73,58 @@ public:
 
         glEnable(GL_CULL_FACE);
 
+        glGenFramebuffers(1, &m_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo); // Create and bind framebuffer object
+
+        glGenTextures(1, &m_texture);
+        glBindTexture(GL_TEXTURE_2D, m_texture); // Create and bind texture
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenWidth, screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr); // allocate memory for texture but not fill
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0); // bind texture to framebuffer as color buffer
+
+        glGenRenderbuffers(1, &m_rbo);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_rbo); // Create and bind renderbuffer object
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight); // Allocate memory for renderbuffer object
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo); // bind renderbuffer to framebuffer
+        
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            fprintf(stderr, "Error creating framebuffer object");
+            return false;
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        float quadVertices[] {
+            -1.0f, +1.0f,    0.0f, 1.0f,
+            -1.0f, -1.0f,    0.0f, 0.0f,
+            +1.0f, -1.0f,    1.0f, 0.0f,
+
+            -1.0f, +1.0f,    0.0f, 1.0f,
+            +1.0f, -1.0f,    1.0f, 0.0f,
+            +1.0f, +1.0f,    1.0f, 1.0f,
+        };
+
+        glGenVertexArrays(1, &m_quadVAO); // VAO to draw quad on screen
+        glBindVertexArray(m_quadVAO);
+        glGenBuffers(1, &m_quadVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        glBindVertexArray(0);
+
+        m_shaders[1].use(); // Set quad texture to quad shader
+        m_shaders[1].setUniformInt("fboTexture", 0);
+
         return true;
     }
 
@@ -95,6 +157,16 @@ public:
             m_spotLights[i]->loadInShader(m_shaders[0], i);
         }
 
+        m_shaders[0].use();
+
+        // Bind Framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // not using stencil
+        glEnable(GL_DEPTH_TEST);
+
+        // All draws go to framebuffer
+
         // Draw objects
         for (size_t group = 0; group < 2; ++group) { // Draw playground and boxes
             for (auto &obj : m_objects[group]) {
@@ -114,18 +186,41 @@ public:
             windowIt->second->draw(m_shaders[0]);
         }
 
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Set default framebuffer
+        setClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        m_shaders[1].use();
+        m_shaders[1].setUniformInt("postprocessMode", postprocessMode);
+
+        glBindVertexArray(m_quadVAO);
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        return true;
+    }
+
+    bool userDestroy
+    (
+    ) override {
+        glDeleteVertexArrays(1, &m_quadVAO);
+        glDeleteBuffers(1, &m_quadVBO);
+        glDeleteTextures(1, &m_texture);
+        glDeleteRenderbuffers(1, &m_rbo);
+        glDeleteFramebuffers(1, &m_fbo);
         return true;
     }
 };
 
-// Key 1 - switch glCullFace GL_BACK/GL_FRONT/GL_FRONTAND_BACK
-// Key 2 - switch glFrontFace GL_CCW/GL_CW
+// Press 1 to switch postprocessing effect
 
 int main() {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);
-    t.setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     t.start();
     return 0;
 }
