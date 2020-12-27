@@ -172,6 +172,7 @@ add_executable(16-StencilTesting example/16-StencilTesting.cpp)
 add_executable(17-Blending example/17-Blending.cpp)
 add_executable(18-FaceCulling example/18-FaceCulling.cpp)
 add_executable(19-Framebuffers example/19-Framebuffers.cpp)
+add_executable(20-Cubemaps example/20-Cubemaps.cpp)
 
 # Linkning libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OpenGLTools assimp)
@@ -196,3 +197,5 @@ target_link_libraries(16-StencilTesting glad glfw OpenGLTools assimp)
 target_link_libraries(17-Blending glad glfw OpenGLTools assimp)
 target_link_libraries(18-FaceCulling glad glfw OpenGLTools assimp)
 target_link_libraries(19-Framebuffers glad glfw OpenGLTools assimp)
+target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
+
