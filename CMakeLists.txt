@@ -128,6 +128,13 @@ add_library(OpenGLTools STATIC
         src/DirectionalLight.cpp
         src/PointLight.cpp
         src/SpotLight.cpp
+        src/Descriptor.cpp
+        src/VertexArrayObject.cpp
+        src/VertexBufferObject.cpp
+        src/ElementBufferObject.cpp
+        src/ColorBufferObject.cpp
+        src/RenderBufferObject.cpp
+        src/FrameBufferObject.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
