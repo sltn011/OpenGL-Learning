@@ -7,6 +7,9 @@
 #include "GLFWInitRAII.hpp"
 #include "Object.hpp"
 #include "Shader.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -33,7 +36,7 @@ namespace OGL::E1 {
         Engine1Base
         ( int          screenWidth
         , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.4"
+        , std::string  title = "Engine1_v.0.1.4.1"
         , bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

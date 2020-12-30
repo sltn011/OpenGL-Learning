@@ -7,6 +7,9 @@
 #include "GLFWInitRAII.hpp"
 #include "Object.hpp"
 #include "Shader.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
