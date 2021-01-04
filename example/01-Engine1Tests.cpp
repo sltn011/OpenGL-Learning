@@ -255,12 +255,26 @@ public:
             m_spotLights[i]->loadInShader(m_shaders[0], i);
         }
 
+        m_shaders[2].use();
+        m_shaders[2].setUniformInt("numDirLights", (int)m_dirLights.size());
+        for (size_t i = 0; i < m_dirLights.size(); ++i) {
+            m_dirLights[i]->loadInShader(m_shaders[2], i);
+        }
+        m_shaders[2].setUniformInt("numPointLights", (int)m_pointLights.size());
+        for (size_t i = 0; i < m_pointLights.size(); ++i) {
+            m_pointLights[i]->loadInShader(m_shaders[2], i);
+        }
+        m_shaders[2].setUniformInt("numSpotLights", (int)m_spotLights.size());
+        for (size_t i = 0; i < m_spotLights.size(); ++i) {
+            m_spotLights[i]->loadInShader(m_shaders[2], i);
+        }
+
         // Draw objects
+        m_shaders[0].use();
         for (auto &obj : m_objects[0]) {
             obj->draw(m_shaders[0]);
         }
 
-        m_shaders[0].use();
         for (auto &obj : m_objects[1]) {
             obj->draw(m_shaders[0]);
         }
@@ -314,31 +328,24 @@ public:
         }
 
         m_shaders[0].use();
-
-        // Load lights
-        m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());
-        for (size_t i = 0; i < m_dirLights.size(); ++i) {
-            m_dirLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numPointLights", (int)m_pointLights.size());
-        for (size_t i = 0; i < m_pointLights.size(); ++i) {
-            m_pointLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numSpotLights", (int)m_spotLights.size());
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[0], i);
-        }
-
-        m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
         m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
 
+        m_shaders[0].use();
+        for (size_t i = 0; i < m_spotLights.size(); ++i) {
+            m_spotLights[i]->loadInShader(m_shaders[0], i);
+        }
+        m_shaders[2].use();
+        for (size_t i = 0; i < m_spotLights.size(); ++i) {
+            m_spotLights[i]->loadInShader(m_shaders[2], i);
+        }
+
+        m_shaders[0].use();
         // Draw objects
         for (auto &obj : m_objects[0]) {
             obj->draw(m_shaders[0]);
         }
 
-        m_shaders[0].use();
         for (auto &obj : m_objects[1]) {
             obj->draw(m_shaders[0]);
         }
