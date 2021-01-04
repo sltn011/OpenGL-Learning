@@ -27,6 +27,10 @@ namespace OGL {
     public:
         FrameBufferObject
         ( GLenum bufferType
+        );
+
+        FrameBufferObject
+        ( GLenum bufferType
         , float const *frameBufferQuadData
         , size_t frameBufferQuadDataLength
         , GLuint frameQuadVerticesVertexAttribIndex = 0
@@ -48,6 +52,14 @@ namespace OGL {
         , RenderBufferObject const &obj
         );
 
+        void bind
+        (
+        ) const;
+
+        static void unbind
+        ( GLenum bufferType
+        );
+
         GLenum checkStatus
         (
         ) const;
@@ -59,6 +71,10 @@ namespace OGL {
         void drawQuad
         ( GLenum colorAttachment
         );
+
+        GLenum bufferType
+        (
+        ) const;
     };
 
 } // OGL

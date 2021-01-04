@@ -113,7 +113,7 @@ add_subdirectory(${PATH_TO_ASSIMP_SOURCE} ${PATH_TO_ASSIMP_BUILT})
 
 
 
-add_library(OpenGLTools STATIC 
+add_library(OpenGLTools STATIC
         src/Utils.cpp
         src/GLFWInitRAII.cpp
         src/Shader.cpp
@@ -121,6 +121,7 @@ add_library(OpenGLTools STATIC
         src/BasicCamera.cpp
         src/CameraFree.cpp
         src/CameraFirstPerson.cpp
+        src/CameraCubemap.cpp
         src/Mesh.cpp
         src/Model.cpp
         src/Object.cpp
@@ -135,6 +136,8 @@ add_library(OpenGLTools STATIC
         src/ColorBufferObject.cpp
         src/RenderBufferObject.cpp
         src/FrameBufferObject.cpp
+        src/Texture.cpp
+        src/Cubemap.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)

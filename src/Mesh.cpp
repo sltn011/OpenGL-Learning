@@ -5,7 +5,7 @@ namespace OGL {
     Mesh::Mesh
     ( std::vector<Vertex> vertices
     , std::vector<unsigned int> indices
-    , std::vector<Texture> textures
+    , std::vector<ModelTexture> textures
     , Colors colors
     ) : m_vertices{ std::move(vertices) }
       , m_indices { std::move(indices)  }

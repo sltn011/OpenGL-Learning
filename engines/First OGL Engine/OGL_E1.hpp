@@ -18,6 +18,7 @@
 #include "Utils/System.hpp"
 #include "Utils/factory.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "glm/glm.hpp"
@@ -36,7 +37,7 @@ namespace OGL::E1 {
         Engine1Base
         ( int          screenWidth
         , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.4.1"
+        , std::string  title = "Engine1_v.0.1.4.2"
         , bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

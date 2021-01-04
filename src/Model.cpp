@@ -38,7 +38,7 @@ namespace OGL {
     ) {
         std::vector<Vertex>       vertices(mesh->mNumVertices);
         std::vector<unsigned int> indices;
-        std::vector<Texture>      textures;
+        std::vector<ModelTexture>      textures;
         Colors                    colors{};
 
         for (size_t i = 0; i < mesh->mNumVertices; ++i) {
@@ -69,16 +69,16 @@ namespace OGL {
         if (mesh->mMaterialIndex >= 0) {
             aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
-            std::vector<Texture> diffuseMap = loadMaterialTexture(material, aiTextureType_DIFFUSE, TextureType::Diffuse);
+            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(material, aiTextureType_DIFFUSE, TextureType::Diffuse);
             textures.insert(textures.end(), diffuseMap.begin(), diffuseMap.end());
 
-            std::vector<Texture> specularMap = loadMaterialTexture(material, aiTextureType_SPECULAR, TextureType::Specular);
+            std::vector<ModelTexture> specularMap = loadMaterialTexture(material, aiTextureType_SPECULAR, TextureType::Specular);
             textures.insert(textures.end(), specularMap.begin(), specularMap.end());
 
-            std::vector<Texture> normalMap = loadMaterialTexture(material, aiTextureType_NORMALS, TextureType::Normal);
+            std::vector<ModelTexture> normalMap = loadMaterialTexture(material, aiTextureType_NORMALS, TextureType::Normal);
             textures.insert(textures.end(), normalMap.begin(), normalMap.end());
 
-            std::vector<Texture> heightMap = loadMaterialTexture(material, aiTextureType_HEIGHT, TextureType::Height);
+            std::vector<ModelTexture> heightMap = loadMaterialTexture(material, aiTextureType_HEIGHT, TextureType::Height);
             textures.insert(textures.end(), heightMap.begin(), heightMap.end());
 
             aiColor3D amb{};
@@ -102,12 +102,12 @@ namespace OGL {
         return Mesh{ vertices, indices, textures, colors };
     }
 
-    std::vector<Texture> Model::loadMaterialTexture
+    std::vector<ModelTexture> Model::loadMaterialTexture
     ( aiMaterial *material
     , aiTextureType texType
     , TextureType typeName
     ) {
-        std::vector<Texture> textures;
+        std::vector<ModelTexture> textures;
         for (size_t i = 0; i < material->GetTextureCount(texType); ++i) {
             aiString str;
             material->GetTexture(texType, i, &str);
@@ -122,7 +122,7 @@ namespace OGL {
             }
 
             if (!alreadyLoaded) {
-                Texture texture;
+                ModelTexture texture;
                 texture.id = textureFromFile(str.C_Str(), m_directory);
                 texture.type = typeName;
                 texture.path = str.C_Str();

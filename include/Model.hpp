@@ -15,9 +15,9 @@
 namespace OGL {
     
     class Model {
-        std::vector<Mesh>    m_meshes;
-        std::string          m_directory;
-        std::vector<Texture> m_loadedTextures;
+        std::vector<Mesh>         m_meshes;
+        std::string               m_directory;
+        std::vector<ModelTexture> m_loadedTextures;
 
         void loadModel
         ( std::string const &path
@@ -34,7 +34,7 @@ namespace OGL {
         , aiScene const *scene
         );
 
-        std::vector<Texture> loadMaterialTexture
+        std::vector<ModelTexture> loadMaterialTexture
         ( aiMaterial *material
         , aiTextureType texType
         , TextureType typeName

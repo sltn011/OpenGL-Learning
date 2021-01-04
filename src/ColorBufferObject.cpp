@@ -17,14 +17,15 @@ namespace OGL {
     void ColorBufferObject::allocateStorage
     ( int width
     , int height
+    , GLenum textureType
     , GLint colorComponents
     , GLenum format
     ) {
-        glBindTexture(GL_TEXTURE_2D, m_descriptor);
-        glTexImage2D(GL_TEXTURE_2D, 0, colorComponents, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(textureType, m_descriptor);
+        glTexImage2D(textureType, 0, colorComponents, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(textureType, 0);
     }
 
 } // OGL

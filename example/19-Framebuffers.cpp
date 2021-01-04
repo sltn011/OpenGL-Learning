@@ -75,7 +75,7 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo->value());
 
         m_cbo = OGL::E1::factory<OGL::ColorBufferObject>();
-        m_cbo->allocateStorage(screenWidth, screenHeight, GL_RGB, GL_RGB);
+        m_cbo->allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGB, GL_RGB);
         m_fbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *m_cbo);
 
         m_rbo = OGL::E1::factory<OGL::RenderBufferObject>();
@@ -129,7 +129,6 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo->value());
         setClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // not using stencil
-        glEnable(GL_DEPTH_TEST);
 
         // All draws go to framebuffer
 
@@ -159,7 +158,9 @@ public:
         m_shaders[1].use();
         m_shaders[1].setUniformInt("postprocessMode", postprocessMode);
 
+        glDisable(GL_DEPTH_TEST);
         m_fbo->drawQuad(GL_COLOR_ATTACHMENT0);
+        glEnable(GL_DEPTH_TEST);
 
         return true;
     }

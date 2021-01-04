@@ -2,8 +2,9 @@
 #define OGL_UTILS_H
 
 #include "glad/glad.h"
-
 #include "Exception.hpp"
+
+#include "stb_image.h"
 
 #include <string>
 

@@ -48,6 +48,7 @@ public:
 
     unsigned int m_skyboxVAO;
     unsigned int m_skyboxVBO;
+    unsigned int m_skyboxEBO;
     unsigned int m_skyboxTexture;
 
     bool userCreate
@@ -117,56 +118,45 @@ public:
             "textures/Skybox1/back.jpg",
         };
 
-        float skyboxVertices[] = {
-            // positions          
-            -1.0f,  1.0f, -1.0f,
-            -1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
+        float constexpr skyboxVertices[] = {
+            -1.0f, -1.0f, -1.0f, // 1
+            -1.0f, -1.0f, +1.0f, // 2
+            +1.0f, -1.0f, +1.0f, // 3
+            +1.0f, -1.0f, -1.0f, // 4
+            -1.0f, +1.0f, -1.0f, // 5
+            -1.0f, +1.0f, +1.0f, // 6
+            +1.0f, +1.0f, +1.0f, // 7
+            +1.0f, +1.0f, -1.0f, // 8
+        };
 
-            -1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
+        int constexpr skyboxIndices[] = {
+            4, 0, 3,
+            3, 7, 4,
 
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
+            7, 3, 2,
+            2, 6, 7,
 
-            -1.0f, -1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
+            6, 2, 1,
+            1, 5, 6,
 
-            -1.0f,  1.0f, -1.0f,
-             1.0f,  1.0f, -1.0f,
-             1.0f,  1.0f,  1.0f,
-             1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f, -1.0f,
+            5, 1, 0,
+            0, 4, 5,
 
-            -1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-             1.0f, -1.0f,  1.0f
+            5, 4, 7,
+            7, 6, 5,
+
+            0, 1, 2,
+            2, 3, 0,
         };
 
         glGenVertexArrays(1, &m_skyboxVAO);
         glBindVertexArray(m_skyboxVAO);
         glGenBuffers(1, &m_skyboxVBO);
+        glGenBuffers(1, &m_skyboxEBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyboxEBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glBindVertexArray(0);
@@ -236,11 +226,11 @@ public:
         // Draw skybox
         m_shaders[1].use();
         glBindVertexArray(m_skyboxVAO);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTexture);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTexture);
         glDepthFunc(GL_LEQUAL);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
         glDepthFunc(GL_LESS);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         glBindVertexArray(0);
 
         // Sort transparent objects by distance to player using map

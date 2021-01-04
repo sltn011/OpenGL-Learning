@@ -3,12 +3,18 @@
 namespace OGL {
 
     FrameBufferObject::FrameBufferObject
-    (GLenum bufferType
+    ( GLenum bufferType
+    ) : m_bufferType{ bufferType } {
+        glGenFramebuffers(1, &m_descriptor);
+    }
+
+    FrameBufferObject::FrameBufferObject
+    ( GLenum bufferType
     , float const *frameBufferQuadData
     , size_t frameBufferQuadDataLength
     , GLuint frameQuadVerticesVertexAttribIndex
     , GLuint frameQuadTexCoordVertexAttribIndex
-    ) : m_bufferType{bufferType} {
+    ) : m_bufferType{ bufferType } {
         glGenFramebuffers(1, &m_descriptor);
         glBindVertexArray(m_frameQuadVAO.value());
         glBindBuffer(GL_ARRAY_BUFFER, m_frameQuadVBO.value());
@@ -31,9 +37,7 @@ namespace OGL {
     , GLenum targetTexture
     , ColorBufferObject const &obj
     ) {
-        glBindFramebuffer(m_bufferType, m_descriptor);
         glFramebufferTexture2D(m_bufferType, colorAttachment, targetTexture, obj.value(), 0);
-        glBindFramebuffer(m_bufferType, 0);
         m_colorAttachmentsTable[colorAttachment] = obj.value();
     }
 
@@ -41,9 +45,19 @@ namespace OGL {
     ( GLenum attachment
     , RenderBufferObject const &obj
     ) {
-        glBindFramebuffer(m_bufferType, m_descriptor);
         glFramebufferRenderbuffer(m_bufferType, attachment, GL_RENDERBUFFER, obj.value());
-        glBindFramebuffer(m_bufferType, 0);
+    }
+
+    void FrameBufferObject::bind
+    (
+    ) const {
+        glBindFramebuffer(m_bufferType, m_descriptor);
+    }
+
+    void FrameBufferObject::unbind
+    ( GLenum bufferType
+    ) {
+        glBindFramebuffer(bufferType, 0);
     }
 
     GLenum FrameBufferObject::checkStatus
@@ -62,11 +76,16 @@ namespace OGL {
     ( GLenum colorAttachment
     ) {
         glBindVertexArray(m_frameQuadVAO.value());
-        glDisable(GL_DEPTH_TEST);
         glBindTexture(GL_TEXTURE_2D, m_colorAttachmentsTable[colorAttachment]);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    GLenum FrameBufferObject::bufferType
+    (
+    ) const {
+        return m_bufferType;
     }
 
     float const FrameBufferObject::frameQuadData[] = {

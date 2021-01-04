@@ -17,6 +17,7 @@ namespace OGL {
     class ColorBufferObject;
     class RenderBufferObject;
     class FrameBufferObject;
+    class Cubemap;
 
     class BasicCamera;
     class CameraFirstPerson;
@@ -40,6 +41,7 @@ namespace OGL {
         using smartCBO = std::unique_ptr<ColorBufferObject>;
         using smartRBO = std::unique_ptr<RenderBufferObject>;
         using smartFBO = std::unique_ptr<FrameBufferObject>;
+        using smartCubemap = std::unique_ptr<Cubemap>;
 
         using smartCamPtr = std::unique_ptr<BasicCamera>;
 

@@ -14,4 +14,16 @@ namespace OGL {
         glDeleteVertexArrays(1, &m_descriptor);
     }
 
+    void VertexArrayObject::bind
+    (
+    ) const {
+        glBindVertexArray(m_descriptor);
+    }
+
+    void VertexArrayObject::unbind
+    (
+    ) {
+        glBindVertexArray(0);
+    }
+
 } // OGL

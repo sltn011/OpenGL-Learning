@@ -19,6 +19,7 @@ namespace OGL {
         void allocateStorage
         ( int width
         , int height
+        , GLenum textureType
         , GLint colorComponents
         , GLenum format
         );

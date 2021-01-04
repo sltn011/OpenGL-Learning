@@ -27,7 +27,7 @@ namespace OGL {
         Height
     };
 
-    struct Texture {
+    struct ModelTexture {
         unsigned int id;
         TextureType  type;
         std::string  path;
@@ -47,7 +47,7 @@ namespace OGL {
 
         std::vector<Vertex>       m_vertices;
         std::vector<unsigned int> m_indices;
-        std::vector<Texture>      m_textures;
+        std::vector<ModelTexture> m_textures;
         Colors                    m_colors;
         
 
@@ -60,7 +60,7 @@ namespace OGL {
         Mesh
         ( std::vector<Vertex> vertices
         , std::vector<unsigned int> indices
-        , std::vector<Texture> textures
+        , std::vector<ModelTexture> textures
         , Colors color
         );
 

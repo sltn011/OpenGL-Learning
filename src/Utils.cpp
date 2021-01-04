@@ -1,7 +1,5 @@
 #include "Utils.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 unsigned int OGL::textureFromFile
 ( char const *path

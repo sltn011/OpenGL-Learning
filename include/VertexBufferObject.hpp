@@ -15,6 +15,14 @@ namespace OGL {
         ~VertexBufferObject
         (
         );
+
+        void bind
+        (
+        ) const;
+
+        static void unbind
+        (
+        );
     };
 
 } // OGL

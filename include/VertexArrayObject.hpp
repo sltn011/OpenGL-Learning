@@ -15,6 +15,14 @@ namespace OGL {
         ~VertexArrayObject
         (
         );
+
+        void bind
+        (
+        ) const;
+
+        static void unbind
+        (
+        );
     };
 
 } // OGL

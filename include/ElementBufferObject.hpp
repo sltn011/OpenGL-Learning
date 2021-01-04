@@ -15,6 +15,14 @@ namespace OGL {
         ~ElementBufferObject
         (
         );
+
+        void bind
+        (
+        ) const;
+
+        static void unbind
+        (
+        );
     };
 
 } // OGL
