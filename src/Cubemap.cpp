@@ -1,3 +1,4 @@
+#include "..\include\Cubemap.hpp"
 #include "Cubemap.hpp"
 
 namespace OGL {
@@ -10,7 +11,7 @@ namespace OGL {
     Cubemap::Cubemap
     ( int size
     , GLenum cubemapTextureUnit
-    ) {
+    ) : m_textureUnit{ cubemapTextureUnit } {
         Texture::setActive(cubemapTextureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
         for (size_t i = 0; i < 6; ++i) {
@@ -31,7 +32,7 @@ namespace OGL {
     Cubemap::Cubemap
     ( std::string const &folderPath
     , GLenum cubemapTextureUnit
-    ) {
+    ) : m_textureUnit{cubemapTextureUnit} {
         std::string const fileNames[6] = {
             "right.jpg",
             "left.jpg",
@@ -69,6 +70,12 @@ namespace OGL {
     (
     ) const {
         return m_texture.value();
+    }
+
+    GLenum Cubemap::unit
+    (
+    ) const {
+        return m_textureUnit;
     }
 
 } // OGL

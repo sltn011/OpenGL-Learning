@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <memory>
 
+#include "glad/glad.h"
+
 namespace OGL {
 
     class GLFWInitRaii;
@@ -33,7 +35,12 @@ namespace OGL {
     class PointLight;
     class SpotLight;
 
+    class Shader;
+
     namespace E1 {
+
+        class Skybox;
+
 
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;
@@ -43,6 +50,7 @@ namespace OGL {
         using smartRBO = std::unique_ptr<RenderBufferObject>;
         using smartFBO = std::unique_ptr<FrameBufferObject>;
         using smartCubemap = std::unique_ptr<Cubemap>;
+        using smartSkybox = std::unique_ptr<Skybox>;
 
         using smartCamPtr = std::unique_ptr<BasicCamera>;
         using smartFPCamPtr = std::unique_ptr<CameraFirstPerson>;
@@ -55,17 +63,16 @@ namespace OGL {
         using smartDirLPtr = std::unique_ptr<DirectionalLight>;
         using smartPointLPtr = std::unique_ptr<PointLight>;
         using smartSpotLPtr = std::unique_ptr<SpotLight>;
-        
 
         using modelsTable = std::unordered_map<size_t, smartModelPtr>;
-        using objectsGroup = std::vector<smartObjPtr>;
-        using gameObjects = std::unordered_map<size_t, objectsGroup>;
+        using objectsVec = std::vector<smartObjPtr>;
+        using mirrorObjsVec = std::vector<std::pair<smartObjPtr, smartCubemap>>;
+        using gameObjects = std::unordered_map<size_t, objectsVec>;
 
         using dirLights = std::vector<smartDirLPtr>;
         using pointLights = std::vector<smartPointLPtr>;
         using spotLights = std::vector<smartSpotLPtr>;
 
-        
         using shadersPack = std::vector<Shader>;
 
         enum Events;

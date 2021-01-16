@@ -11,6 +11,7 @@ namespace OGL {
     class Cubemap {
     protected:
         Texture m_texture;
+        GLenum  m_textureUnit;
 
     public:
         Cubemap
@@ -28,6 +29,10 @@ namespace OGL {
         );
 
         unsigned int value
+        (
+        ) const;
+
+        GLenum unit
         (
         ) const;
 

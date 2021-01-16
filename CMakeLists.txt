@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 project(OpenGLLearning)
 
 
+
+######################################################################################################
 # USER DEFINED VARIABLES!!!
 # Path to directory with GLFW Source
 set(PATH_TO_GLFW_SOURCE "D:/OpenGL/Libs/GLFW_3.3.2" CACHE PATH "Path to directory with GLFW source")
@@ -88,9 +90,11 @@ SET (ASSIMP_BUILD_3MF_EXPORTER CACHE BOOL OFF)
 SET (ASSIMP_BUILD_ASSJSON_EXPORTER CACHE BOOL OFF)
 SET (ASSIMP_BUILD_STEP_EXPORTER CACHE BOOL OFF)
 SET (ASSIMP_BUILD_3DS_EXPORTER CACHE BOOL OFF)
+######################################################################################################
 
 
 
+######################################################################################################
 # Set directory where executables are created
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "./example")
 
@@ -110,9 +114,27 @@ add_subdirectory(${PATH_TO_GLAD_SOURCE} ${PATH_TO_GLAD_BUILT})
 
 # Include Assimp Source to be built
 add_subdirectory(${PATH_TO_ASSIMP_SOURCE} ${PATH_TO_ASSIMP_BUILT})
+######################################################################################################
 
 
 
+######################################################################################################
+# Compiler commands
+#add_definitions("-lglfw3 -lGL -lX11 -lXrandr -lXildl -lpthread")
+
+# Folder with header files
+include_directories(include)
+include_directories("${PATH_TO_GLFW_SOURCE}/include")
+include_directories("${PATH_TO_GLAD_SOURCE}/include")
+include_directories(${PATH_TO_GLM_INCLUDES})
+include_directories(${PATH_TO_STB_INCLUDE})
+include_directories("${PATH_TO_ASSIMP_SOURCE}/include")
+include_directories("${PATH_TO_ASSIMP_BUILT}/include")
+######################################################################################################
+
+
+
+######################################################################################################
 add_library(OpenGLTools STATIC
         src/Utils.cpp
         src/GLFWInitRAII.cpp
@@ -143,22 +165,28 @@ add_library(OpenGLTools STATIC
 target_include_directories(OpenGLTools PUBLIC include)
 
 target_link_libraries(OpenGLTools)
+######################################################################################################
 
-# Compiler commands
-#add_definitions("-lglfw3 -lGL -lX11 -lXrandr -lXildl -lpthread")
 
-# Folder with header files
-include_directories(include)
-include_directories("${PATH_TO_GLFW_SOURCE}/include")
-include_directories("${PATH_TO_GLAD_SOURCE}/include")
-include_directories(${PATH_TO_GLM_INCLUDES})
-include_directories(${PATH_TO_STB_INCLUDE})
-include_directories("${PATH_TO_ASSIMP_SOURCE}/include")
-include_directories("${PATH_TO_ASSIMP_BUILT}/include")
-
+######################################################################################################
+# ENGINE FILES
 # Engines folder
 include_directories(engines)
 
+# Engine library
+add_library(OGL_E1_LIB STATIC
+        "engines/First OGL Engine/src/Scene.cpp"
+        "engines/First OGL Engine/src/Skybox.cpp"
+)
+
+target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")
+
+target_link_libraries(OGL_E1_LIB OpenGLTools)
+######################################################################################################
+
+
+
+######################################################################################################
 # Executable location
 add_executable(01-Engine1Tests example/01-Engine1Tests.cpp)
 
@@ -184,8 +212,8 @@ add_executable(18-FaceCulling example/18-FaceCulling.cpp)
 add_executable(19-Framebuffers example/19-Framebuffers.cpp)
 add_executable(20-Cubemaps example/20-Cubemaps.cpp)
 
-# Linkning libraries for executable
-target_link_libraries(01-Engine1Tests glad glfw OpenGLTools assimp)
+# Linking libraries for executable
+target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
 
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)
@@ -208,4 +236,5 @@ target_link_libraries(17-Blending glad glfw OpenGLTools assimp)
 target_link_libraries(18-FaceCulling glad glfw OpenGLTools assimp)
 target_link_libraries(19-Framebuffers glad glfw OpenGLTools assimp)
 target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
+######################################################################################################
 

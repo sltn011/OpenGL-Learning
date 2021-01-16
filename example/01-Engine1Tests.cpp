@@ -119,7 +119,7 @@ public:
             addObject(2, 2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
         }
 
-        glm::vec3 spherePosition{0.3f, -0.05f, -0.3f};
+        glm::vec3 spherePosition{ 0.3f, -0.05f, -0.3f };
         float     sphereScale = 0.1f;
         glm::vec3 sphereColor{ 0.66f, 0.8f, 0.84f };
         addObject(3, 3, spherePosition, sphereScale);
@@ -195,7 +195,7 @@ public:
             spherePosition,
             0.1f,
             100.0f
-        );
+            );
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -212,7 +212,7 @@ public:
         m_fbo->attach(GL_DEPTH_ATTACHMENT, *m_rbo);
 
         glViewport(0, 0, cubemapSize, cubemapSize);
-        
+
         for (int i = 0; i < 6; ++i) {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_cubemap->value(), 0);
             m_cubemapCam->setSide(i);
@@ -228,7 +228,7 @@ public:
         glViewport(0, 0, screenWidth, screenHeight);
 
         glEnable(GL_CULL_FACE);
-   
+
         return true;
     }
 
