@@ -1,6 +1,7 @@
 #include "Cubemap.hpp"
 #include <map>
 #include "Cubemap.hpp"
+#include "Skybox.hpp"
 #include "CameraCubemap.hpp"
 #include "FrameBufferObject.hpp"
 #include "First OGL Engine/OGL_E1.hpp"
@@ -14,49 +15,13 @@ const int cubemapTextureID = 16;
 
 const int cubemapSize = 256;
 
-unsigned int loadSkyboxTexture(std::vector<std::string> const &paths) {
-    unsigned int textureId;
-    glGenTextures(1, &textureId);
-    glActiveTexture(GL_TEXTURE0 + skyboxTextureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-
-    stbi_set_flip_vertically_on_load(false);
-
-    for (size_t i = 0; i < 6; ++i) {
-        int width, height, nrChannels;
-        unsigned char *data = stbi_load(paths[i].c_str(), &width, &height, &nrChannels, 0);
-        if (!data) {
-            stbi_set_flip_vertically_on_load(true);
-            stbi_image_free(data);
-            throw OGL::Exception("Error loading cubemap texture " + paths[i]);
-        }
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        stbi_image_free(data);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    glActiveTexture(GL_TEXTURE0);
-
-    stbi_set_flip_vertically_on_load(true);
-
-    return textureId;
-}
-
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(int width, int height) : Engine1Base{ width, height } {}
 
     glm::mat4 m_projection;
 
-    unsigned int m_skyboxVAO;
-    unsigned int m_skyboxVBO;
-    unsigned int m_skyboxEBO;
-    unsigned int m_skyboxTexture;
+    OGL::E1::smartSkybox m_skybox;
 
     OGL::E1::smartCubemapCamPtr m_cubemapCam;
     OGL::E1::smartCubemap m_cubemap;
@@ -131,59 +96,9 @@ public:
         addDirLight(directionalLightDir, directionalLightColor);
         //addSpotLight({}, {}, { 1.0f, 1.0f, 1.0f }, glm::radians(23.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
 
-        std::vector<std::string> cubemathPaths{
-            "textures/Skybox1/right.jpg",
-            "textures/Skybox1/left.jpg",
-            "textures/Skybox1/top.jpg",
-            "textures/Skybox1/bottom.jpg",
-            "textures/Skybox1/front.jpg",
-            "textures/Skybox1/back.jpg",
-        };
-
-        float constexpr skyboxVertices[] = {
-            -1.0f, -1.0f, -1.0f, // 1
-            -1.0f, -1.0f, +1.0f, // 2
-            +1.0f, -1.0f, +1.0f, // 3
-            +1.0f, -1.0f, -1.0f, // 4
-            -1.0f, +1.0f, -1.0f, // 5
-            -1.0f, +1.0f, +1.0f, // 6
-            +1.0f, +1.0f, +1.0f, // 7
-            +1.0f, +1.0f, -1.0f, // 8
-        };
-
-        int constexpr skyboxIndices[] = {
-            4, 0, 3,
-            3, 7, 4,
-
-            7, 3, 2,
-            2, 6, 7,
-
-            6, 2, 1,
-            1, 5, 6,
-
-            5, 1, 0,
-            0, 4, 5,
-
-            5, 4, 7,
-            7, 6, 5,
-
-            0, 1, 2,
-            2, 3, 0,
-        };
-
-        glGenVertexArrays(1, &m_skyboxVAO);
-        glBindVertexArray(m_skyboxVAO);
-        glGenBuffers(1, &m_skyboxVBO);
-        glGenBuffers(1, &m_skyboxEBO);
-        glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyboxEBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glBindVertexArray(0);
-
-        m_skyboxTexture = loadSkyboxTexture(cubemathPaths);
+        stbi_set_flip_vertically_on_load(false);
+        m_skybox = OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID);
+        stbi_set_flip_vertically_on_load(true);
 
         m_shaders[1].use();
         m_shaders[1].setUniformInt("skyboxSampler", skyboxTextureID);
@@ -282,15 +197,11 @@ public:
         // Draw skybox
         m_shaders[1].use();
         m_shaders[1].setUniformMatrix4("view", glm::mat4(glm::mat3(m_cubemapCam->getViewMatrix())));
-        glBindVertexArray(m_skyboxVAO);
-        glActiveTexture(GL_TEXTURE0 + skyboxTextureID);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTexture);
+        m_skybox->bind();
         glDepthFunc(GL_LEQUAL);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
         glDepthFunc(GL_LESS);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(0);
+        OGL::Skybox::unbind();
 
         // Sort transparent objects by distance to player using map
         std::map<float, OGL::E1::smartObjPtr const&> map;
@@ -361,15 +272,11 @@ public:
         // Draw skybox
         m_shaders[1].use();
         m_shaders[1].setUniformInt("skyboxSampler", skyboxTextureID);
-        glBindVertexArray(m_skyboxVAO);
-        glActiveTexture(GL_TEXTURE0 + skyboxTextureID);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxTexture);
+        m_skybox->bind();
         glDepthFunc(GL_LEQUAL);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
         glDepthFunc(GL_LESS);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(0);
+        OGL::Skybox::unbind();
 
         // Sort transparent objects by distance to player using map
         std::map<float, OGL::E1::smartObjPtr const&> map;
@@ -390,7 +297,6 @@ public:
     bool userDestroy
     (
     ) override {
-        glDeleteTextures(1, &m_skyboxTexture);
         return true;
     }
 };

@@ -160,6 +160,7 @@ add_library(OpenGLTools STATIC
         src/FrameBufferObject.cpp
         src/Texture.cpp
         src/Cubemap.cpp
+        src/Skybox.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
@@ -176,7 +177,6 @@ include_directories(engines)
 # Engine library
 add_library(OGL_E1_LIB STATIC
         "engines/First OGL Engine/src/Scene.cpp"
-        "engines/First OGL Engine/src/Skybox.cpp"
 )
 
 target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")

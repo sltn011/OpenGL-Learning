@@ -20,6 +20,7 @@ namespace OGL {
     class RenderBufferObject;
     class FrameBufferObject;
     class Cubemap;
+    class Skybox;
 
     class BasicCamera;
     class CameraFirstPerson;
@@ -38,9 +39,6 @@ namespace OGL {
     class Shader;
 
     namespace E1 {
-
-        class Skybox;
-
 
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;
