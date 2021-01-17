@@ -1,5 +1,5 @@
-#ifndef OGL_SKYBOX_HPP
-#define OGL_SKYBOX_HPP
+#ifndef OGL_SKYBOX_H
+#define OGL_SKYBOX_H
 
 #include "Cubemap.hpp"
 #include "VertexArrayObject.hpp"
@@ -32,4 +32,4 @@ namespace OGL {
 } // OGL
 
 
-#endif // OGL_SCENE_HPP
+#endif // OGL_SKYBOX_H

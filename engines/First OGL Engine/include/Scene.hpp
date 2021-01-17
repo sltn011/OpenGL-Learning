@@ -1,5 +1,5 @@
-#ifndef OGL_E1_SCENE_HPP
-#define OGL_E1_SCENE_HPP
+#ifndef OGL_E1_SCENE_H
+#define OGL_E1_SCENE_H
 
 #include "First OGL Engine/Utils/EngineTypes.hpp"
 #include "First OGL Engine/Utils/factory.hpp"
@@ -77,4 +77,4 @@ namespace OGL::E1 {
 
 } // OGL::E1
 
-#endif // OGL_E1_SCENE_HPP
+#endif // OGL_E1_SCENE_H
