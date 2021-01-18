@@ -29,6 +29,22 @@ namespace OGL {
         (
         );
 
+        Texture
+        ( Texture const &rhs
+        ) = delete;
+
+        Texture
+        ( Texture &&rhs
+        ) = default;
+
+        Texture &operator=
+        ( Texture const &rhs
+        ) = delete;
+
+        Texture &operator=
+        ( Texture &&rhs
+        ) = default;
+
         static void allocate
         ( GLenum textureType
         , int width

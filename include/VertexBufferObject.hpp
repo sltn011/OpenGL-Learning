@@ -16,6 +16,22 @@ namespace OGL {
         (
         );
 
+        VertexBufferObject
+        ( VertexBufferObject const &rhs
+        ) = delete;
+
+        VertexBufferObject
+        ( VertexBufferObject &&rhs
+        ) = default;
+
+        VertexBufferObject &operator=
+        ( VertexBufferObject const &rhs
+        ) = delete;
+
+        VertexBufferObject &operator=
+        ( VertexBufferObject &&rhs
+        ) = default;
+
         void bind
         (
         ) const;

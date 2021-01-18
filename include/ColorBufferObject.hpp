@@ -16,6 +16,22 @@ namespace OGL {
         (
         );
 
+        ColorBufferObject
+        ( ColorBufferObject const &rhs
+        ) = delete;
+
+        ColorBufferObject
+        ( ColorBufferObject &&rhs
+        ) = default;
+
+        ColorBufferObject &operator=
+        ( ColorBufferObject const &rhs
+        ) = delete;
+
+        ColorBufferObject &operator=
+        ( ColorBufferObject &&rhs
+        ) = default;
+
         void allocateStorage
         ( int width
         , int height

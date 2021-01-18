@@ -35,17 +35,19 @@ namespace OGL {
     void FrameBufferObject::attach
     ( GLenum colorAttachment
     , GLenum targetTexture
-    , ColorBufferObject const &obj
+    , ColorBufferObject &&obj
     ) {
         glFramebufferTexture2D(m_bufferType, colorAttachment, targetTexture, obj.value(), 0);
         m_colorAttachmentsTable[colorAttachment] = obj.value();
+        m_colorBufferObjs.emplace(colorAttachment, std::move(obj));
     }
 
     void FrameBufferObject::attach
     ( GLenum attachment
-    , RenderBufferObject const &obj
+    , RenderBufferObject &&obj
     ) {
         glFramebufferRenderbuffer(m_bufferType, attachment, GL_RENDERBUFFER, obj.value());
+        m_renderBufferObj = std::move(obj);
     }
 
     void FrameBufferObject::bind

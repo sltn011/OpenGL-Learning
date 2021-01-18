@@ -10,7 +10,7 @@ namespace OGL {
     Cubemap::Cubemap
     ( int size
     , GLenum cubemapTextureUnit
-    ) {
+    ) : m_textureUnit{ cubemapTextureUnit } {
         Texture::setActive(cubemapTextureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
         for (size_t i = 0; i < 6; ++i) {
@@ -31,7 +31,7 @@ namespace OGL {
     Cubemap::Cubemap
     ( std::string const &folderPath
     , GLenum cubemapTextureUnit
-    ) {
+    ) : m_textureUnit{cubemapTextureUnit} {
         std::string const fileNames[6] = {
             "right.jpg",
             "left.jpg",
@@ -65,10 +65,30 @@ namespace OGL {
         Texture::setActive(GL_TEXTURE0);
     }
 
+    void Cubemap::bind
+    (
+    ) const {
+        glActiveTexture(m_textureUnit);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture.value());
+    }
+
+    void Cubemap::unbind
+    (
+    ) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glActiveTexture(GL_TEXTURE0);
+    }
+
     unsigned int Cubemap::value
     (
     ) const {
         return m_texture.value();
+    }
+
+    GLenum Cubemap::unit
+    (
+    ) const {
+        return m_textureUnit;
     }
 
 } // OGL

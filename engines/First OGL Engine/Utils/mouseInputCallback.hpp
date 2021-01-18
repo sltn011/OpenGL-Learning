@@ -10,12 +10,7 @@ namespace OGL::E1 {
     , double xpos
     , double ypos
     ) {
-        float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
-        float yOffset = System::lastMouseYPos - static_cast<float>(ypos);
-        System::lastMouseXPos = static_cast<float>(xpos);
-        System::lastMouseYPos = static_cast<float>(ypos);
         
-        GameCamera::inst->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
     }
 
 } // OGL::E1

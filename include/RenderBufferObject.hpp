@@ -18,6 +18,22 @@ namespace OGL {
         (
         );
 
+        RenderBufferObject
+        ( RenderBufferObject const &rhs
+        ) = delete;
+
+        RenderBufferObject
+        ( RenderBufferObject &&rhs
+        ) = default;
+
+        RenderBufferObject &operator=
+        ( RenderBufferObject const &rhs
+        ) = delete;
+
+        RenderBufferObject &operator=
+        ( RenderBufferObject &&rhs
+        ) = default;
+
         void allocateStorage
         ( int width
         , int height

@@ -14,6 +14,10 @@ namespace OGL {
         , float moveSpeed
         , float yawAngle
         , float pitchAngle
+        , float fov
+        , float aspect
+        , float near
+        , float far
         );
 
         void processMoveInput

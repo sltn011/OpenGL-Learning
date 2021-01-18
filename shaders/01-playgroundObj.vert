@@ -14,7 +14,6 @@ out vec2 vertexTex;
 void main() {
 	vertexPos = vec3(model * vec4(aPos, 1.0));
 	vertexNorm = normalize(mat3(model) * aNorm);
-	//vertexNorm = normalize(mat3(inverse(transpose(model))) * aNorm);
 	vertexTex = aTex;
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

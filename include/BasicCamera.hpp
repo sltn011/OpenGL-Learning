@@ -25,6 +25,10 @@ namespace OGL {
         float m_speed;
         float m_yaw;    // Y rotation
         float m_pitch;  // X rotation
+        float m_fov;
+        float m_aspect;
+        float m_near;
+        float m_far;
 
     public:
         BasicCamera
@@ -34,6 +38,10 @@ namespace OGL {
         , float moveSpeed
         , float yawAngle
         , float pitchAngle
+        , float fov
+        , float aspect
+        , float near = 0.1f
+        , float far = 100.0f
         );
 
         virtual ~BasicCamera
@@ -41,6 +49,10 @@ namespace OGL {
         );
 
         glm::mat4 getViewMatrix
+        (
+        ) const;
+
+        glm::mat4 getProjectionMatrix
         (
         ) const;
 

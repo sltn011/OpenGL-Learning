@@ -9,6 +9,10 @@ namespace OGL {
     , float moveSpeed
     , float yawAngle
     , float pitchAngle
+    , float fov
+    , float aspect
+    , float near
+    , float far
     )
     : m_position{ positionVec }
     , m_forward{ forwardVec }
@@ -16,6 +20,10 @@ namespace OGL {
     , m_speed{ moveSpeed }
     , m_yaw{ yawAngle }
     , m_pitch{ pitchAngle }
+    , m_fov{ fov }
+    , m_aspect{ aspect }
+    , m_near{ near }
+    , m_far{ far }
     {
         updateVectors();
     }
@@ -30,6 +38,11 @@ namespace OGL {
     (
     ) const {
         return glm::lookAt(m_position, m_position + m_forward, m_up);
+    }
+
+    glm::mat4 BasicCamera::getProjectionMatrix() const
+    {
+        return glm::perspective(glm::radians(m_fov), m_aspect, m_near, m_far);
     }
 
     glm::vec3 BasicCamera::getPos

@@ -19,6 +19,9 @@ namespace OGL {
         VertexArrayObject m_frameQuadVAO;
         VertexBufferObject m_frameQuadVBO;
 
+        std::map<GLenum, ColorBufferObject> m_colorBufferObjs;
+        RenderBufferObject m_renderBufferObj;
+
         std::map<GLenum, unsigned int> m_colorAttachmentsTable;
 
     public:
@@ -41,15 +44,31 @@ namespace OGL {
         (
         );
 
+        FrameBufferObject
+        ( FrameBufferObject const &rhs
+        ) = delete;
+
+        FrameBufferObject
+        (FrameBufferObject &&rhs
+        ) = default;
+
+        FrameBufferObject &operator=
+        ( FrameBufferObject const &rhs
+        ) = delete;
+
+        FrameBufferObject &operator=
+        ( FrameBufferObject &&rhs
+        ) = default;
+
         void attach
         ( GLenum colorAttachment
         , GLenum targetTexture
-        , ColorBufferObject const &obj
+        , ColorBufferObject &&obj
         );
 
         void attach
         ( GLenum attachment
-        , RenderBufferObject const &obj
+        , RenderBufferObject &&obj
         );
 
         void bind
