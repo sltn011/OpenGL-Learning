@@ -46,8 +46,8 @@ namespace OGL {
 
     public:
         Shader
-        ( char const *vertexSourcePath
-        , char const *fragmentSourcePath
+        ( std::string vertexSourcePath
+        , std::string fragmentSourcePath
         );
 
         Shader

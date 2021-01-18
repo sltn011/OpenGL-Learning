@@ -7,9 +7,12 @@
 #include "GLFWInitRAII.hpp"
 #include "Object.hpp"
 #include "Shader.hpp"
-#include "DirectionalLight.hpp"
-#include "PointLight.hpp"
-#include "SpotLight.hpp"
+
+#include "Scene.hpp"
+#include "NormalRenderer.hpp"
+#include "TransparentRenderer.hpp"
+#include "CubemapRenderer.hpp"
+#include "MirrorRenderer.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -37,7 +40,7 @@ namespace OGL::E1 {
         Engine1Base
         ( int          screenWidth
         , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.4.2"
+        , std::string  title = "Engine1_v.0.2"
         , bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -72,6 +75,8 @@ namespace OGL::E1 {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glBlendEquation(GL_FUNC_ADD);
+
+            glEnable(GL_CULL_FACE);
         }
 
         virtual ~Engine1Base(){
@@ -117,16 +122,14 @@ namespace OGL::E1 {
             m_modelsTable[modelId] = OGL::E1::factory<OGL::Model>(path);
         }
 
-        // Returns index of created object in m_objects
-        size_t addObject
+        void addNormalObject
         ( size_t modelID
-        , size_t groupID = 0
         , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
         , float scale = 1.0f
         , float rotationAngleRadians = 0.0f
         , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_objects[groupID].emplace_back(
+            m_scene->addNormalObj(
                 factory<Object>(
                     *m_modelsTable[modelID].get(),
                     pos,
@@ -135,45 +138,75 @@ namespace OGL::E1 {
                     rotationAxis
                 )
             );
-            return m_objects[groupID].size() - 1;
         }
 
-        // Returns index of created dir light in m_dirLights
-        size_t addDirLight
+        void addTransparentObject
+        ( size_t modelID
+        , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
+        , float scale = 1.0f
+        , float rotationAngleRadians = 0.0f
+        , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
+        ) {
+            m_scene->addTransparentObj(
+                factory<Object>(
+                    *m_modelsTable[modelID].get(),
+                    pos,
+                    scale,
+                    rotationAngleRadians,
+                    rotationAxis
+                )
+            );
+        }
+
+        void addMirrorObject
+        ( size_t modelID
+        , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
+        , float scale = 1.0f
+        , float rotationAngleRadians = 0.0f
+        , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
+        ) {
+            m_scene->addMirrorObj(
+                factory<Object>(
+                    *m_modelsTable[modelID].get(),
+                    pos,
+                    scale,
+                    rotationAngleRadians,
+                    rotationAxis
+                )
+            );
+        }
+
+        void addDirLight
         ( glm::vec3 direction
         , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         ) {
-            m_dirLights.emplace_back(
-                factory<DirectionalLight>(
+            m_scene->addDirLight(
+                {
                     direction,
                     color
-                )
+                }
             );
-            return m_dirLights.size() - 1;
         }
 
-        // Returns index of created point light in m_pointLights
-        size_t addPointLight
+        void addPointLight
         ( glm::vec3 position
         , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         , float attenuationConst = 1.0f
         , float attenuationLinear = 0.09f
         , float attenuationQuadratic = 0.032f
         ) {
-            m_pointLights.emplace_back(
-                factory<PointLight>(
+            m_scene->addPointLight(
+                {
                     position,
                     color,
                     attenuationConst,
                     attenuationLinear,
                     attenuationQuadratic
-                )
+                }
             );
-            return m_pointLights.size() - 1;
         }
 
-        // Returns index of created spot light in m_spotLights
-        size_t addSpotLight
+        void addSpotLight
         ( glm::vec3 position
         , glm::vec3 direction
         , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
@@ -183,8 +216,8 @@ namespace OGL::E1 {
         , float attenuationLinear = 0.09f
         , float attenuationQuadratic = 0.032f
         ) {
-            m_spotLights.emplace_back(
-                factory<SpotLight>(
+            m_scene->addSpotLight(
+                {
                     position,
                     direction,
                     color,
@@ -193,9 +226,8 @@ namespace OGL::E1 {
                     attenuationConst,
                     attenuationLinear,
                     attenuationQuadratic
-                )
+                }
             );
-            return m_spotLights.size() - 1;
         }
 
         void setClearColor
@@ -236,24 +268,31 @@ namespace OGL::E1 {
             }
 
             if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime * speedMult);
             }
             if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                GameCamera::inst->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime * speedMult);
+                m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime * speedMult);
             }
 
+            double xMousePos, yMousePos;
+            glfwGetCursorPos(m_window, &xMousePos, &yMousePos);
+            float xOffset = static_cast<float>(xMousePos) - System::lastMouseXPos;
+            float yOffset = System::lastMouseYPos - static_cast<float>(yMousePos);
+            System::lastMouseXPos = static_cast<float>(xMousePos);
+            System::lastMouseYPos = static_cast<float>(yMousePos);
+            m_scene->getCamera()->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
         }
 
     protected:
@@ -261,14 +300,16 @@ namespace OGL::E1 {
                         
         GLFWwindow      *m_window;
         std::string      m_title;
+
+        smartScenePtr               m_scene;
+        smartNormalRendererPtr      m_normalRenderer;
+        smartTransparentRendererPtr m_transpRenderer;
+        smartSkyboxRendererPtr      m_skyboxRenderer;
+        smartCubemapRendererPtr     m_cubemapRenderer;
+        smartMirrorRendererPtr      m_mirrorRenderer;
                         
         eventsQueue      m_eventsQ;
         modelsTable      m_modelsTable;
-        gameObjects      m_objects;
-        shadersPack      m_shaders;
-        dirLights        m_dirLights;
-        pointLights      m_pointLights;
-        spotLights       m_spotLights;
 
         std::atomic_bool m_gameShouldRun;
 

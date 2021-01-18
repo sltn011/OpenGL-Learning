@@ -2,12 +2,14 @@
 #define OGL_E1_SCENE_H
 
 #include "First OGL Engine/Utils/EngineTypes.hpp"
-#include "First OGL Engine/Utils/factory.hpp"
 #include "Cubemap.hpp"
 #include "Skybox.hpp"
 #include "Object.hpp"
 #include "CameraFirstPerson.hpp"
 #include "CameraFree.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 namespace OGL::E1 {
 
@@ -44,6 +46,18 @@ namespace OGL::E1 {
         void addMirrorObj
         ( smartObjPtr &&obj
         );
+
+        void addDirLight
+        ( DirectionalLight dirLight
+        );
+
+        void addPointLight
+        ( PointLight pointLight
+        );
+
+        void addSpotLight
+        ( SpotLight spotLight
+        );
         
         objectsVec &getNormalObjs
         (
@@ -57,11 +71,27 @@ namespace OGL::E1 {
         (
         );
 
+        dirLights &getDirLights
+        (
+        );
+
+        pointLights &getPointLights
+        (
+        );
+
+        spotLights &getSpotLights
+        (
+        );
+
         void replaceSkybox
         ( smartSkybox &&skybox
         );
 
         smartSkybox &getSkybox
+        (
+        );
+
+        smartCamPtr &getCamera
         (
         );
 
@@ -71,6 +101,10 @@ namespace OGL::E1 {
         objectsVec m_normalObjects;
         objectsVec m_transparentObjects;
         mirrorObjsVec m_mirrorObjects;
+
+        dirLights m_dirLights;
+        pointLights m_pointLights;
+        spotLights m_spotLights;
 
         smartSkybox m_skybox;
     };

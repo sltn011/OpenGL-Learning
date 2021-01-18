@@ -9,6 +9,10 @@ namespace OGL {
     , float moveSpeed
     , float yawAngle
     , float pitchAngle
+    , float fov
+    , float aspect
+    , float near
+    , float far
     ) 
     : BasicCamera
     { positionVec
@@ -17,6 +21,10 @@ namespace OGL {
     , moveSpeed
     , yawAngle
     , pitchAngle
+    , fov
+    , aspect
+    , near
+    , far
     }
     {
         updateVectors();

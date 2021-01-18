@@ -1,4 +1,3 @@
-#include "..\include\Cubemap.hpp"
 #include "Cubemap.hpp"
 
 namespace OGL {
@@ -64,6 +63,20 @@ namespace OGL {
         Texture::setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         Texture::setActive(GL_TEXTURE0);
+    }
+
+    void Cubemap::bind
+    (
+    ) const {
+        glActiveTexture(m_textureUnit);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture.value());
+    }
+
+    void Cubemap::unbind
+    (
+    ) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glActiveTexture(GL_TEXTURE0);
     }
 
     unsigned int Cubemap::value

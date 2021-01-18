@@ -6,20 +6,12 @@
 
 namespace OGL {
     class CameraCubemap : public BasicCamera {
-    protected:
-        glm::mat4 m_view;
-        glm::mat4 m_projection;
-
     public:
         CameraCubemap
         ( glm::vec3 position
         , float near
         , float far
         );
-
-        glm::mat4 getProjectionMatrix
-        (
-        ) const;
 
         void setSide
         ( int side

@@ -17,7 +17,7 @@ namespace OGL {
 
         void bind
         (
-        ) const;
+        ) const override;
 
         static void unbind
         (

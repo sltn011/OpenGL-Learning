@@ -6,10 +6,6 @@
 #include "FrameBufferObject.hpp"
 #include "First OGL Engine/OGL_E1.hpp"
 
-int playgroundRenderMode = 0;
-int crateRenderMode = 0;
-int windowRenderMode = 0;
-
 const int skyboxTextureID = 15;
 const int cubemapTextureID = 16;
 
@@ -19,44 +15,40 @@ class Test : public OGL::E1::Engine1Base {
 public:
     Test(int width, int height) : Engine1Base{ width, height } {}
 
-    glm::mat4 m_projection;
-
     OGL::E1::smartSkybox m_skybox;
-
-    OGL::E1::smartCubemapCamPtr m_cubemapCam;
-    OGL::E1::smartCubemap m_cubemap;
-    OGL::E1::smartFBO m_fbo;
-    OGL::E1::smartRBO m_rbo;
 
     bool userCreate
     (
     ) override {
-        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFree>(
+
+        int screenWidth, screenHeight;
+        glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
+
+        OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ 0.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
             -90.0f,
-            0.0f
-            );
+            0.0f,
+            45.0f,
+            static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
+            0.01f,
+            100.0f
+        );
 
-        m_shaders.emplace_back("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
-        m_shaders.emplace_back("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
-        m_shaders.emplace_back("shaders/01-playgroundMirror.vert", "shaders/01-playgroundMirror.frag");
+        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
 
-        int screenWidth, screenHeight;
-        glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
+        OGL::Shader normalShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag"); normalShader.showWarnings(true);
+        OGL::Shader transpShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag"); transpShader.showWarnings(true);
+        OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag"); skyboxShader.showWarnings(true);
+        OGL::Shader mirrorShader("shaders/01-playgroundMirror.vert", "shaders/01-playgroundMirror.frag"); mirrorShader.showWarnings(true);
 
-        m_projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.01f, 100.0f);
-
-        m_shaders[0].use();
-        m_shaders[0].setUniformMatrix4("projection", m_projection);
-
-        m_shaders[1].use();
-        m_shaders[1].setUniformMatrix4("projection", m_projection);
-
-        m_shaders[2].use();
-        m_shaders[2].setUniformMatrix4("projection", m_projection);
+        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+        m_transpRenderer = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
+        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_mirrorRenderer = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
+        m_cubemapRenderer = OGL::E1::factory<OGL::E1::CubemapRenderer>();
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -68,228 +60,70 @@ public:
         float     playgroundScale = 0.1f;
         float     playgroundRotationRadians = glm::radians(0.0f);
         glm::vec3 playgroundRotationAxes = { 0.0f, 1.0f, 0.0f };
-        addObject(0, 0, playgroundPosition, playgroundScale, playgroundRotationRadians, playgroundRotationAxes);
+        addNormalObject(0, playgroundPosition, playgroundScale, playgroundRotationRadians, playgroundRotationAxes);
 
         glm::vec3 cratesPosition[] = { { -0.8f, -0.0955f, -0.75f }, { -0.5f, -0.0855f, -1.0f }, { -0.35f, -0.0955f, -0.65f }, { -0.87f, -0.0955f, -1.1f } };
         float     cratesScale[] = { 0.055f, 0.065f, 0.055f, 0.055f };
         float     cratesRotationRadians[] = { glm::radians(30.0f), glm::radians(45.0f), glm::radians(0.0f), glm::radians(60.0f) };
         for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
-            addObject(1, 1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
+            addNormalObject(1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
         }
 
         glm::vec3 windowsPosition[] = { { 0.8f, -0.05f, 0.75f }, { 0.5f, -0.05f, 1.0f }, { 0.35f, -0.05f, 0.65f }, { 0.87f, -0.05f, 1.1f } };
         float     windowsScale[] = { 0.1f, 0.1f, 0.1f, 0.1f };
         float     windowsRotation[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
         for (size_t i = 0; i < sizeof(windowsPosition) / sizeof(windowsPosition[0]); ++i) {
-            addObject(2, 2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
+            addTransparentObject(2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
         }
 
         glm::vec3 spherePosition{ 0.3f, -0.05f, -0.3f };
         float     sphereScale = 0.1f;
-        glm::vec3 sphereColor{ 0.66f, 0.8f, 0.84f };
-        addObject(3, 3, spherePosition, sphereScale);
+        addMirrorObject(3, spherePosition, sphereScale);
 
         // Lights
         glm::vec3 directionalLightDir{ 0.85f, -1.5f, -1.0f };
         glm::vec3 directionalLightColor{ 1.55f, 1.55f, 1.35f };
 
         addDirLight(directionalLightDir, directionalLightColor);
-        //addSpotLight({}, {}, { 1.0f, 1.0f, 1.0f }, glm::radians(23.0f), glm::radians(25.0f), 1.0f, 0.22f, 0.20f);
 
         stbi_set_flip_vertically_on_load(false);
         m_skybox = OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID);
         stbi_set_flip_vertically_on_load(true);
-
-        m_shaders[1].use();
-        m_shaders[1].setUniformInt("skyboxSampler", skyboxTextureID);
-        m_shaders[2].use();
-        m_shaders[2].setUniformInt("cubemapSampler", cubemapTextureID);
-        m_shaders[2].setUniformVec3("mirrorColor", sphereColor);
-
-        m_cubemapCam = OGL::E1::factory<OGL::CameraCubemap>(
-            spherePosition,
-            0.1f,
-            100.0f
-            );
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendEquation(GL_FUNC_ADD);
-
-        m_cubemap = OGL::E1::factory<OGL::Cubemap>(cubemapSize, GL_TEXTURE0 + cubemapTextureID);
-
-        m_fbo = OGL::E1::factory<OGL::FrameBufferObject>(GL_FRAMEBUFFER);
-        m_fbo->bind();
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-        m_rbo = OGL::E1::factory<OGL::RenderBufferObject>();
-        m_rbo->allocateStorage(cubemapSize, cubemapSize, GL_DEPTH_COMPONENT24);
-        m_fbo->attach(GL_DEPTH_ATTACHMENT, *m_rbo);
+        m_scene->replaceSkybox(std::move(m_skybox));
 
         glViewport(0, 0, cubemapSize, cubemapSize);
 
-        for (int i = 0; i < 6; ++i) {
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_cubemap->value(), 0);
-            m_cubemapCam->setSide(i);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            renderCubemapSide();
+        for (auto &p : m_scene->getMirrorObjs()) {
+            p.second = OGL::E1::factory<OGL::Cubemap>(
+                m_cubemapRenderer->render(
+                    *m_scene,
+                    cubemapSize,
+                    GL_TEXTURE0 + cubemapTextureID,
+                    p.first->m_postiton,
+                    m_normalRenderer.get(),
+                    m_skyboxRenderer.get(),
+                    m_transpRenderer.get()
+                )
+            );
         }
-        OGL::FrameBufferObject::unbind(GL_FRAMEBUFFER);
-
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap->value());
-        OGL::Texture::generateMipmap(GL_TEXTURE_CUBE_MAP);
-        OGL::Texture::unbind(GL_TEXTURE_CUBE_MAP);
-
+        
         glViewport(0, 0, screenWidth, screenHeight);
-
-        glEnable(GL_CULL_FACE);
 
         return true;
     }
 
-    void renderCubemapSide() {
-        for (size_t i = 0; i < m_shaders.size(); ++i) {
-            m_shaders[i].use();
-            m_shaders[i].setUniformMatrix4("projection", m_cubemapCam->getProjectionMatrix());
-            m_shaders[i].setUniformMatrix4("view", m_cubemapCam->getViewMatrix());
-            m_shaders[i].setUniformVec3("viewerPos", m_cubemapCam->getPos());
-        }
-
-        // Load lights
-        m_shaders[0].use();
-        m_shaders[0].setUniformInt("numDirLights", (int)m_dirLights.size());
-        for (size_t i = 0; i < m_dirLights.size(); ++i) {
-            m_dirLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numPointLights", (int)m_pointLights.size());
-        for (size_t i = 0; i < m_pointLights.size(); ++i) {
-            m_pointLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[0].setUniformInt("numSpotLights", (int)m_spotLights.size());
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[0], i);
-        }
-
-        m_shaders[2].use();
-        m_shaders[2].setUniformInt("numDirLights", (int)m_dirLights.size());
-        for (size_t i = 0; i < m_dirLights.size(); ++i) {
-            m_dirLights[i]->loadInShader(m_shaders[2], i);
-        }
-        m_shaders[2].setUniformInt("numPointLights", (int)m_pointLights.size());
-        for (size_t i = 0; i < m_pointLights.size(); ++i) {
-            m_pointLights[i]->loadInShader(m_shaders[2], i);
-        }
-        m_shaders[2].setUniformInt("numSpotLights", (int)m_spotLights.size());
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[2], i);
-        }
-
-        // Draw objects
-        m_shaders[0].use();
-        for (auto &obj : m_objects[0]) {
-            obj->draw(m_shaders[0]);
-        }
-
-        for (auto &obj : m_objects[1]) {
-            obj->draw(m_shaders[0]);
-        }
-
-        // Draw skybox
-        m_shaders[1].use();
-        m_shaders[1].setUniformMatrix4("view", glm::mat4(glm::mat3(m_cubemapCam->getViewMatrix())));
-        m_skybox->bind();
-        glDepthFunc(GL_LEQUAL);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
-        glDepthFunc(GL_LESS);
-        OGL::Skybox::unbind();
-
-        // Sort transparent objects by distance to player using map
-        std::map<float, OGL::E1::smartObjPtr const&> map;
-        for (auto const &obj : m_objects[2]) {
-            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->m_postiton);
-            map.emplace(dist, obj);
-        }
-
-        // Draw transparent windows starting from farthes to closest
-        m_shaders[0].use();
-        for (auto windowIt = map.rbegin(); windowIt != map.rend(); ++windowIt) {
-            windowIt->second->draw(m_shaders[0]);
-        }
-    }
-
     bool userFrameUpdate
-    (float elapsedTime
+    ( float elapsedTime
     ) override {
         processInput(0.5f);
 
-        for (size_t i = 0; i < m_shaders.size(); ++i) {
-            m_shaders[i].use();
-            m_shaders[i].setUniformMatrix4("projection", m_projection);
-            m_shaders[i].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
-            m_shaders[i].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
-        }
+        m_normalRenderer->render(*m_scene, m_scene->getCamera());
 
-        m_shaders[1].use();
-        m_shaders[1].setUniformMatrix4("view", glm::mat4(glm::mat3(OGL::E1::GameCamera::inst->getViewMatrix()))); // Remove translation
+        m_mirrorRenderer->render(*m_scene, m_scene->getCamera());
 
-        // Update flashlight
-        if (m_spotLights.size() != 0) {
-            m_spotLights[0]->m_position = OGL::E1::GameCamera::inst->getPos();
-            m_spotLights[0]->m_direction = OGL::E1::GameCamera::inst->getForward();
-        }
+        m_skyboxRenderer->render(*m_scene, m_scene->getCamera());
 
-        m_shaders[0].use();
-        m_shaders[0].setUniformMatrix4("view", OGL::E1::GameCamera::inst->getViewMatrix());
-        m_shaders[0].setUniformVec3("viewerPos", OGL::E1::GameCamera::inst->getPos());
-
-        m_shaders[0].use();
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[0], i);
-        }
-        m_shaders[2].use();
-        for (size_t i = 0; i < m_spotLights.size(); ++i) {
-            m_spotLights[i]->loadInShader(m_shaders[2], i);
-        }
-
-        m_shaders[0].use();
-        // Draw objects
-        for (auto &obj : m_objects[0]) {
-            obj->draw(m_shaders[0]);
-        }
-
-        for (auto &obj : m_objects[1]) {
-            obj->draw(m_shaders[0]);
-        }
-
-        m_shaders[2].use();
-        m_shaders[2].setUniformInt("cubemapSampler", cubemapTextureID);
-        glActiveTexture(GL_TEXTURE0 + cubemapTextureID);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap->value());
-        m_objects[3][0]->draw(m_shaders[2]);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        glActiveTexture(GL_TEXTURE0);
-
-        // Draw skybox
-        m_shaders[1].use();
-        m_shaders[1].setUniformInt("skyboxSampler", skyboxTextureID);
-        m_skybox->bind();
-        glDepthFunc(GL_LEQUAL);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
-        glDepthFunc(GL_LESS);
-        OGL::Skybox::unbind();
-
-        // Sort transparent objects by distance to player using map
-        std::map<float, OGL::E1::smartObjPtr const&> map;
-        for (auto const &obj : m_objects[2]) {
-            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->m_postiton);
-            map.emplace(dist, obj);
-        }
-
-        // Draw transparent windows starting from farthes to closest
-        m_shaders[0].use();
-        for (auto windowIt = map.rbegin(); windowIt != map.rend(); ++windowIt) {
-            windowIt->second->draw(m_shaders[0]);
-        }
+        m_transpRenderer->render(*m_scene, m_scene->getCamera());
 
         return true;
     }

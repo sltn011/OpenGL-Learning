@@ -5,7 +5,6 @@ namespace OGL::E1 {
     Scene::Scene
     ( smartCamPtr &&camera
     ) : m_camera{ std::move(camera) } {
-
     }
 
     void Scene::addNormalObj
@@ -25,7 +24,25 @@ namespace OGL::E1 {
     ) {
         std::pair<smartObjPtr, smartCubemap> pair;
         pair.first = std::move(obj);
-        m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first - will be created with first render
+        m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
+    }
+
+    void Scene::addDirLight
+    ( DirectionalLight dirLight
+    ) {
+        m_dirLights.push_back(dirLight);
+    }
+
+    void Scene::addPointLight
+    ( PointLight pointLight
+    ) {
+        m_pointLights.push_back(pointLight);
+    }
+
+    void Scene::addSpotLight
+    ( SpotLight spotLight
+    ) {
+        m_spotLights.push_back(spotLight);
     }
 
     objectsVec &Scene::getNormalObjs
@@ -46,6 +63,24 @@ namespace OGL::E1 {
         return m_mirrorObjects;
     }
 
+    dirLights &Scene::getDirLights
+    (
+    ) {
+        return m_dirLights;
+    }
+
+    pointLights &Scene::getPointLights
+    (
+    ) {
+        return m_pointLights;
+    }
+
+    spotLights &Scene::getSpotLights
+    (
+    ) {
+        return m_spotLights;
+    }
+
     void Scene::replaceSkybox
     ( smartSkybox &&skybox
     ) {
@@ -56,6 +91,12 @@ namespace OGL::E1 {
     (
     ) {
         return m_skybox;
+    }
+
+    smartCamPtr &Scene::getCamera
+    (
+    ) {
+        return m_camera;
     }
 
 } // OGL::E1

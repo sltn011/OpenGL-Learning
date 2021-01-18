@@ -28,6 +28,30 @@ namespace OGL {
         , GLenum cubemapTextureUnit
         );
 
+        Cubemap
+        ( Cubemap const &rhs
+        ) = delete;
+
+        Cubemap
+        ( Cubemap &&rhs
+        ) = default;
+
+        Cubemap &operator=
+        ( Cubemap const &rhs
+        ) = delete;
+
+        Cubemap &operator=
+        ( Cubemap &&rhs
+        ) = default;
+
+        virtual void bind
+        (
+        ) const;
+
+        static void unbind
+        (
+        );
+
         unsigned int value
         (
         ) const;

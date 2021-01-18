@@ -7,15 +7,7 @@ in vec3 vertexNorm;
 
 uniform vec3 viewerPos;
 
-uniform vec3 mirrorColor;
 uniform samplerCube cubemapSampler;
-
-//void main() {    
-//    vec3 norm = normalize(normal);
-//	vec3 viewDir = normalize(vertexPos - viewerPos);
-//	
-//	//fragColor = vec4(texture(cubemapSampler, texCoords).rgb, 1.0);
-//}
 
 struct Material {
 	sampler2D textureDiffuse1;
@@ -102,7 +94,7 @@ void main() {
 
 	vec3 reflected = reflect(viewDir, norm);
 	reflected.yz *= -1;
-	fragColor = vec4(texture(cubemapSampler, reflected).rgb * mirrorColor * res, 1.0);
+	fragColor = vec4(texture(cubemapSampler, reflected).rgb * res, 1.0);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {

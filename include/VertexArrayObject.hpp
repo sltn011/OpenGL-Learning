@@ -16,6 +16,22 @@ namespace OGL {
         (
         );
 
+        VertexArrayObject
+        ( VertexArrayObject const &rhs
+        ) = delete;
+
+        VertexArrayObject
+        ( VertexArrayObject &&rhs
+        ) = default;
+
+        VertexArrayObject &operator=
+        ( VertexArrayObject const &rhs
+        ) = delete;
+
+        VertexArrayObject &operator=
+        ( VertexArrayObject &&rhs
+        ) = default;
+
         void bind
         (
         ) const;

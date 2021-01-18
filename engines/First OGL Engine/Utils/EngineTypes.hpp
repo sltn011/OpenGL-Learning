@@ -40,6 +40,20 @@ namespace OGL {
 
     namespace E1 {
 
+        class Scene;
+        using smartScenePtr = std::unique_ptr<Scene>;
+
+        class NormalRenderer;
+        using smartNormalRendererPtr = std::unique_ptr<NormalRenderer>;
+        class TransparentRenderer;
+        using smartTransparentRendererPtr = std::unique_ptr<TransparentRenderer>;
+        class CubemapRenderer;
+        using smartCubemapRendererPtr = std::unique_ptr<CubemapRenderer>;
+        class MirrorRenderer;
+        using smartMirrorRendererPtr = std::unique_ptr<MirrorRenderer>;
+        class SkyboxRenderer;
+        using smartSkyboxRendererPtr = std::unique_ptr<SkyboxRenderer>;
+
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;
         using smartVBO = std::unique_ptr<VertexBufferObject>;
@@ -67,9 +81,9 @@ namespace OGL {
         using mirrorObjsVec = std::vector<std::pair<smartObjPtr, smartCubemap>>;
         using gameObjects = std::unordered_map<size_t, objectsVec>;
 
-        using dirLights = std::vector<smartDirLPtr>;
-        using pointLights = std::vector<smartPointLPtr>;
-        using spotLights = std::vector<smartSpotLPtr>;
+        using dirLights = std::vector<DirectionalLight>;
+        using pointLights = std::vector<PointLight>;
+        using spotLights = std::vector<SpotLight>;
 
         using shadersPack = std::vector<Shader>;
 

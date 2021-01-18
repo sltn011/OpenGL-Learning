@@ -4,8 +4,8 @@
 namespace OGL {
 
     Shader::Shader
-    ( char const *vertexSourcePath
-    , char const *fragmentSourcePath
+    ( std::string vertexSourcePath
+    , std::string fragmentSourcePath
     ) {
         std::ifstream vertexShaderFile;
         std::ifstream fragmentShaderFile;

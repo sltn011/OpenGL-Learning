@@ -1,5 +1,3 @@
-#include "..\include\CameraCubemap.hpp"
-#include "..\include\CameraCubemap.hpp"
 #include "CameraCubemap.hpp"
 
 namespace OGL {
@@ -16,14 +14,12 @@ namespace OGL {
     , 0.0f
     , 0.0f
     , 0.0f
+    , 90.0f
+    , 1.0f
+    , near
+    , far
     } {
-        m_projection = glm::perspective(glm::radians(90.0f), 1.0f, near, far);
-    }
 
-    glm::mat4 CameraCubemap::getProjectionMatrix
-    (
-    ) const {
-        return m_projection;
     }
 
     void CameraCubemap::setSide
