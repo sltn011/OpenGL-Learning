@@ -5,6 +5,7 @@
 #include "CameraFree.hpp"
 #include "Object.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "glm/glm.hpp"
@@ -51,7 +52,8 @@ OGL::CameraFree freeCam{
     {0.0f, 0.0f, 5.0f},
     {0.0f, 0.0f, -1.0f},
     {0.0f, 1.0f, 0.0f},
-    5.0f, -90.0f, 0.0f
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
 
 void windowResizeCallback
@@ -152,10 +154,10 @@ int main() {
     glm::vec3 lightColor{ 1.0f, 1.0f, 1.0f };
 
     shader.use();
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)Screen::width / (float)Screen::height, 0.1f, 100.0f);
-    shader.setUniformMatrix4("projection", projection, false);
+    shader.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
 
     while (!glfwWindowShouldClose(window)) {
+        processInput(window);
         float currentFrameTime = (float)glfwGetTime();
         System::deltaTime = currentFrameTime - System::lastFrameTime;
         System::lastFrameTime = currentFrameTime;

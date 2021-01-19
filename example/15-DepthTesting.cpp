@@ -7,34 +7,29 @@ int shaderNum = 0;
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(int width, int height) : Engine1Base{ width, height } {}
-    
-    glm::mat4 m_projection;
 
     bool userCreate
     (
     ) override {
-        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
-            glm::vec3{ 0.0f, 0.0f, 0.0f },
-            glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
-            1.0f,
-            -90.0f,
-            0.0f
-        );
-
         m_shaders.emplace_back("shaders/12-depthBufferTest.vert", "shaders/12-depthBufferTest.frag");
         m_shaders.emplace_back("shaders/12-depthBufferTest.vert", "shaders/12-depthBufferVizualizer.frag");
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
-        m_projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.01f, 100.0f);
+        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
+            glm::vec3{ 0.0f, 0.0f, 0.0f },
+            glm::vec3{ 0.0f, 0.0f, -1.0f },
+            glm::vec3{ 0.0f, 1.0f, 0.0f },
+            1.0f, -90.0f, 0.0f,
+            45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
+        );
 
         m_shaders[0].use();
-        m_shaders[0].setUniformMatrix4("projection", m_projection);
+        m_shaders[0].setUniformMatrix4("projection", OGL::E1::GameCamera::inst->getProjectionMatrix());
 
         m_shaders[1].use();
-        m_shaders[1].setUniformMatrix4("projection", m_projection);
+        m_shaders[1].setUniformMatrix4("projection", OGL::E1::GameCamera::inst->getProjectionMatrix());
         
         // Objects
         addModel("models/Playground/playground.obj", 0);

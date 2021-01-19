@@ -29,12 +29,13 @@ namespace System {
     float mouseSensitivity = 0.15f;
 }
 
-OGL::CameraFree freeCam(
+OGL::CameraFree freeCam{
     {0.0f, 0.0f, 5.0f},
     {0.0f, 0.0f, -1.0f},
     {0.0f, 1.0f, 0.0f},
-    5.0f, -90.0f, 0.0f
-);
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
+};
 
 void framebufferSizeCallback
 ( GLFWwindow *window
@@ -299,8 +300,7 @@ int main
     shaderProgramm.use();
 
     glm::mat4 projection(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)((float)Screen::width / (float)Screen::height), 0.1f, 100.0f);
-    shaderProgramm.setUniformMatrix4("projection", projection, false);
+    shaderProgramm.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
 
     // 6. Render loop
     while (!glfwWindowShouldClose(window)) {

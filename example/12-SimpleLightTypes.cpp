@@ -50,7 +50,8 @@ OGL::CameraFree freeCam{
     {0.0f, 0.0f, 5.0f},
     {0.0f, 0.0f, -1.0f},
     {0.0f, 1.0f, 0.0f},
-    5.0f, -90.0f, 0.0f
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
 
 void windowResizeCallback
@@ -257,7 +258,6 @@ int main() {
     glm::vec3 lampColor{ 1.0f, 1.0f, 1.0f };
 
     glm::mat4 model{1.0f};
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), ((float)Screen::width) / ((float)Screen::height), 0.1f, 100.0f);
 
     glm::mat4 objModel = glm::translate(model, { 0.0f, 0.0f, -5.0f });
 
@@ -265,11 +265,11 @@ int main() {
     objectShader.setUniformVec3("objectColor", objectColor);
     objectShader.setUniformVec3("lampColor", lampColor);
     objectShader.setUniformMatrix4("model", objModel, false);
-    objectShader.setUniformMatrix4("projection", projection, false);
+    objectShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
 
     lampShader.use();
     lampShader.setUniformVec3("lampColor", lampColor);
-    lampShader.setUniformMatrix4("projection", projection, false);
+    lampShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
 
     glEnable(GL_DEPTH_TEST);
 

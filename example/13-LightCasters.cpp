@@ -39,12 +39,13 @@ enum LightMode {
 
 LightMode currentLight = LightMode::Default;
 
-OGL::CameraFree freeCam(
-    { 0.0f, 0.0f, 5.0f },
-    { 0.0f, 0.0f, -1.0f },
-    { 0.0f, 1.0f, 0.0f },
-    5.0f, -90.0f, 0.0f
-);
+OGL::CameraFree freeCam{
+    {0.0f, 0.0f, 5.0f},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 1.0f, 0.0f},
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
+};
 
 void framebufferSizeCallback
 (GLFWwindow *window
@@ -297,9 +298,6 @@ int main
         glm::vec3(-2.3f, 2.0f, -2.5f)
     };
 
-    glm::mat4 projection(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)((float)Screen::width / (float)Screen::height), 0.1f, 100.0f);
-
     glm::vec3 lampPos{ 3.0f, 2.5f, 2.5f };
     glm::vec3 lampColor{ 1.0f, 1.0f, 1.0f };
     glm::vec3 lightDirection{ 0.0f, 0.0f, -1.0f };
@@ -318,7 +316,7 @@ int main
     lampShader.use();
     lampShader.setUniformVec3("lampColor", lampColor);
     lampShader.setUniformMatrix4("model", lampModel);
-    lampShader.setUniformMatrix4("projection", projection);
+    lampShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
 
     glBindVertexArray(crateVAO);
     crateShader.use();
@@ -333,7 +331,7 @@ int main
     crateShader.setUniformFloat("light.attLinear", 0.027f);
     crateShader.setUniformFloat("light.attQuad", 0.0028f);
 
-    crateShader.setUniformMatrix4("projection", projection);
+    crateShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
 
     crateShader.setUniformInt("material.diffuseTex", 0);
     crateShader.setUniformInt("material.specularTex", 1);

@@ -32,12 +32,13 @@ namespace System {
     float mouseSensitivity = 0.15f;
 }
 
-OGL::CameraFree freeCam(
-    { 0.0f, 0.0f, 5.0f },
-    { 0.0f, 0.0f, -1.0f },
-    { 0.0f, 1.0f, 0.0f },
-    5.0f, -90.0f, 0.0f
-);
+OGL::CameraFree freeCam{
+    {0.0f, 0.0f, 5.0f},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 1.0f, 0.0f},
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
+};
 
 void framebufferSizeCallback
 (GLFWwindow *window
@@ -276,9 +277,6 @@ int main
         glm::vec3(-2.3f, 2.0f, -2.5f)
     };
 
-    glm::mat4 projection(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)((float)Screen::width / (float)Screen::height), 0.1f, 100.0f);
-
     glm::vec3 directionalLightDir{ 1.0f, -1.5f, 2.0f };
     glm::vec3 directionalLightColor{ 0.0f, 0.5f, 0.0f };
 
@@ -299,7 +297,7 @@ int main
         lampShader.setUniformMatrix4("model[" + std::to_string(i) + "]", lampModel);
         lampShader.setUniformVec3("lampColor[" + std::to_string(i) + "]", pointLightColor[i]);
     }
-    lampShader.setUniformMatrix4("projection", projection);
+    lampShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
 
     glBindVertexArray(crateVAO);
     crateShader.use();
@@ -323,7 +321,7 @@ int main
 
     spotLight.loadInShader(crateShader, 0);
     
-    crateShader.setUniformMatrix4("projection", projection);
+    crateShader.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
     
     crateShader.setUniformInt("numDirLights", 1);
     crateShader.setUniformInt("numPointLights", 2);

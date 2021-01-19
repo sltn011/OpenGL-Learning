@@ -12,30 +12,25 @@ public:
     OGL::E1::smartCBO m_cbo;
     OGL::E1::smartRBO m_rbo;
 
-    glm::mat4 m_projection;
-
     bool userCreate
     (
     ) override {
-        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
-            glm::vec3{ 0.0f, 0.0f, 0.0f },
-            glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
-            1.0f,
-            -90.0f,
-            0.0f
-        );
-
         m_shaders.emplace_back("shaders/15-Framebuffer_ToFBO.vert", "shaders/15-Framebuffer_ToFBO.frag");
         m_shaders.emplace_back("shaders/15-Framebuffer_ToScreen.vert", "shaders/15-Framebuffer_ToScreen.frag");
 
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
-        m_projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.01f, 100.0f);
+        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
+            glm::vec3{ 0.0f, 0.0f, 0.0f },
+            glm::vec3{ 0.0f, 0.0f, -1.0f },
+            glm::vec3{ 0.0f, 1.0f, 0.0f },
+            1.0f, -90.0f, 0.0f,
+            45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
+            );
 
         m_shaders[0].use();
-        m_shaders[0].setUniformMatrix4("projection", m_projection);
+        m_shaders[0].setUniformMatrix4("projection", OGL::E1::GameCamera::inst->getProjectionMatrix());
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -76,11 +71,11 @@ public:
 
         m_cbo = OGL::E1::factory<OGL::ColorBufferObject>();
         m_cbo->allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGB, GL_RGB);
-        m_fbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *m_cbo);
+        m_fbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, std::move(*m_cbo));
 
         m_rbo = OGL::E1::factory<OGL::RenderBufferObject>();
         m_rbo->allocateStorage(screenWidth, screenHeight, GL_DEPTH24_STENCIL8);
-        m_fbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, *m_rbo);
+        m_fbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, std::move(*m_rbo));
         
         if (!m_fbo->isComplete()) {
             throw OGL::Exception("Error creating FBO");

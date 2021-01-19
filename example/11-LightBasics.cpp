@@ -26,12 +26,13 @@ namespace System {
     float mouseSensitivity = 0.15f;
 }
 
-OGL::CameraFree freeCam(
-    { 0.0f, 0.0f, 5.0f },
-    { 0.0f, 0.0f, -1.0f },
-    { 0.0f, 1.0f, 0.0f },
-    5.0f, -90.0f, 0.0f
-);
+OGL::CameraFree freeCam{
+    {0.0f, 0.0f, 5.0f},
+    {0.0f, 0.0f, -1.0f},
+    {0.0f, 1.0f, 0.0f},
+    5.0f, -90.0f, 0.0f,
+    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
+};
 
 void framebufferResizeCallback
 ( GLFWwindow *window
@@ -195,7 +196,6 @@ int main() {
         glm::vec3 objectColor{ 0.7f, 0.35f, 0.2f };
 
         glm::mat4 view = freeCam.getViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), ((float)(Screen::width) / (float)(Screen::height)), 0.1f, 100.0f);
 
         shaderObject.use();
         shaderObject.setUniformVec3("objectColor", objectColor);
@@ -203,7 +203,7 @@ int main() {
         shaderObject.setUniformMatrix4("view", view, false);
         glm::mat4 objModelMat = glm::translate(glm::mat4{ 1.0f }, { 0.0f, 0.0f, -4.0f });
         shaderObject.setUniformMatrix4("model", objModelMat, false);
-        shaderObject.setUniformMatrix4("projection", projection, false);
+        shaderObject.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
         
         glBindVertexArray(objectVAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
@@ -215,7 +215,7 @@ int main() {
         glm::mat4 lampModelMat = glm::scale(glm::mat4{ 1.0f }, glm::vec3{ 0.25 });
         lampModelMat = glm::translate(lampModelMat, { -1.5f, -1.5f, -3.0f });
         shaderLamp.setUniformMatrix4("model", lampModelMat, false);
-        shaderLamp.setUniformMatrix4("projection", projection, false);
+        shaderLamp.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
         
         glBindVertexArray(lampVAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
