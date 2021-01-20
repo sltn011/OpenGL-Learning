@@ -158,6 +158,7 @@ add_library(OpenGLTools STATIC
         src/ColorBufferObject.cpp
         src/RenderBufferObject.cpp
         src/FrameBufferObject.cpp
+        src/UniformBufferObject.cpp
         src/Texture.cpp
         src/Cubemap.cpp
         src/Skybox.cpp
@@ -216,6 +217,7 @@ add_executable(17-Blending example/17-Blending.cpp)
 add_executable(18-FaceCulling example/18-FaceCulling.cpp)
 add_executable(19-Framebuffers example/19-Framebuffers.cpp)
 add_executable(20-Cubemaps example/20-Cubemaps.cpp)
+add_executable(21-AdvancedGLSL example/21-AdvancedGLSL.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
@@ -241,5 +243,6 @@ target_link_libraries(17-Blending glad glfw OpenGLTools assimp)
 target_link_libraries(18-FaceCulling glad glfw OpenGLTools assimp)
 target_link_libraries(19-Framebuffers glad glfw OpenGLTools assimp)
 target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
+target_link_libraries(21-AdvancedGLSL glad glfw OpenGLTools)
 ######################################################################################################
 

@@ -170,6 +170,21 @@ namespace OGL {
         return true;
     }
 
+    bool Shader::uniformBlockBinding
+    ( std::string const &blockName
+    , size_t bindingPointIndex
+    ) {
+        unsigned int blockIndex = glGetUniformBlockIndex(m_programmID, blockName.c_str());
+        if (blockIndex == GL_INVALID_INDEX) {
+            if (m_showWarnings) {
+                std::cerr << "No uniform block with name \"" << blockName << "\" in programm " << m_programmID << std::endl;
+            }
+            return false;
+        }
+        glUniformBlockBinding(m_programmID, blockIndex, bindingPointIndex);
+        return true;
+    }
+
     unsigned int Shader::compileGLShader
     ( char const *sourceCode
     , int shaderType

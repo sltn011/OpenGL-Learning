@@ -107,6 +107,11 @@ namespace OGL {
         ( std::string const &name
         , glm::vec3 const &vec
         );
+
+        bool uniformBlockBinding
+        ( std::string const &blockName
+        , size_t bindingPointIndex
+        );
     };
 
 } // OGL
