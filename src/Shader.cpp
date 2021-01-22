@@ -55,6 +55,71 @@ namespace OGL {
     }
 
     Shader::Shader
+    ( std::string vertexSourcePath
+    , std::string geometrySourcePath
+    , std::string fragmentSourcePath
+    ) {
+        std::ifstream vertexShaderFile;
+        std::ifstream geometryShaderFile;
+        std::ifstream fragmentShaderFile;
+        std::string vertexShaderCode;
+        std::string geometryShaderCode;
+        std::string fragmentShaderCode;
+
+        vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        geometryShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+        try {
+            vertexShaderFile.open(vertexSourcePath);
+            geometryShaderFile.open(geometrySourcePath);
+            fragmentShaderFile.open(fragmentSourcePath);
+
+            std::stringstream ssVertexCode, ssGeometryCode, ssFragmentCode;
+            ssVertexCode << vertexShaderFile.rdbuf();
+            ssGeometryCode << geometryShaderFile.rdbuf();
+            ssFragmentCode << fragmentShaderFile.rdbuf();
+
+            vertexShaderCode = ssVertexCode.str();
+            geometryShaderCode = ssGeometryCode.str();
+            fragmentShaderCode = ssFragmentCode.str();
+        }
+        catch (std::ifstream::failure e) {
+            throw Exception("Error reading shader code from file!");
+        }
+
+        unsigned int vertexShaderID = compileGLShader(vertexShaderCode.c_str(), GL_VERTEX_SHADER);
+        if (!shaderCorrectlyCompiled(vertexShaderID)) {
+            reportShaderCompileError(vertexShaderID);
+        }
+
+        unsigned int geometryShaderID = compileGLShader(geometryShaderCode.c_str(), GL_GEOMETRY_SHADER);
+        if (!shaderCorrectlyCompiled(geometryShaderID)) {
+            reportShaderCompileError(geometryShaderID);
+        }
+
+        unsigned int fragmentShaderID = compileGLShader(fragmentShaderCode.c_str(), GL_FRAGMENT_SHADER);
+        if (!shaderCorrectlyCompiled(fragmentShaderID)) {
+            reportShaderCompileError(fragmentShaderID);
+        }
+
+        m_programmID = glCreateProgram();
+        glAttachShader(m_programmID, vertexShaderID);
+        glAttachShader(m_programmID, geometryShaderID);
+        glAttachShader(m_programmID, fragmentShaderID);
+        glLinkProgram(m_programmID);
+        if (!programmCorrectlyLinked(m_programmID)) {
+            reportProgrammLinkError(m_programmID);
+        }
+
+        glDeleteShader(vertexShaderID);
+        glDeleteShader(geometryShaderID);
+        glDeleteShader(fragmentShaderID);
+
+        m_showWarnings = false;
+    }
+
+    Shader::Shader
     ( Shader &&rhs
     ) {
         m_programmID = rhs.m_programmID;

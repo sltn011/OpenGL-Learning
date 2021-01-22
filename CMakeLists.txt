@@ -218,6 +218,7 @@ add_executable(18-FaceCulling example/18-FaceCulling.cpp)
 add_executable(19-Framebuffers example/19-Framebuffers.cpp)
 add_executable(20-Cubemaps example/20-Cubemaps.cpp)
 add_executable(21-AdvancedGLSL example/21-AdvancedGLSL.cpp)
+add_executable(22-GeometryShader example/22-GeometryShader.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
@@ -244,5 +245,6 @@ target_link_libraries(18-FaceCulling glad glfw OpenGLTools assimp)
 target_link_libraries(19-Framebuffers glad glfw OpenGLTools assimp)
 target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
 target_link_libraries(21-AdvancedGLSL glad glfw OpenGLTools)
+target_link_libraries(22-GeometryShader glad glfw OpenGLTools)
 ######################################################################################################
 

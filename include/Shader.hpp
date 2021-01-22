@@ -51,6 +51,12 @@ namespace OGL {
         );
 
         Shader
+        ( std::string vertexSourcePath
+        , std::string geometrySourcePath
+        , std::string fragmentSourcePath
+        );
+
+        Shader
         ( Shader const &rhs
         ) = delete;
 
