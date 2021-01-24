@@ -4,6 +4,9 @@
 #include "GLFWInitRAII.hpp"
 #include "CameraFree.hpp"
 #include "Object.hpp"
+#include "DirectionalLight.hpp"
+
+#include "UniformBufferObject.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -26,17 +29,7 @@ namespace System {
     float mouseSensitivity = 0.15f;
 }
 
-enum class LightMode {
-    Ambient,
-    Diffuse,
-    Specular,
-    Phong,
-    SIZE
-};
-
 namespace Object {
-    LightMode currentMode = LightMode::Phong;
-
     float ambientStr = 0.3f;
     float ambientDelta = 0.01f;
 
@@ -45,6 +38,11 @@ namespace Object {
 
     int shininess = 32;
     int shininessDelta = 1;
+
+    bool doExplode = false;
+    float explodeBeginTime = 0.0f;
+
+    bool showNormals = false;
 }
 
 
@@ -57,9 +55,9 @@ OGL::CameraFree freeCam{
 };
 
 void windowResizeCallback
-(GLFWwindow *window
-    , int newWidth
-    , int newHeight
+( GLFWwindow *window
+, int newWidth
+, int newHeight
 ) {
     glViewport(0, 0, newWidth, newHeight);
 }
@@ -92,10 +90,28 @@ void processInput
 
 }
 
+void keyCallback
+( GLFWwindow *window
+, int key
+, int scancode
+, int action
+, int mods
+) {
+    if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+        Object::doExplode ^= true;
+        if (Object::doExplode) {
+            Object::explodeBeginTime = (float)glfwGetTime();
+        }
+    }
+    if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+        Object::showNormals ^= true;
+    }
+}
+
 void mouseCallback
-(GLFWwindow *window
-    , double xpos
-    , double ypos
+( GLFWwindow *window
+, double xpos
+, double ypos
 ) {
     float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
     float yOffset = System::lastMouseYPos - static_cast<float>(ypos);
@@ -118,7 +134,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Model Renderer", glfwGetPrimaryMonitor(), nullptr);
+    GLFWwindow *window = glfwCreateWindow(Screen::width, Screen::height, "Model Renderer", nullptr, nullptr);
     if (!window) {
         throw OGL::Exception("Error creating window!");
     }
@@ -126,6 +142,8 @@ int main() {
     glfwMakeContextCurrent(window);
 
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
+
+    glfwSetKeyCallback(window, keyCallback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -137,7 +155,16 @@ int main() {
 
     stbi_set_flip_vertically_on_load(true);
 
-    OGL::Shader shader("shaders/0-renderer.vert", "shaders/0-renderer.frag");
+    OGL::Shader shader("shaders/0-renderer.vert", "shaders/0-renderer.geom", "shaders/0-renderer.frag");
+    OGL::Shader normalsShader("shaders/0-normalsRender.vert", "shaders/0-normalsRender.geom", "shaders/0-normalsRender.frag");
+
+    OGL::UniformBufferObject ubo;
+    ubo.bind();
+    ubo.allocateBufferData(2 * 64, GL_DYNAMIC_DRAW);
+    ubo.setBindingPoint(0);
+    shader.uniformBlockBinding("Matrices", 0);
+    normalsShader.uniformBlockBinding("Matrices", 0);
+    ubo.unbind();
 
     OGL::Model myModel("models/Backpack/backpack.obj");
 
@@ -150,12 +177,11 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    glm::vec3 lightPos{ 3.0f, 2.5f, 2.0f };
-    glm::vec3 lightColor{ 1.0f, 1.0f, 1.0f };
+    glm::vec3 lightDir{ 1.0f, -1.0f, -1.0f };
+    glm::vec3 lightColor{ 1.5f, 1.5f, 1.5f };
+    OGL::DirectionalLight dirLight(lightDir, lightColor);
 
-    shader.use();
-    shader.setUniformMatrix4("projection", freeCam.getProjectionMatrix(), false);
-
+    ubo.bind();
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
         float currentFrameTime = (float)glfwGetTime();
@@ -164,16 +190,20 @@ int main() {
 
         clearScreen();
 
-        shader.use();
-        glm::mat4 view = freeCam.getViewMatrix();
-        
-        shader.setUniformMatrix4("view", view, false);
-        
-        shader.setUniformVec3("lightPos", lightPos);
-        shader.setUniformVec3("lightColor", lightColor);
-        shader.setUniformVec3("viewerPos", freeCam.getPos());
+        ubo.setBufferData(0, sizeof(glm::mat4), glm::value_ptr(freeCam.getViewMatrix()));
+        ubo.setBufferData(64, sizeof(glm::mat4), glm::value_ptr(freeCam.getProjectionMatrix()));
 
+        shader.use();
+        shader.setUniformVec3("viewerPos", freeCam.getPos());
+        dirLight.loadInShader(shader);
+        shader.setUniformBool("doExplode", Object::doExplode);
+        shader.setUniformFloat("explodeTime", (float)glfwGetTime() - Object::explodeBeginTime);
         myObject.draw(shader);
+
+        if (Object::showNormals) {
+            normalsShader.use();
+            myObject.draw(normalsShader);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

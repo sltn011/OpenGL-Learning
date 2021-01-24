@@ -1,54 +1,84 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 vertPos;
-in vec3 vertNorm;
-in vec2 texCoords;
+in GS_OUT {
+	vec3 vertPos;
+	vec3 vertNorm;
+	vec2 texCoords;
+} gs_out;
 
 struct Material {
+	sampler2D textureDiffuse1;
+	sampler2D textureSpecular1;
+
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
 	vec3 colorSpecular;
-	
+
 	float specularExponent;
-
-	sampler2D textureDiffuse1;
-
-	sampler2D textureSpecular1;
-
-	sampler2D textureNormal1;
-
-	sampler2D textureHeight1;
 };
 
-uniform Material material;
-
-uniform vec3 lightPos;
-uniform vec3 lightColor;
+struct DirectionalLight {
+	vec3 color;
+	vec3 direction;
+};
 
 uniform vec3 viewerPos;
 
-void main()
-{
-	vec3 texColor = vec3(texture(material.textureDiffuse1, texCoords));
-	vec3 specColor = vec3(texture(material.textureSpecular1, texCoords));
+uniform Material material;
 
-    // Ambient
-	vec3 ambient = lightColor * material.colorAmbient * texColor;
+uniform int numDirLights;
+uniform int numPointLights;
+uniform int numSpotLights;
 
-	// Diffuse
-	vec3 norm = normalize(vertNorm);
-	vec3 lightDir = normalize(vertPos - lightPos);
-	float diff = -min(0.0, dot(norm, lightDir));
-	vec3 diffuse = lightColor * (diff * material.colorDiffuse) * texColor;
+uniform DirectionalLight directionalLight;
 
-	// Specular
-	vec3 viewDir = normalize(vertPos - viewerPos);
-	vec3 reflectedLight = reflect(lightDir, norm);
+vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir);
+
+vec3 ambientComponent(Material material, vec3 lightColor);
+vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal);
+vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir);
+
+void main() {
+	vec3 norm = normalize(gs_out.vertNorm);
+	vec3 viewDir = normalize(gs_out.vertPos - viewerPos);
+
+	vec3 res = vec3(0.0, 0.0, 0.0);
+	float alpha = vec4(texture(material.textureDiffuse1, gs_out.texCoords)).a;
+	
+	if (alpha < 0.1) {
+		discard;
+	}
+
+	res += calculateDirectLight(directionalLight, norm, viewDir);
+
+	FragColor = vec4(res, alpha);
+}
+
+vec3 ambientComponent(Material material, vec3 lightColor) {
+	return material.colorAmbient * lightColor;
+}
+
+vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
+	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, gs_out.texCoords));
+	vec3 specularCol = vec3(texture(material.textureSpecular1, gs_out.texCoords));
+
+	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
+	vec3 diffuse = diffuseComponent(material, light, normal) * diffuseCol;
+	vec3 specular = specularComponent(material, light, normal, viewDir) * specularCol;
+
+	return (ambient + diffuse + specular);
+}
+
+vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal) {
+	vec3 lightDir = normalize(light.direction);
+	float diff = -min(0.0, dot(lightDir, normal));
+	return diff * material.colorDiffuse * light.color;
+}
+
+vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir) {
+	vec3 lightDir = normalize(light.direction);
+	vec3 reflectedLight = normalize(reflect(lightDir, normal));
 	float spec = pow(-min(0.0, dot(viewDir, reflectedLight)), material.specularExponent);
-	vec3 specular = lightColor * (spec * material.colorSpecular) * texColor * specColor;
-
-	vec3 result = ambient + diffuse + specular;
-
-	FragColor = vec4(result, 1.0);
+	return spec * material.colorSpecular * light.color;
 }
