@@ -19,6 +19,11 @@ namespace OGL {
         ( Shader &shader
         ) const;
 
+        void drawInstanced
+        ( Shader &shader
+        , size_t amount
+        ) const;
+
     protected:
         Model &m_model;
 

@@ -1,3 +1,5 @@
+#include "..\include\Model.hpp"
+#include "..\include\Model.hpp"
 #include "Model.hpp"
 
 namespace OGL {
@@ -142,10 +144,25 @@ namespace OGL {
 
     void Model::draw
     ( Shader &shader
-    ) {
+    ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].draw(shader);
         }
+    }
+
+    void Model::drawInstanced
+    ( Shader &shader
+    , size_t amount
+    ) const {
+        for (size_t i = 0; i < m_meshes.size(); ++i) {
+            m_meshes[i].drawInstanced(shader, amount);
+        }
+    }
+
+    unsigned int Model::meshVAO
+    ( size_t index
+    ) {
+        return m_meshes[index].vaoValue();
     }
 
 } // OGL

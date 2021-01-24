@@ -1,3 +1,4 @@
+#include "..\include\Object.hpp"
 #include "Object.hpp"
 
 namespace OGL {
@@ -28,6 +29,20 @@ namespace OGL {
         model = glm::scale(model, scaleVec);
         shader.setUniformMatrix4("model", model);
         m_model.draw(shader);
+    }
+
+    void Object::drawInstanced
+    ( Shader &shader
+    , size_t amount
+    ) const {
+        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
+
+        glm::mat4 model = glm::identity<glm::mat4>();
+        model = glm::translate(model, m_postiton);
+        model = glm::rotate(model, m_rotationAngleRadians, glm::normalize(m_rotationAxis));
+        model = glm::scale(model, scaleVec);
+        shader.setUniformMatrix4("model", model);
+        m_model.drawInstanced(shader, amount);
     }
 
 }// OGL

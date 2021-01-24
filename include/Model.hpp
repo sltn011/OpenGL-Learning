@@ -52,6 +52,15 @@ namespace OGL {
 
         void draw
         ( Shader &shader
+        ) const;
+
+        void drawInstanced
+        ( Shader &shader
+        , size_t amount
+        ) const;
+
+        unsigned int meshVAO
+        ( size_t index
         );
     };
 

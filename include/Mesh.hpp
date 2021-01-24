@@ -41,9 +41,9 @@ namespace OGL {
     };
 
     class Mesh {
-        unsigned int mVAO;
-        unsigned int mVBO;
-        unsigned int mEBO;
+        unsigned int m_VAO;
+        unsigned int m_VBO;
+        unsigned int m_EBO;
 
         std::vector<Vertex>       m_vertices;
         std::vector<unsigned int> m_indices;
@@ -66,6 +66,15 @@ namespace OGL {
 
         void draw
         ( OGL::Shader &shader
+        ) const;
+
+        void drawInstanced
+        ( OGL::Shader &shader
+        , size_t amount
+        ) const;
+
+        unsigned int vaoValue
+        (
         );
 
     };

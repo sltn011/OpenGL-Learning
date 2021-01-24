@@ -1,3 +1,5 @@
+#include "..\include\Mesh.hpp"
+#include "..\include\Mesh.hpp"
 #include "Mesh.hpp"
 
 namespace OGL {
@@ -18,16 +20,16 @@ namespace OGL {
     void Mesh::setup
     (
     ) {
-        glGenVertexArrays(1, &mVAO);
-        glGenBuffers(1, &mVBO);
-        glGenBuffers(1, &mEBO);
+        glGenVertexArrays(1, &m_VAO);
+        glGenBuffers(1, &m_VBO);
+        glGenBuffers(1, &m_EBO);
 
-        glBindVertexArray(mVAO);
+        glBindVertexArray(m_VAO);
 
-        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(*m_vertices.data()), m_vertices.data(), GL_STATIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(*m_indices.data()), m_indices.data(), GL_STATIC_DRAW);
 
         // Vertex pos
@@ -47,7 +49,7 @@ namespace OGL {
 
     void Mesh::draw
     ( OGL::Shader &shader
-    ) {
+    ) const {
         unsigned int diffuseTexCnt  = 0;
         unsigned int specularTexCnt = 0;
         unsigned int normalTexCnt   = 0;
@@ -90,9 +92,66 @@ namespace OGL {
         shader.setUniformVec3 ("material.colorSpecular",    m_colors.specular);
         shader.setUniformFloat("material.specularExponent", m_colors.specularExponent);
 
-        glBindVertexArray(mVAO);
+        glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+    }
+
+    void Mesh::drawInstanced
+    ( OGL::Shader &shader
+    , size_t amount
+    ) const {
+        unsigned int diffuseTexCnt = 0;
+        unsigned int specularTexCnt = 0;
+        unsigned int normalTexCnt = 0;
+        unsigned int heightTexCnt = 0;
+
+        for (size_t i = 0; i < m_textures.size(); ++i) {
+            glActiveTexture(GL_TEXTURE0 + i);
+
+            std::string name;
+
+            switch (m_textures[i].type) {
+            case TextureType::Diffuse:
+                name = "textureDiffuse" + std::to_string(++diffuseTexCnt);
+                break;
+
+            case TextureType::Specular:
+                name = "textureSpecular" + std::to_string(++specularTexCnt);
+                break;
+
+            case TextureType::Normal:
+                name = "textureNormal" + std::to_string(++normalTexCnt);
+                break;
+
+            case TextureType::Height:
+                name = "textureHeight" + std::to_string(++heightTexCnt);
+                break;
+
+            default:
+                continue;
+                break;
+            }
+
+            shader.setUniformInt("material." + name, i);
+            glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
+        }
+        glActiveTexture(GL_TEXTURE0);
+
+        shader.setUniformVec3("material.colorAmbient", m_colors.ambient);
+        shader.setUniformVec3("material.colorDiffuse", m_colors.diffuse);
+        shader.setUniformVec3("material.colorSpecular", m_colors.specular);
+        shader.setUniformFloat("material.specularExponent", m_colors.specularExponent);
+
+        glBindVertexArray(m_VAO);
+        glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, amount);
+        glBindVertexArray(0);
+    }
+
+    unsigned int Mesh::vaoValue
+    (
+    ) {
+        return m_VAO;
     }
 
 } // OGL
