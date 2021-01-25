@@ -2,9 +2,9 @@
 
 namespace OGL {
     
-    Skybox::Skybox
-    ( std::string const folderPath
-    , GLenum cubemapTextureUnit
+    Skybox::Skybox( 
+        std::string const folderPath, 
+        GLenum cubemapTextureUnit
     ) : Cubemap{folderPath, cubemapTextureUnit} {
         float constexpr skyboxVertices[] = {
             -1.0f, -1.0f, -1.0f, // 1
@@ -47,16 +47,14 @@ namespace OGL {
         VertexArrayObject::unbind();
     }
 
-    void Skybox::bind
-    (
+    void Skybox::bind(
     ) const {
         m_vao.bind();
         Texture::setActive(m_textureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
     }
 
-    void Skybox::unbind
-    (
+    void Skybox::unbind(
     ) {
         Texture::unbind(GL_TEXTURE_CUBE_MAP);
         Texture::setActive(GL_TEXTURE0);

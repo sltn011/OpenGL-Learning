@@ -7,22 +7,22 @@
 namespace OGL {
 
     class DirectionalLight : public BasicLight {
-    public:
+     public:
         glm::vec3 m_direction;
 
-    public:
-        DirectionalLight
-        ( glm::vec3 direction
-        , glm::vec3 color = glm::vec3{1.0f, 1.0f, 1.0f}
+     public:
+        DirectionalLight( 
+            glm::vec3 direction, 
+            glm::vec3 color = glm::vec3{1.0f, 1.0f, 1.0f}
         );
 
-        virtual void loadInShader
-        ( OGL::Shader &shader
+        virtual void loadInShader( 
+            OGL::Shader &shader
         ) override;
 
-        void loadInShader
-        ( OGL::Shader &shader
-        , int indexInArray
+        void loadInShader( 
+            OGL::Shader &shader, 
+            int indexInArray
         ) override;
     };
 

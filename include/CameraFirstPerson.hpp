@@ -6,30 +6,30 @@
 namespace OGL {
 
     class CameraFirstPerson : public BasicCamera {
-    public:
-        CameraFirstPerson
-        ( glm::vec3 positionVec
-        , glm::vec3 forwardVec
-        , glm::vec3 worldUpVec
-        , float moveSpeed
-        , float yawAngle
-        , float pitchAngle
-        , float fov
-        , float aspect
-        , float near
-        , float far
+     public:
+        CameraFirstPerson( 
+            glm::vec3 positionVec, 
+            glm::vec3 forwardVec, 
+            glm::vec3 worldUpVec, 
+            float moveSpeed, 
+            float yawAngle, 
+            float pitchAngle,
+            float fov,
+            float aspect, 
+            float near, 
+            float far
         );
 
-        void processMoveInput
-        ( CameraMovementDirection dir
-        , float deltaTime
+        void processMoveInput( 
+            CameraMovementDirection dir, 
+            float deltaTime
         ) override;
 
-        void processRotateInput
-        ( float xOffset
-        , float yOffset
-        , float sensitivity
-        , bool constrainPitch
+        void processRotateInput( 
+            float xOffset,
+            float yOffset, 
+            float sensitivity,
+            bool constrainPitch
         ) override;
 
     };

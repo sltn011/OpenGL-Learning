@@ -16,7 +16,7 @@ namespace OGL {
     };
 
     class BasicCamera {
-    protected:
+     protected:
         glm::vec3 m_position;
         glm::vec3 m_forward;
         glm::vec3 m_right;
@@ -30,60 +30,46 @@ namespace OGL {
         float m_near;
         float m_far;
 
-    public:
-        BasicCamera
-        ( glm::vec3 positionVec
-        , glm::vec3 forwardVec
-        , glm::vec3 worldUpVec
-        , float moveSpeed
-        , float yawAngle
-        , float pitchAngle
-        , float fov
-        , float aspect
-        , float near = 0.1f
-        , float far = 100.0f
+     public:
+        BasicCamera(
+            glm::vec3 positionVec,
+            glm::vec3 forwardVec,
+            glm::vec3 worldUpVec,
+            float moveSpeed,
+            float yawAngle,
+            float pitchAngle,
+            float fov,
+            float aspect,
+            float near = 0.1f,
+            float far = 100.0f
         );
 
-        virtual ~BasicCamera
-        (
-        );
+        virtual ~BasicCamera();
 
-        glm::mat4 getViewMatrix
-        (
-        ) const;
+        glm::mat4 getViewMatrix() const;
 
-        glm::mat4 getProjectionMatrix
-        (
-        ) const;
+        glm::mat4 getProjectionMatrix() const;
 
-        glm::vec3 getPos
-        (
-        ) const;
+        glm::vec3 getPos() const;
 
-        glm::vec3 getForward
-        (
-        ) const;
+        glm::vec3 getForward() const;
 
-        glm::vec3 getUp
-        (
-        ) const;
+        glm::vec3 getUp() const;
 
-        virtual void processMoveInput
-        ( CameraMovementDirection dir
-        , float deltaTime
+        virtual void processMoveInput(
+            CameraMovementDirection dir,
+            float deltaTime
         ) = 0;
 
-        virtual void processRotateInput
-        ( float xOffset
-        , float yOffset
-        , float sensitivity
-        , bool constrainPitch
+        virtual void processRotateInput(
+            float xOffset,
+            float yOffset, 
+            float sensitivity, 
+            bool constrainPitch
         ) = 0;
 
-    protected:
-        virtual void updateVectors
-        (
-        );
+     protected:
+        virtual void updateVectors();
     };
 
 } // OGL

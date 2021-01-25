@@ -2,24 +2,22 @@
 
 namespace OGL {
 
-    Descriptor::Descriptor
-    (
+    Descriptor::Descriptor(
     ) : m_descriptor{0} {
     }
 
-    Descriptor::~Descriptor
-    (
+    Descriptor::~Descriptor(
     ) {
     }
 
-    Descriptor::Descriptor
-    ( Descriptor &&rhs
+    Descriptor::Descriptor( 
+        Descriptor &&rhs
     ) : m_descriptor{rhs.m_descriptor} {
         rhs.m_descriptor = 0;
     }
 
-    Descriptor &Descriptor::operator=
-    ( Descriptor &&rhs
+    Descriptor &Descriptor::operator=( 
+        Descriptor &&rhs
     ) {
         unsigned int buf = m_descriptor;
         m_descriptor = rhs.m_descriptor;
@@ -27,8 +25,7 @@ namespace OGL {
         return *this;
     }
 
-    unsigned int Descriptor::value
-    (
+    unsigned int Descriptor::value(
     ) const {
         return m_descriptor;
     }

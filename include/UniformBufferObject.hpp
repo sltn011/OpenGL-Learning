@@ -7,58 +7,54 @@
 namespace OGL {
 
     class UniformBufferObject : public Descriptor {
-    public:
-        UniformBufferObject
-        (
+     public:
+        UniformBufferObject(
         );
 
-        ~UniformBufferObject
-        (
+        ~UniformBufferObject(
         );
 
-        UniformBufferObject
-        ( UniformBufferObject const &rhs
+        UniformBufferObject( 
+            UniformBufferObject const &rhs
         ) = delete;
 
-        UniformBufferObject
-        ( UniformBufferObject &&rhs
+        UniformBufferObject(
+            UniformBufferObject &&rhs
         ) = default;
 
-        UniformBufferObject &operator=
-        ( UniformBufferObject const &rhs
+        UniformBufferObject &operator=(
+            UniformBufferObject const &rhs
         ) = delete;
 
-        UniformBufferObject &operator=
-        ( UniformBufferObject &&rhs
+        UniformBufferObject &operator=( 
+            UniformBufferObject &&rhs
         ) = default;
 
-        void bind
-        (
+        void bind(
         ) const;
 
-        static void unbind
-        (
+        static void unbind(
         );
 
-        void allocateBufferData
-        ( size_t size
-        , GLenum usage
+        void allocateBufferData(
+            size_t size, 
+            GLenum usage
         );
 
-        void setBufferData
-        ( size_t offset
-        , size_t length
-        , void const *data
+        void setBufferData( 
+            size_t offset, 
+            size_t length, 
+            void const *data
         );
 
-        void setBindingPoint
-        ( size_t pointIndex
+        void setBindingPoint( 
+            size_t pointIndex
         );
 
-        void setBindingPoint
-        ( size_t pointIndex
-        , size_t offset
-        , size_t size
+        void setBindingPoint( 
+            size_t pointIndex,
+            size_t offset, 
+            size_t size
         );
     };
 

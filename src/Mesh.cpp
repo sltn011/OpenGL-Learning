@@ -2,21 +2,19 @@
 
 namespace OGL {
 
-    Mesh::Mesh
-    ( std::vector<Vertex> vertices
-    , std::vector<unsigned int> indices
-    , std::vector<ModelTexture> textures
-    , Colors colors
-    ) : m_vertices{ std::move(vertices) }
-      , m_indices { std::move(indices)  }
-      , m_textures{ std::move(textures) }
-      , m_colors{colors}
-    {
+    Mesh::Mesh( 
+        std::vector<Vertex> vertices,
+        std::vector<unsigned int> indices,
+        std::vector<ModelTexture> textures,
+        Colors colors
+    ) : m_vertices{ std::move(vertices) }, 
+        m_indices { std::move(indices)  }, 
+        m_textures{ std::move(textures) }, 
+        m_colors{colors} {
         setup();
     }
 
-    void Mesh::setup
-    (
+    void Mesh::setup(
     ) {
         glGenVertexArrays(1, &m_VAO);
         glGenBuffers(1, &m_VBO);
@@ -45,8 +43,8 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    void Mesh::draw
-    ( OGL::Shader &shader
+    void Mesh::draw(
+        OGL::Shader &shader
     ) const {
         unsigned int diffuseTexCnt  = 0;
         unsigned int specularTexCnt = 0;
@@ -95,9 +93,9 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    void Mesh::drawInstanced
-    ( OGL::Shader &shader
-    , size_t amount
+    void Mesh::drawInstanced( 
+        OGL::Shader &shader, 
+        size_t amount
     ) const {
         unsigned int diffuseTexCnt = 0;
         unsigned int specularTexCnt = 0;
@@ -146,8 +144,8 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    void Mesh::setVertexAttribInstancedModelMat4
-    ( int attribLocation
+    void Mesh::setVertexAttribInstancedModelMat4( 
+        int attribLocation
     ) {
         glBindVertexArray(m_VAO);
         for (int i = 0; i < 4; ++i) {

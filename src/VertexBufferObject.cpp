@@ -2,26 +2,22 @@
 
 namespace OGL {
 
-    VertexBufferObject::VertexBufferObject
-    (
+    VertexBufferObject::VertexBufferObject(
     ) {
         glGenBuffers(1, &m_descriptor);
     }
 
-    VertexBufferObject::~VertexBufferObject
-    (
+    VertexBufferObject::~VertexBufferObject(
     ) {
         glDeleteBuffers(1, &m_descriptor);
     }
 
-    void VertexBufferObject::bind
-    (
+    void VertexBufferObject::bind(
     ) const {
         glBindBuffer(GL_ARRAY_BUFFER, m_descriptor);
     }
 
-    void VertexBufferObject::unbind
-    (
+    void VertexBufferObject::unbind(
     ) {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }

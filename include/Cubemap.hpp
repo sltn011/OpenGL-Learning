@@ -9,55 +9,48 @@
 namespace OGL {
 
     class Cubemap {
-    protected:
+     protected:
         Texture m_texture;
         GLenum  m_textureUnit;
 
-    public:
-        Cubemap
-        (
+     public:
+
+        Cubemap( 
+            int size,
+            GLenum cubemapTextureUnit
         );
 
-        Cubemap
-        ( int size
-        , GLenum cubemapTextureUnit
+        Cubemap( 
+            std::string const &folderPath, 
+            GLenum cubemapTextureUnit
         );
 
-        Cubemap
-        ( std::string const &folderPath
-        , GLenum cubemapTextureUnit
-        );
-
-        Cubemap
-        ( Cubemap const &rhs
+        Cubemap( 
+            Cubemap const &rhs
         ) = delete;
 
-        Cubemap
-        ( Cubemap &&rhs
+        Cubemap( 
+            Cubemap &&rhs
         ) = default;
 
-        Cubemap &operator=
-        ( Cubemap const &rhs
+        Cubemap &operator=( 
+            Cubemap const &rhs
         ) = delete;
 
-        Cubemap &operator=
-        ( Cubemap &&rhs
+        Cubemap &operator=( 
+            Cubemap &&rhs
         ) = default;
 
-        virtual void bind
-        (
+        virtual void bind(
         ) const;
 
-        static void unbind
-        (
+        static void unbind(
         );
 
-        unsigned int value
-        (
+        unsigned int value(
         ) const;
 
-        GLenum unit
-        (
+        GLenum unit(
         ) const;
 
     };

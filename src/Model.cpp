@@ -2,9 +2,9 @@
 
 namespace OGL {
 
-    void Model::loadModel
-    ( std::string const &path
-    , int flags
+    void Model::loadModel( 
+        std::string const &path, 
+        int flags
     ) {
         Assimp::Importer importer;
         aiScene const *scene = importer.ReadFile(path, flags);
@@ -18,9 +18,9 @@ namespace OGL {
         processNode(scene->mRootNode, scene);
     }
 
-    void Model::processNode
-    ( aiNode *node
-    , aiScene const *scene
+    void Model::processNode( 
+        aiNode *node, 
+        aiScene const *scene
     ) {
         for (size_t i = 0; i < node->mNumMeshes; ++i) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
@@ -32,9 +32,9 @@ namespace OGL {
         }
     }
 
-    Mesh Model::processMesh
-    ( aiMesh *mesh
-    , aiScene const *scene
+    Mesh Model::processMesh( 
+        aiMesh *mesh,
+        aiScene const *scene
     ) {
         std::vector<Vertex>       vertices(mesh->mNumVertices);
         std::vector<unsigned int> indices;
@@ -102,10 +102,10 @@ namespace OGL {
         return Mesh{ vertices, indices, textures, colors };
     }
 
-    std::vector<ModelTexture> Model::loadMaterialTexture
-    ( aiMaterial *material
-    , aiTextureType texType
-    , TextureType typeName
+    std::vector<ModelTexture> Model::loadMaterialTexture( 
+        aiMaterial *material, 
+        aiTextureType texType,
+        TextureType typeName
     ) {
         std::vector<ModelTexture> textures;
         for (size_t i = 0; i < material->GetTextureCount(texType); ++i) {
@@ -133,32 +133,32 @@ namespace OGL {
         return textures;
     }
 
-    Model::Model
-    ( char const *path
-    , int flags
+    Model::Model( 
+        char const *path, 
+        int flags
     ) {
         loadModel(path, flags);
     }
 
-    void Model::draw
-    ( Shader &shader
+    void Model::draw( 
+        Shader &shader
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].draw(shader);
         }
     }
 
-    void Model::drawInstanced
-    ( Shader &shader
-    , size_t amount
+    void Model::drawInstanced( 
+        Shader &shader,
+        size_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].drawInstanced(shader, amount);
         }
     }
 
-    void Model::setVertexAttribInstancedModelMat4
-    ( int attribLocation
+    void Model::setVertexAttribInstancedModelMat4( 
+        int attribLocation
     ) {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].setVertexAttribInstancedModelMat4(attribLocation);

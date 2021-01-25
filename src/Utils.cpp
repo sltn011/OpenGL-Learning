@@ -1,10 +1,10 @@
 #include "Utils.hpp"
 
 
-unsigned int OGL::textureFromFile
-( char const *path
-, std::string const &directory
-, bool gamma
+unsigned int OGL::textureFromFile( 
+    char const *path, 
+    std::string const &directory,
+    bool gamma
 ) {
     std::string filename = directory + '/' + std::string{path};
 

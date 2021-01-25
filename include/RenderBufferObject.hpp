@@ -7,37 +7,35 @@
 namespace OGL {
 
     class RenderBufferObject : public Descriptor {
-    protected:
+     protected:
 
-    public:
-        RenderBufferObject
-        (
+     public:
+        RenderBufferObject(
         );
 
-        ~RenderBufferObject
-        (
+        ~RenderBufferObject(
         );
 
-        RenderBufferObject
-        ( RenderBufferObject const &rhs
+        RenderBufferObject( 
+            RenderBufferObject const &rhs
         ) = delete;
 
-        RenderBufferObject
-        ( RenderBufferObject &&rhs
+        RenderBufferObject( 
+            RenderBufferObject &&rhs
         ) = default;
 
-        RenderBufferObject &operator=
-        ( RenderBufferObject const &rhs
+        RenderBufferObject &operator=( 
+            RenderBufferObject const &rhs
         ) = delete;
 
-        RenderBufferObject &operator=
-        ( RenderBufferObject &&rhs
+        RenderBufferObject &operator=( 
+            RenderBufferObject &&rhs
         ) = default;
 
-        void allocateStorage
-        ( int width
-        , int height
-        , GLenum innertype
+        void allocateStorage(
+            int width, 
+            int height, 
+            GLenum innertype
         );
     };
 

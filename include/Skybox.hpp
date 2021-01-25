@@ -9,21 +9,19 @@
 namespace OGL {
 
     class Skybox : public Cubemap {
-    public:
-        Skybox
-        ( std::string const folderPath
-        , GLenum cubemapTextureUnit
+     public:
+        Skybox( 
+            std::string const folderPath,
+            GLenum cubemapTextureUnit
         );
 
-        void bind
-        (
+        void bind(
         ) const override;
 
-        static void unbind
-        (
+        static void unbind(
         );
 
-    protected:
+     protected:
         VertexArrayObject m_vao;
         VertexBufferObject m_vbo;
         ElementBufferObject m_ebo;

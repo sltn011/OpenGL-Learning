@@ -4,36 +4,33 @@
 namespace OGL {
 
     class Descriptor {
-    protected:
+     protected:
         unsigned int m_descriptor;
 
-    public:
-        Descriptor
-        (
+     public:
+        Descriptor(
         );
 
-        ~Descriptor
-        (
+        ~Descriptor(
         );
 
-        Descriptor
-        ( Descriptor const &rhs
+        Descriptor( 
+            Descriptor const &rhs
         ) = delete;
 
-        Descriptor &operator=
-        ( Descriptor const &rhs
+        Descriptor &operator=( 
+            Descriptor const &rhs
         ) = delete;
 
-        Descriptor
-        ( Descriptor &&rhs
+        Descriptor( 
+            Descriptor &&rhs
         );
 
-        Descriptor &operator=
-        ( Descriptor &&rhs
+        Descriptor &operator=( 
+            Descriptor &&rhs
         );
 
-        unsigned int value
-        (
+        unsigned int value(
         ) const;
 
     };

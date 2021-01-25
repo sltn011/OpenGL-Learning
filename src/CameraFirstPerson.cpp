@@ -2,37 +2,34 @@
 
 namespace OGL {
 
-    CameraFirstPerson::CameraFirstPerson
-    (glm::vec3 positionVec
-    , glm::vec3 forwardVec
-    , glm::vec3 worldUpVec
-    , float moveSpeed
-    , float yawAngle
-    , float pitchAngle
-    , float fov
-    , float aspect
-    , float near
-    , float far
-    )
-    : BasicCamera
-    { positionVec
-    , forwardVec
-    , worldUpVec
-    , moveSpeed
-    , yawAngle
-    , pitchAngle
-    , fov
-    , aspect
-    , near
-    , far
-    }
-    {
+    CameraFirstPerson::CameraFirstPerson(
+        glm::vec3 positionVec, 
+        glm::vec3 forwardVec, 
+        glm::vec3 worldUpVec, 
+        float moveSpeed, 
+        float yawAngle, 
+        float pitchAngle, 
+        float fov, 
+        float aspect, 
+        float near, 
+        float far
+    ) : BasicCamera{ 
+        positionVec, 
+        forwardVec, 
+        worldUpVec, 
+        moveSpeed, 
+        yawAngle, 
+        pitchAngle, 
+        fov, 
+        aspect, 
+        near, 
+        far} {
         updateVectors();
     }
 
-    void CameraFirstPerson::processMoveInput
-    ( CameraMovementDirection dir
-    , float deltaTime
+    void CameraFirstPerson::processMoveInput( 
+        CameraMovementDirection dir,
+        float deltaTime
     ) {
         glm::vec3 forward = m_forward;
         forward.y = m_position.y;
@@ -59,11 +56,11 @@ namespace OGL {
         }
     }
 
-    void CameraFirstPerson::processRotateInput
-    ( float xOffset
-    , float yOffset
-    , float sensitivity
-    , bool constrainPitch
+    void CameraFirstPerson::processRotateInput( 
+        float xOffset, 
+        float yOffset, 
+        float sensitivity, 
+        bool constrainPitch
     ) {
 
         static bool firstTime = true;

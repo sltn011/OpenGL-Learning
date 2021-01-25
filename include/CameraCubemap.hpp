@@ -7,26 +7,26 @@
 namespace OGL {
     class CameraCubemap : public BasicCamera {
     public:
-        CameraCubemap
-        ( glm::vec3 position
-        , float near
-        , float far
+        CameraCubemap( 
+            glm::vec3 position, 
+            float near, 
+            float far
         );
 
-        void setSide
-        ( int side
+        void setSide( 
+            int side
         );
 
-        void processMoveInput
-        ( CameraMovementDirection dir
-        , float deltaTime
+        void processMoveInput( 
+            CameraMovementDirection dir, 
+            float deltaTime
         ) override;
 
-        void processRotateInput
-        ( float xOffset
-        , float yOffset
-        , float sensitivity
-        , bool constrainPitch
+        void processRotateInput( 
+            float xOffset, 
+            float yOffset, 
+            float sensitivity, 
+            bool constrainPitch
         ) override;
 
     };

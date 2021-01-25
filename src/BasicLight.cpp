@@ -2,14 +2,13 @@
 
 namespace OGL {
 
-    BasicLight::BasicLight
-    ( glm::vec3 color
-    ) 
-    : m_color{ color } {
+    BasicLight::BasicLight(
+        glm::vec3 color
+    ) : m_color{ color } {
+
     }
 
-    BasicLight::~BasicLight
-    (
+    BasicLight::~BasicLight(
     ) {
     }
 

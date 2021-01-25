@@ -2,16 +2,14 @@
 
 namespace OGL {
 
-    GLFWInitRAII::GLFWInitRAII
-    (
+    GLFWInitRAII::GLFWInitRAII(
     ) {
         if (glfwInit() == GL_FALSE) {
             throw Exception("Error initializing GLFW!");
         }
     }
 
-    GLFWInitRAII::~GLFWInitRAII
-    (
+    GLFWInitRAII::~GLFWInitRAII(
     ) {
         glfwTerminate();
     }

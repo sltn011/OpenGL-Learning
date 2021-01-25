@@ -7,21 +7,17 @@
 namespace OGL {
 
     class ElementBufferObject : public Descriptor {
-    public:
-        ElementBufferObject
-        (
+     public:
+        ElementBufferObject(
         );
 
-        ~ElementBufferObject
-        (
+        ~ElementBufferObject(
         );
 
-        void bind
-        (
+        void bind(
         ) const;
 
-        static void unbind
-        (
+        static void unbind(
         );
     };
 

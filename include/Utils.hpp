@@ -10,10 +10,10 @@
 
 namespace OGL {
 
-    unsigned int textureFromFile
-    ( char const *path
-    , std::string const &directory
-    , bool gamma = false
+    unsigned int textureFromFile( 
+        char const *path, 
+        std::string const &directory,
+        bool gamma = false
     );
 
 } // OGL

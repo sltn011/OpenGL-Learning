@@ -2,18 +2,18 @@
 
 namespace OGL {
 
-    FrameBufferObject::FrameBufferObject
-    ( GLenum bufferType
+    FrameBufferObject::FrameBufferObject( 
+        GLenum bufferType
     ) : m_bufferType{ bufferType } {
         glGenFramebuffers(1, &m_descriptor);
     }
 
-    FrameBufferObject::FrameBufferObject
-    ( GLenum bufferType
-    , float const *frameBufferQuadData
-    , size_t frameBufferQuadDataLength
-    , GLuint frameQuadVerticesVertexAttribIndex
-    , GLuint frameQuadTexCoordVertexAttribIndex
+    FrameBufferObject::FrameBufferObject( 
+        GLenum bufferType, 
+        float const *frameBufferQuadData, 
+        size_t frameBufferQuadDataLength, 
+        GLuint frameQuadVerticesVertexAttribIndex,
+        GLuint frameQuadTexCoordVertexAttribIndex
     ) : m_bufferType{ bufferType } {
         glGenFramebuffers(1, &m_descriptor);
         glBindVertexArray(m_frameQuadVAO.value());
@@ -26,56 +26,52 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    FrameBufferObject::~FrameBufferObject
-    (
+    FrameBufferObject::~FrameBufferObject(
     ) {
         glDeleteFramebuffers(1, &m_descriptor);
     }
 
-    void FrameBufferObject::attach
-    ( GLenum colorAttachment
-    , GLenum targetTexture
-    , ColorBufferObject &&obj
+    void FrameBufferObject::attach(
+        GLenum colorAttachment, 
+        GLenum targetTexture, 
+        ColorBufferObject &&obj
     ) {
         glFramebufferTexture2D(m_bufferType, colorAttachment, targetTexture, obj.value(), 0);
         m_colorAttachmentsTable[colorAttachment] = obj.value();
         m_colorBufferObjs.emplace(colorAttachment, std::move(obj));
     }
 
-    void FrameBufferObject::attach
-    ( GLenum attachment
-    , RenderBufferObject &&obj
+    void FrameBufferObject::attach(
+        GLenum attachment, 
+        RenderBufferObject &&obj
     ) {
         glFramebufferRenderbuffer(m_bufferType, attachment, GL_RENDERBUFFER, obj.value());
         m_renderBufferObj = std::move(obj);
     }
 
-    void FrameBufferObject::bind
-    (
+    void FrameBufferObject::bind(
     ) const {
         glBindFramebuffer(m_bufferType, m_descriptor);
     }
 
-    void FrameBufferObject::unbind
-    ( GLenum bufferType
+    void FrameBufferObject::unbind( 
+        GLenum bufferType
     ) {
         glBindFramebuffer(bufferType, 0);
     }
 
-    GLenum FrameBufferObject::checkStatus
-    (
+    GLenum FrameBufferObject::checkStatus(
     ) const {
         return glCheckFramebufferStatus(m_bufferType);
     }
 
-    bool FrameBufferObject::isComplete
-    (
+    bool FrameBufferObject::isComplete(
     ) const {
         return checkStatus() == GL_FRAMEBUFFER_COMPLETE;
     }
 
-    void FrameBufferObject::drawQuad
-    ( GLenum colorAttachment
+    void FrameBufferObject::drawQuad( 
+        GLenum colorAttachment
     ) {
         glBindVertexArray(m_frameQuadVAO.value());
         glBindTexture(GL_TEXTURE_2D, m_colorAttachmentsTable[colorAttachment]);
@@ -84,8 +80,7 @@ namespace OGL {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    GLenum FrameBufferObject::bufferType
-    (
+    GLenum FrameBufferObject::bufferType(
     ) const {
         return m_bufferType;
     }

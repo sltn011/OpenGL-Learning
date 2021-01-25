@@ -2,24 +2,22 @@
 
 namespace OGL {
 
-    ColorBufferObject::ColorBufferObject
-    (
+    ColorBufferObject::ColorBufferObject(
     ) {
         glGenTextures(1, &m_descriptor);
     }
 
-    ColorBufferObject::~ColorBufferObject
-    (
+    ColorBufferObject::~ColorBufferObject(
     ) {
         glDeleteTextures(1, &m_descriptor);
     }
 
-    void ColorBufferObject::allocateStorage
-    ( int width
-    , int height
-    , GLenum textureType
-    , GLint colorComponents
-    , GLenum format
+    void ColorBufferObject::allocateStorage( 
+        int width, 
+        int height, 
+        GLenum textureType,
+        GLint colorComponents,
+        GLenum format
     ) {
         glBindTexture(textureType, m_descriptor);
         glTexImage2D(textureType, 0, colorComponents, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);

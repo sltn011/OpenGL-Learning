@@ -3,43 +3,41 @@
 
 namespace OGL {
 
-    Texture::Texture
-    (
+    Texture::Texture(
     ) {
         glGenTextures(1, &m_descriptor);
     }
 
-    Texture::Texture
-    ( std::string const &folderPath
-    , std::string const &fileName
-    , GLenum textureType
-    , bool gamma
+    Texture::Texture( 
+        std::string const &folderPath,
+        std::string const &fileName, 
+        GLenum textureType, 
+        bool gamma
     ) {
         glGenTextures(1, &m_descriptor);
         load(folderPath, fileName, textureType, gamma);
     }
 
-    Texture::~Texture
-    (
+    Texture::~Texture(
     ) {
         glDeleteTextures(1, &m_descriptor);
     }
 
-    void Texture::allocate
-    ( GLenum textureType
-    , int width
-    , int height
-    , GLenum format
-    , void *data
+    void Texture::allocate( 
+        GLenum textureType, 
+        int width, 
+        int height, 
+        GLenum format, 
+        void *data
     ) {
         glTexImage2D(textureType, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     }
 
-    void Texture::load
-    ( std::string const &folderPath
-    , std::string const &fileName
-    , GLenum textureType
-    , bool gamma
+    void Texture::load( 
+        std::string const &folderPath,
+        std::string const &fileName,
+        GLenum textureType, 
+        bool gamma
     ) {
         std::string filePath = folderPath + '/' + fileName;
         
@@ -72,34 +70,34 @@ namespace OGL {
         stbi_image_free(data);
     }
 
-    void Texture::setActive
-    ( GLenum textureUnit
+    void Texture::setActive( 
+        GLenum textureUnit
     ) {
         glActiveTexture(textureUnit);
     }
 
-    void Texture::bind
-    ( GLenum textureType
+    void Texture::bind( 
+        GLenum textureType
     ) const {
         glBindTexture(textureType, m_descriptor);
     }
 
-    void Texture::unbind
-    ( GLenum textureType
+    void Texture::unbind( 
+        GLenum textureType
     ) {
         glBindTexture(textureType, 0);
     }
 
-    void Texture::setParameter
-    ( GLenum textureType
-    , GLenum paramName
-    , GLint paramValue
+    void Texture::setParameter( 
+        GLenum textureType,
+        GLenum paramName, 
+        GLint paramValue
     ) {
         glTexParameteri(textureType, paramName, paramValue);
     }
 
-    void Texture::generateMipmap
-    ( GLenum textureType
+    void Texture::generateMipmap( 
+        GLenum textureType
     ) {
         glGenerateMipmap(textureType);
     }

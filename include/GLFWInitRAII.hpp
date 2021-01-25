@@ -8,24 +8,22 @@
 namespace OGL {
 
     struct GLFWInitRAII {
-        GLFWInitRAII
-        (
+        GLFWInitRAII(
         );
 
-        ~GLFWInitRAII
-        (
+        ~GLFWInitRAII(
         );
 
-        GLFWInitRAII
-        ( GLFWInitRAII const &rhs
+        GLFWInitRAII( 
+            GLFWInitRAII const &rhs
         ) = delete;
 
-        GLFWInitRAII &operator=
-        ( GLFWInitRAII const &rhs
+        GLFWInitRAII &operator=( 
+            GLFWInitRAII const &rhs
         ) = delete;
 
-        GLFWInitRAII
-        ( GLFWInitRAII &&rhs
+        GLFWInitRAII( 
+            GLFWInitRAII &&rhs
         ) = default;
     };
 

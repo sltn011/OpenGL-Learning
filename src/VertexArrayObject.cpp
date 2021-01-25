@@ -2,26 +2,22 @@
 
 namespace OGL {
 
-    VertexArrayObject::VertexArrayObject
-    (
+    VertexArrayObject::VertexArrayObject(
     ) {
         glGenVertexArrays(1, &m_descriptor);
     }
 
-    VertexArrayObject::~VertexArrayObject
-    (
+    VertexArrayObject::~VertexArrayObject(
     ) {
         glDeleteVertexArrays(1, &m_descriptor);
     }
 
-    void VertexArrayObject::bind
-    (
+    void VertexArrayObject::bind(
     ) const {
         glBindVertexArray(m_descriptor);
     }
 
-    void VertexArrayObject::unbind
-    (
+    void VertexArrayObject::unbind(
     ) {
         glBindVertexArray(0);
     }

@@ -7,37 +7,33 @@
 namespace OGL {
 
     class VertexArrayObject : public Descriptor {
-    public:
-        VertexArrayObject
-        (
+     public:
+        VertexArrayObject(
         );
 
-        ~VertexArrayObject
-        (
+        ~VertexArrayObject(
         );
 
-        VertexArrayObject
-        ( VertexArrayObject const &rhs
+        VertexArrayObject( 
+            VertexArrayObject const &rhs
         ) = delete;
 
-        VertexArrayObject
-        ( VertexArrayObject &&rhs
+        VertexArrayObject( 
+            VertexArrayObject &&rhs
         ) = default;
 
-        VertexArrayObject &operator=
-        ( VertexArrayObject const &rhs
+        VertexArrayObject &operator=( 
+            VertexArrayObject const &rhs
         ) = delete;
 
-        VertexArrayObject &operator=
-        ( VertexArrayObject &&rhs
+        VertexArrayObject &operator=( 
+            VertexArrayObject &&rhs
         ) = default;
 
-        void bind
-        (
+        void bind(
         ) const;
 
-        static void unbind
-        (
+        static void unbind(
         );
     };
 

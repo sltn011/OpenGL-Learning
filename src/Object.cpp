@@ -2,23 +2,21 @@
 
 namespace OGL {
 
-    Object::Object
-    ( Model &model
-    , glm::vec3 position
-    , float scale
-    , float rotationAngleRadians
-    , glm::vec3 rotationAxis
-    )
-    : m_model{model}
-    , m_postiton{position}
-    , m_scale{scale}
-    , m_rotationAngleRadians{rotationAngleRadians}
-    , m_rotationAxis{rotationAxis}
-    {
+    Object::Object( 
+        Model &model, 
+        glm::vec3 position,
+        float scale,
+        float rotationAngleRadians,
+        glm::vec3 rotationAxis
+    ) : m_model{model},
+        m_postiton{position}, 
+        m_scale{scale},
+        m_rotationAngleRadians{rotationAngleRadians}, 
+        m_rotationAxis{rotationAxis} {
     }
 
-    void Object::draw
-    ( Shader &shader
+    void Object::draw( 
+        Shader &shader
     ) const {
         glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
 
@@ -30,9 +28,9 @@ namespace OGL {
         m_model.draw(shader);
     }
 
-    void Object::drawInstanced
-    ( Shader &shader
-    , size_t amount
+    void Object::drawInstanced( 
+        Shader &shader, 
+        size_t amount
     ) const {
         glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
 
@@ -44,8 +42,8 @@ namespace OGL {
         m_model.drawInstanced(shader, amount);
     }
 
-    void Object::setVertexAttribInstancedModelMat4
-    ( int attribLocation
+    void Object::setVertexAttribInstancedModelMat4( 
+        int attribLocation
     ) {
         m_model.setVertexAttribInstancedModelMat4(attribLocation);
     }

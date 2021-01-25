@@ -51,30 +51,29 @@ namespace OGL {
         Colors                    m_colors;
         
 
-        void setup
-        (
+        void setup(
         );
 
-    public:
+     public:
         
-        Mesh
-        ( std::vector<Vertex> vertices
-        , std::vector<unsigned int> indices
-        , std::vector<ModelTexture> textures
-        , Colors color
+        Mesh( 
+            std::vector<Vertex> vertices,
+            std::vector<unsigned int> indices,
+            std::vector<ModelTexture> textures,
+            Colors color
         );
 
-        void draw
-        ( OGL::Shader &shader
+        void draw( 
+            OGL::Shader &shader
         ) const;
 
-        void drawInstanced
-        ( OGL::Shader &shader
-        , size_t amount
+        void drawInstanced( 
+            OGL::Shader &shader,
+            size_t amount
         ) const;
 
-        void setVertexAttribInstancedModelMat4
-        ( int attribLocation
+        void setVertexAttribInstancedModelMat4( 
+            int attribLocation
         );
 
     };

@@ -2,37 +2,35 @@
 
 namespace OGL {
 
-    CameraFree::CameraFree
-    ( glm::vec3 positionVec
-    , glm::vec3 forwardVec
-    , glm::vec3 worldUpVec
-    , float moveSpeed
-    , float yawAngle
-    , float pitchAngle
-    , float fov
-    , float aspect
-    , float near
-    , float far
-    ) 
-    : BasicCamera
-    { positionVec
-    , forwardVec
-    , worldUpVec
-    , moveSpeed
-    , yawAngle
-    , pitchAngle
-    , fov
-    , aspect
-    , near
-    , far
-    }
+    CameraFree::CameraFree( 
+        glm::vec3 positionVec,
+        glm::vec3 forwardVec, 
+        glm::vec3 worldUpVec,
+        float moveSpeed, 
+        float yawAngle, 
+        float pitchAngle,
+        float fov,
+        float aspect,
+        float near,
+        float far
+    ) : BasicCamera { 
+        positionVec,
+        forwardVec, 
+        worldUpVec, 
+        moveSpeed, 
+        yawAngle,
+        pitchAngle,
+        fov, 
+        aspect,
+        near, 
+        far }
     {
         updateVectors();
     }
 
-    void CameraFree::processMoveInput
-    ( CameraMovementDirection dir
-    , float deltaTime
+    void CameraFree::processMoveInput( 
+        CameraMovementDirection dir, 
+        float deltaTime
     ) {
         switch (dir) {
         case CameraMovementDirection::Forward:
@@ -64,11 +62,11 @@ namespace OGL {
         }
     }
 
-    void CameraFree::processRotateInput
-    ( float xOffset
-    , float yOffset
-    , float sensitivity
-    , bool constrainPitch
+    void CameraFree::processRotateInput( 
+        float xOffset, 
+        float yOffset, 
+        float sensitivity, 
+        bool constrainPitch
     ) {
 
         static bool firstTime = true;

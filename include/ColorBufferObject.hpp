@@ -7,37 +7,33 @@
 namespace OGL {
 
     class ColorBufferObject : public Descriptor {
-    public:
-        ColorBufferObject
-        (
-        );
+     public:
+        ColorBufferObject();
 
-        ~ColorBufferObject
-        (
-        );
+        ~ColorBufferObject();
 
-        ColorBufferObject
-        ( ColorBufferObject const &rhs
+        ColorBufferObject(
+            ColorBufferObject const &rhs
         ) = delete;
 
-        ColorBufferObject
-        ( ColorBufferObject &&rhs
+        ColorBufferObject(
+            ColorBufferObject &&rhs
         ) = default;
 
-        ColorBufferObject &operator=
-        ( ColorBufferObject const &rhs
+        ColorBufferObject &operator=(
+            ColorBufferObject const &rhs
         ) = delete;
 
-        ColorBufferObject &operator=
-        ( ColorBufferObject &&rhs
+        ColorBufferObject &operator=( 
+            ColorBufferObject &&rhs
         ) = default;
 
-        void allocateStorage
-        ( int width
-        , int height
-        , GLenum textureType
-        , GLint colorComponents
-        , GLenum format
+        void allocateStorage( 
+            int width, 
+            int height, 
+            GLenum textureType, 
+            GLint colorComponents, 
+            GLenum format
         );
     };
 

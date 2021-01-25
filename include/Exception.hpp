@@ -9,11 +9,17 @@ namespace OGL {
     class Exception : public std::exception {
         std::string m_info;
 
-    public:
-        Exception(std::string const &info);
-        Exception(std::string &&info);
+     public:
+        Exception(
+            std::string const &info
+        );
 
-        const char *what() const noexcept override;
+        Exception(
+            std::string &&info
+        );
+
+        const char *what(
+        ) const noexcept override;
     };
 
 }

@@ -7,37 +7,33 @@
 namespace OGL {
 
     class VertexBufferObject : public Descriptor {
-    public:
-        VertexBufferObject
-        (
+     public:
+        VertexBufferObject(
         );
 
-        ~VertexBufferObject
-        (
+        ~VertexBufferObject(
         );
 
-        VertexBufferObject
-        ( VertexBufferObject const &rhs
+        VertexBufferObject( 
+            VertexBufferObject const &rhs
         ) = delete;
 
-        VertexBufferObject
-        ( VertexBufferObject &&rhs
+        VertexBufferObject( 
+            VertexBufferObject &&rhs
         ) = default;
 
-        VertexBufferObject &operator=
-        ( VertexBufferObject const &rhs
+        VertexBufferObject &operator=( 
+            VertexBufferObject const &rhs
         ) = delete;
 
-        VertexBufferObject &operator=
-        ( VertexBufferObject &&rhs
+        VertexBufferObject &operator=( 
+            VertexBufferObject &&rhs
         ) = default;
 
-        void bind
-        (
+        void bind(
         ) const;
 
-        static void unbind
-        (
+        static void unbind(
         );
     };
 

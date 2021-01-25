@@ -2,28 +2,26 @@
 
 namespace OGL {
 
-    CameraCubemap::CameraCubemap
-    ( glm::vec3 position
-    , float near
-    , float far
-    ) 
-    : BasicCamera
-    { position
-    , glm::vec3{1.0f, 0.0f, 0.0f}
-    , glm::vec3{0.0f, 1.0f, 0.0f}
-    , 0.0f
-    , 0.0f
-    , 0.0f
-    , 90.0f
-    , 1.0f
-    , near
-    , far
-    } {
+    CameraCubemap::CameraCubemap( 
+        glm::vec3 position, 
+        float near, 
+        float far
+    ) : BasicCamera { 
+        position, 
+        glm::vec3{1.0f, 0.0f, 0.0f}, 
+        glm::vec3{0.0f, 1.0f, 0.0f}, 
+        0.0f,
+        0.0f, 
+        0.0f, 
+        90.0f, 
+        1.0f, 
+        near, 
+        far } {
 
     }
 
-    void CameraCubemap::setSide
-    ( int side
+    void CameraCubemap::setSide( 
+        int side
     ) {
         switch (side) {
         case 0: // POS_X
@@ -62,17 +60,17 @@ namespace OGL {
         updateVectors();
     }
 
-    void CameraCubemap::processMoveInput
-    ( CameraMovementDirection dir
-    , float deltaTime
+    void CameraCubemap::processMoveInput(
+        CameraMovementDirection dir, 
+        float deltaTime
     ) {
     }
 
-    void CameraCubemap::processRotateInput
-    ( float xOffset
-    , float yOffset
-    , float sensitivity
-    , bool constrainPitch
+    void CameraCubemap::processRotateInput( 
+        float xOffset, 
+        float yOffset, 
+        float sensitivity, 
+        bool constrainPitch
     ) {
     }
 

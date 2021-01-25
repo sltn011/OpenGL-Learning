@@ -19,48 +19,47 @@ namespace OGL {
         std::string               m_directory;
         std::vector<ModelTexture> m_loadedTextures;
 
-        void loadModel
-        ( std::string const &path
-        , int flags = aiProcess_Triangulate | aiProcess_FlipUVs
+        void loadModel( 
+            std::string const &path, 
+            int flags = aiProcess_Triangulate | aiProcess_FlipUVs
         );
 
-        void processNode
-        ( aiNode *node
-        , aiScene const *scene
+        void processNode( 
+            aiNode *node, 
+            aiScene const *scene
         );
 
-        Mesh processMesh
-        ( aiMesh *mesh
-        , aiScene const *scene
+        Mesh processMesh( 
+            aiMesh *mesh, 
+            aiScene const *scene
         );
 
-        std::vector<ModelTexture> loadMaterialTexture
-        ( aiMaterial *material
-        , aiTextureType texType
-        , TextureType typeName
+        std::vector<ModelTexture> loadMaterialTexture( 
+            aiMaterial *material, 
+            aiTextureType texType, 
+            TextureType typeName
         );
 
-    public:
-        Model
-        (
+     public:
+        Model(
         ) = default;
 
-        Model
-        ( char const *path
-        , int flags = aiProcess_Triangulate | aiProcess_FlipUVs
+        Model( 
+            char const *path, 
+            int flags = aiProcess_Triangulate | aiProcess_FlipUVs
         );
 
-        void draw
-        ( Shader &shader
+        void draw( 
+            Shader &shader
         ) const;
 
-        void drawInstanced
-        ( Shader &shader
-        , size_t amount
+        void drawInstanced( 
+            Shader &shader, 
+            size_t amount
         ) const;
 
-        void setVertexAttribInstancedModelMat4
-        ( int attribLocation
+        void setVertexAttribInstancedModelMat4( 
+            int attribLocation
         );
 
     };

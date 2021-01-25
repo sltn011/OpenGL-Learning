@@ -1,11 +1,10 @@
 #include "Shader.hpp"
-#include <iostream>
 
 namespace OGL {
 
-    Shader::Shader
-    ( std::string vertexSourcePath
-    , std::string fragmentSourcePath
+    Shader::Shader( 
+        std::string vertexSourcePath, 
+        std::string fragmentSourcePath
     ) {
         std::ifstream vertexShaderFile;
         std::ifstream fragmentShaderFile;
@@ -54,10 +53,10 @@ namespace OGL {
         m_showWarnings = false;
     }
 
-    Shader::Shader
-    ( std::string vertexSourcePath
-    , std::string geometrySourcePath
-    , std::string fragmentSourcePath
+    Shader::Shader( 
+        std::string vertexSourcePath, 
+        std::string geometrySourcePath, 
+        std::string fragmentSourcePath
     ) {
         std::ifstream vertexShaderFile;
         std::ifstream geometryShaderFile;
@@ -119,49 +118,46 @@ namespace OGL {
         m_showWarnings = false;
     }
 
-    Shader::Shader
-    ( Shader &&rhs
+    Shader::Shader( 
+        Shader &&rhs
     ) {
         m_programmID = rhs.m_programmID;
         rhs.m_programmID = 0;
         m_showWarnings = rhs.m_showWarnings;
     }
 
-    Shader &Shader::operator=
-    ( Shader &&rhs
+    Shader &Shader::operator=( 
+        Shader &&rhs
     ) {
         std::swap(m_programmID, rhs.m_programmID);
         std::swap(m_showWarnings, rhs.m_showWarnings);
         return *this;
     }
 
-    Shader::~Shader
-    (
+    Shader::~Shader(
     ) {
         glDeleteProgram(m_programmID);
     }
 
-    unsigned int Shader::id
-    (
+    unsigned int Shader::id(
     ) const {
         return m_programmID;
     }
 
-    void Shader::use 
-    (
+    void Shader::use (
     ) {
         glUseProgram(m_programmID);
     }
 
-    void Shader::showWarnings
-    ( bool value
+    void Shader::showWarnings( 
+        bool value
     ) {
         m_showWarnings = value;
     }
 
-    bool Shader::setUniformBool
-    ( std::string const &name
-    , bool val
+    bool Shader::setUniformBool( 
+        std::string const &name, 
+        bool val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -174,9 +170,9 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformInt
-    ( std::string const &name
-    , int val
+    bool Shader::setUniformInt( 
+        std::string const &name,
+        int val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -189,9 +185,9 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformFloat
-    ( std::string const &name
-    , float val
+    bool Shader::setUniformFloat( 
+        std::string const &name, 
+        float val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -204,10 +200,10 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformMatrix4
-    ( std::string const &name
-    , glm::mat4 const &matrix
-    , bool doTranspose
+    bool Shader::setUniformMatrix4( 
+        std::string const &name, 
+        glm::mat4 const &matrix, 
+        bool doTranspose
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -220,9 +216,9 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformVec3
-    ( std::string const &name
-    , glm::vec3 const &vec
+    bool Shader::setUniformVec3( 
+        std::string const &name, 
+        glm::vec3 const &vec
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -235,9 +231,9 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::uniformBlockBinding
-    ( std::string const &blockName
-    , size_t bindingPointIndex
+    bool Shader::uniformBlockBinding( 
+        std::string const &blockName, 
+        size_t bindingPointIndex
     ) {
         unsigned int blockIndex = glGetUniformBlockIndex(m_programmID, blockName.c_str());
         if (blockIndex == GL_INVALID_INDEX) {
@@ -250,9 +246,9 @@ namespace OGL {
         return true;
     }
 
-    unsigned int Shader::compileGLShader
-    ( char const *sourceCode
-    , int shaderType
+    unsigned int Shader::compileGLShader( 
+        char const *sourceCode, 
+        int shaderType
     ) {
         unsigned int shaderId = glCreateShader(shaderType);
         glShaderSource(shaderId, 1, &sourceCode, nullptr);
@@ -260,40 +256,40 @@ namespace OGL {
         return shaderId;
     }
 
-    bool Shader::shaderCorrectlyCompiled
-    ( unsigned int shaderId
+    bool Shader::shaderCorrectlyCompiled( 
+        unsigned int shaderId
     ) {
         int correctness;
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &correctness);
         return correctness == GL_TRUE;
     }
 
-    void Shader::reportShaderCompileError
-    ( unsigned int shaderId
+    void Shader::reportShaderCompileError( 
+        unsigned int shaderId
     ) {
         std::string infoLog(512, ' ');
         glGetShaderInfoLog(shaderId, infoLog.size(), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 
-    bool Shader::programmCorrectlyLinked
-    ( unsigned int programmId
+    bool Shader::programmCorrectlyLinked( 
+        unsigned int programmId
     ) {
         int correctness;
         glGetProgramiv(programmId, GL_LINK_STATUS, &correctness);
         return correctness == GL_TRUE;
     }
 
-    void Shader::reportProgrammLinkError
-    ( unsigned int programmId
+    void Shader::reportProgrammLinkError( 
+        unsigned int programmId
     ) {
         std::string infoLog(512, ' ');
         glGetProgramInfoLog(programmId, infoLog.size(), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 
-    void Shader::warnInvalidUniformLocation
-    ( std::string const &name
+    void Shader::warnInvalidUniformLocation( 
+        std::string const &name
     ) {
         std::cerr << "No uniform object with name \"" << name << "\" in shader " << m_programmID << std::endl;
     }
