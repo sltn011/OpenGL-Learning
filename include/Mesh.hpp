@@ -73,8 +73,8 @@ namespace OGL {
         , size_t amount
         ) const;
 
-        unsigned int vaoValue
-        (
+        void setVertexAttribInstancedModelMat4
+        ( int attribLocation
         );
 
     };

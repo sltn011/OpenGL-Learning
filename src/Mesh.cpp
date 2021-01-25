@@ -1,5 +1,3 @@
-#include "..\include\Mesh.hpp"
-#include "..\include\Mesh.hpp"
 #include "Mesh.hpp"
 
 namespace OGL {
@@ -148,10 +146,16 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    unsigned int Mesh::vaoValue
-    (
+    void Mesh::setVertexAttribInstancedModelMat4
+    ( int attribLocation
     ) {
-        return m_VAO;
+        glBindVertexArray(m_VAO);
+        for (int i = 0; i < 4; ++i) {
+            glEnableVertexAttribArray(attribLocation + i);
+            glVertexAttribPointer(attribLocation + i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(i * sizeof(glm::vec4)));
+            glVertexAttribDivisor(attribLocation + i, 1);
+        }
+        glBindVertexArray(0);
     }
 
 } // OGL

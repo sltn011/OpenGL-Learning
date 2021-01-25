@@ -59,9 +59,10 @@ namespace OGL {
         , size_t amount
         ) const;
 
-        unsigned int meshVAO
-        ( size_t index
+        void setVertexAttribInstancedModelMat4
+        ( int attribLocation
         );
+
     };
 
 } // OGL

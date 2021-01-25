@@ -1,5 +1,3 @@
-#include "..\include\Model.hpp"
-#include "..\include\Model.hpp"
 #include "Model.hpp"
 
 namespace OGL {
@@ -159,10 +157,12 @@ namespace OGL {
         }
     }
 
-    unsigned int Model::meshVAO
-    ( size_t index
+    void Model::setVertexAttribInstancedModelMat4
+    ( int attribLocation
     ) {
-        return m_meshes[index].vaoValue();
+        for (size_t i = 0; i < m_meshes.size(); ++i) {
+            m_meshes[i].setVertexAttribInstancedModelMat4(attribLocation);
+        }
     }
 
 } // OGL

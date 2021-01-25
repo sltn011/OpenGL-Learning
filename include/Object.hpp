@@ -24,6 +24,10 @@ namespace OGL {
         , size_t amount
         ) const;
 
+        void setVertexAttribInstancedModelMat4
+        ( int attribLocation
+        );
+
     protected:
         Model &m_model;
 

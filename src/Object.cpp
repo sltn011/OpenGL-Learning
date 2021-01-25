@@ -1,4 +1,3 @@
-#include "..\include\Object.hpp"
 #include "Object.hpp"
 
 namespace OGL {
@@ -43,6 +42,12 @@ namespace OGL {
         model = glm::scale(model, scaleVec);
         shader.setUniformMatrix4("model", model);
         m_model.drawInstanced(shader, amount);
+    }
+
+    void Object::setVertexAttribInstancedModelMat4
+    ( int attribLocation
+    ) {
+        m_model.setVertexAttribInstancedModelMat4(attribLocation);
     }
 
 }// OGL
