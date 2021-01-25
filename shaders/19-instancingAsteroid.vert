@@ -11,5 +11,5 @@ out vec2 vertexTex;
 
 void main() {
 	vertexTex = aTex;
-	gl_Position = projection * view * instanceMatrix * vec4(aPos, 1.0);
+	gl_Position = projection * view * instanceMatrix * model * vec4(aPos, 1.0);
 }
