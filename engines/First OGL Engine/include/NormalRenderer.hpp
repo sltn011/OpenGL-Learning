@@ -9,37 +9,37 @@
 namespace OGL::E1 {
 
     class NormalRenderer {
-    public:
-        NormalRenderer
-        ( Shader &&shader
+     public:
+        NormalRenderer( 
+            Shader &&shader
         );
 
-        NormalRenderer
-        ( NormalRenderer const &rhs
+        NormalRenderer( 
+            NormalRenderer const &rhs
         ) = delete;
 
-        NormalRenderer
-        ( NormalRenderer &&rhs
+        NormalRenderer( 
+            NormalRenderer &&rhs
         ) = default;
 
-        NormalRenderer &operator=
-        ( NormalRenderer const &rhs
+        NormalRenderer &operator=( 
+            NormalRenderer const &rhs
         ) = delete;
 
-        NormalRenderer &operator=
-        ( NormalRenderer &&rhs
+        NormalRenderer &operator=(
+            NormalRenderer &&rhs
         ) = default;
 
-        void render
-        ( Scene &scene
-        , smartCamPtr const &camera
+        void render( 
+            Scene &scene, 
+            smartCamPtr const &camera
         );
 
-        void setShader
-        ( Shader &&shader
+        void setShader( 
+            Shader &&shader
         );
 
-    protected:
+     protected:
         Shader m_shader;
     };
 

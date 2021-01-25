@@ -16,45 +16,44 @@
 namespace OGL::E1 {
 
     class CubemapRenderer {
-    public:
-        CubemapRenderer
-        (
+     public:
+        CubemapRenderer(
         );
 
-        CubemapRenderer
-        ( CubemapRenderer const &rhs
+        CubemapRenderer( 
+            CubemapRenderer const &rhs
         ) = delete;
 
-        CubemapRenderer
-        ( CubemapRenderer &&rhs
+        CubemapRenderer( 
+            CubemapRenderer &&rhs
         ) = default;
 
-        CubemapRenderer &operator=
-        ( CubemapRenderer const &rhs
+        CubemapRenderer &operator=( 
+            CubemapRenderer const &rhs
         ) = delete;
 
-        CubemapRenderer &operator=
-        ( CubemapRenderer &&rhs
+        CubemapRenderer &operator=( 
+            CubemapRenderer &&rhs
         ) = default;
 
-        Cubemap render
-        ( Scene &scene
-        , int cubemapSize
-        , GLenum cubemapTextureUnit
-        , glm::vec3 mirrorPos
-        , NormalRenderer *normalRenderer
-        , SkyboxRenderer *skyboxRenderer
-        , TransparentRenderer *transparentRenderer
+        Cubemap render( 
+            Scene &scene, 
+            int cubemapSize,
+            GLenum cubemapTextureUnit,
+            glm::vec3 mirrorPos,
+            NormalRenderer *normalRenderer,
+            SkyboxRenderer *skyboxRenderer, 
+            TransparentRenderer *transparentRenderer
         );
 
-    protected:
-        void renderSide
-        ( Scene &scene
-        , smartCamPtr const &cubemapCamera
-        , Cubemap &cubemap
-        , NormalRenderer *normalRenderer
-        , SkyboxRenderer *skyboxRenderer
-        , TransparentRenderer *transparentRenderer
+     protected:
+        void renderSide(
+            Scene &scene,
+            smartCamPtr const &cubemapCamera,
+            Cubemap &cubemap, 
+            NormalRenderer *normalRenderer,
+            SkyboxRenderer *skyboxRenderer,
+            TransparentRenderer *transparentRenderer
         );
     };
 

@@ -2,20 +2,19 @@
 
 namespace OGL::E1 {
 
-    CubemapRenderer::CubemapRenderer
-    (
+    CubemapRenderer::CubemapRenderer(
     ) {
 
     }
 
-    Cubemap CubemapRenderer::render
-    ( Scene &scene
-    , int cubemapSize
-    , GLenum cubemapTextureUnit
-    , glm::vec3 mirrorPos
-    , NormalRenderer *normalRenderer
-    , SkyboxRenderer *skyboxRenderer
-    , TransparentRenderer *transparentRenderer
+    Cubemap CubemapRenderer::render( 
+        Scene &scene, 
+        int cubemapSize, 
+        GLenum cubemapTextureUnit,
+        glm::vec3 mirrorPos, 
+        NormalRenderer *normalRenderer,
+        SkyboxRenderer *skyboxRenderer,
+        TransparentRenderer *transparentRenderer
     ) {
         smartCamPtr cameraCubemap = std::make_unique<CameraCubemap>(mirrorPos, 0.1f, 100.0f);
         Cubemap cubemap(cubemapSize, cubemapTextureUnit);
@@ -44,13 +43,13 @@ namespace OGL::E1 {
         return cubemap;
     }
 
-    void CubemapRenderer::renderSide
-    ( Scene &scene
-    , smartCamPtr const &cameraCubemap
-    , Cubemap &cubemap
-    , NormalRenderer *normalRenderer
-    , SkyboxRenderer *skyboxRenderer
-    , TransparentRenderer *transparentRenderer
+    void CubemapRenderer::renderSide(
+        Scene &scene, 
+        smartCamPtr const &cameraCubemap,
+        Cubemap &cubemap, 
+        NormalRenderer *normalRenderer,
+        SkyboxRenderer *skyboxRenderer, 
+        TransparentRenderer *transparentRenderer
     ) {
         if (skyboxRenderer) {
             skyboxRenderer->render(scene, cameraCubemap);

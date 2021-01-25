@@ -2,15 +2,15 @@
 
 namespace OGL::E1 {
 
-    SkyboxRenderer::SkyboxRenderer
-    ( Shader &&shader
+    SkyboxRenderer::SkyboxRenderer( 
+        Shader &&shader
     ) : m_shader{ std::move(shader) } {
 
     }
 
-    void SkyboxRenderer::render
-    ( Scene &scene
-    , smartCamPtr const &camera
+    void SkyboxRenderer::render(
+        Scene &scene,
+        smartCamPtr const &camera
     ) {
         smartSkybox &skyboxPtr = scene.getSkybox();
         if (!skyboxPtr) {
@@ -33,8 +33,8 @@ namespace OGL::E1 {
         Skybox::unbind();
     }
 
-    void SkyboxRenderer::setShader
-    ( Shader &&shader
+    void SkyboxRenderer::setShader(
+        Shader &&shader
     ) {
         m_shader = std::move(shader);
     }

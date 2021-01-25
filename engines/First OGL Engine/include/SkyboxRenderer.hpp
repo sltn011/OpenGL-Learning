@@ -9,37 +9,37 @@
 namespace OGL::E1 {
 
     class SkyboxRenderer {
-    public:
-        SkyboxRenderer
-        (Shader &&shader
+     public:
+        SkyboxRenderer(
+            Shader &&shader
         );
 
-        SkyboxRenderer
-        ( SkyboxRenderer const &rhs
+        SkyboxRenderer( 
+            SkyboxRenderer const &rhs
         ) = delete;
 
-        SkyboxRenderer
-        ( SkyboxRenderer &&rhs
+        SkyboxRenderer(
+            SkyboxRenderer &&rhs
         ) = default;
 
-        SkyboxRenderer &operator=
-        ( SkyboxRenderer const &rhs
+        SkyboxRenderer &operator=( 
+            SkyboxRenderer const &rhs
         ) = delete;
 
-        SkyboxRenderer &operator=
-        ( SkyboxRenderer &&rhs
+        SkyboxRenderer &operator=( 
+            SkyboxRenderer &&rhs
         ) = default;
 
-        void render
-        ( Scene &scene
-        , smartCamPtr const &camera
+        void render( 
+            Scene &scene, 
+            smartCamPtr const &camera
         );
 
-        void setShader
-        ( Shader &&shader
+        void setShader(
+            Shader &&shader
         );
 
-    protected:
+     protected:
         Shader m_shader;
     };
 

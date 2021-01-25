@@ -2,15 +2,15 @@
 
 namespace OGL::E1 {
 
-    TransparentRenderer::TransparentRenderer
-    ( Shader &&shader
+    TransparentRenderer::TransparentRenderer( 
+        Shader &&shader
     ) : m_shader{ std::move(shader) } {
 
     }
 
-    void TransparentRenderer::render
-    ( Scene &scene
-    , smartCamPtr const &camera
+    void TransparentRenderer::render( 
+        Scene &scene, 
+        smartCamPtr const &camera
     ) {
         m_shader.use();
         m_shader.setUniformMatrix4("view", camera->getViewMatrix());
@@ -47,8 +47,8 @@ namespace OGL::E1 {
         }
     }
 
-    void TransparentRenderer::setShader
-    ( Shader &&shader
+    void TransparentRenderer::setShader( 
+        Shader &&shader
     ) {
         m_shader = std::move(shader);
     }

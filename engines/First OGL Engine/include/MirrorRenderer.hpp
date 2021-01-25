@@ -9,37 +9,37 @@
 namespace OGL::E1 {
 
     class MirrorRenderer {
-    public:
-        MirrorRenderer
-        ( Shader &&shader
+     public:
+        MirrorRenderer( 
+            Shader &&shader
         );
 
-        MirrorRenderer
-        ( MirrorRenderer const &rhs
+        MirrorRenderer(
+            MirrorRenderer const &rhs
         ) = delete;
 
-        MirrorRenderer
-        ( MirrorRenderer &&rhs
+        MirrorRenderer( 
+            MirrorRenderer &&rhs
         ) = default;
 
-        MirrorRenderer &operator=
-        ( MirrorRenderer const &rhs
+        MirrorRenderer &operator=(
+            MirrorRenderer const &rhs
         ) = delete;
 
-        MirrorRenderer &operator=
-        ( MirrorRenderer &&rhs
+        MirrorRenderer &operator=(
+            MirrorRenderer &&rhs
         ) = default;
 
-        void render
-        ( Scene &scene
-        , smartCamPtr const &camera
+        void render( 
+            Scene &scene,
+            smartCamPtr const &camera
         );
 
-        void setShader
-        ( Shader &&shader
+        void setShader( 
+            Shader &&shader
         );
 
-    protected:
+     protected:
         Shader m_shader;
     };
 

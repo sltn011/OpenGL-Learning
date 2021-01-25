@@ -2,15 +2,15 @@
 
 namespace OGL::E1 {
 
-    MirrorRenderer::MirrorRenderer
-    ( Shader &&shader
+    MirrorRenderer::MirrorRenderer( 
+        Shader &&shader
     ) : m_shader{ std::move(shader) } {
 
     }
 
-    void MirrorRenderer::render
-    ( Scene &scene
-    , smartCamPtr const &camera
+    void MirrorRenderer::render(
+        Scene &scene, 
+        smartCamPtr const &camera
     ) {
         m_shader.use();
         m_shader.setUniformMatrix4("view", camera->getViewMatrix());
@@ -46,8 +46,8 @@ namespace OGL::E1 {
         }
     }
 
-    void MirrorRenderer::setShader
-    ( Shader &&shader
+    void MirrorRenderer::setShader( 
+        Shader &&shader
     ) {
         m_shader = std::move(shader);
     }

@@ -2,15 +2,15 @@
 
 namespace OGL::E1 {
 
-    NormalRenderer::NormalRenderer
-    ( Shader &&shader
+    NormalRenderer::NormalRenderer( 
+        Shader &&shader
     ) : m_shader{ std::move(shader) } {
 
     }
 
-    void NormalRenderer::render
-    ( Scene &scene
-    , smartCamPtr const &camera
+    void NormalRenderer::render( 
+        Scene &scene, 
+        smartCamPtr const &camera
     ) {
         m_shader.use();
         m_shader.setUniformMatrix4("view", camera->getViewMatrix());
@@ -40,8 +40,8 @@ namespace OGL::E1 {
         }
     }
 
-    void NormalRenderer::setShader
-    ( Shader &&shader
+    void NormalRenderer::setShader( 
+        Shader &&shader
     ) {
         m_shader = std::move(shader);
     }

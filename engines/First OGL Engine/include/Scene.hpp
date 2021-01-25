@@ -14,88 +14,80 @@
 namespace OGL::E1 {
 
     class Scene {
-    public:
-        Scene
-        ( smartCamPtr &&camera
+     public:
+        Scene( 
+            smartCamPtr &&camera
         );
 
-        Scene
-        ( Scene const &rhs
+        Scene( 
+            Scene const &rhs
         ) = delete;
 
-        Scene
-        ( Scene &&rhs
+        Scene( 
+            Scene &&rhs
         ) = default;
 
-        Scene &operator=
-        ( Scene const &rhs
+        Scene &operator=(
+            Scene const &rhs
         ) = delete;
 
-        Scene &operator=
-        ( Scene &&rhs
+        Scene &operator=(
+            Scene &&rhs
         ) = default;
 
-        void addNormalObj
-        ( smartObjPtr &&obj
+        void addNormalObj( 
+            smartObjPtr &&obj
         );
 
-        void addTransparentObj
-        ( smartObjPtr &&obj
+        void addTransparentObj(
+            smartObjPtr &&obj
         );
 
-        void addMirrorObj
-        ( smartObjPtr &&obj
+        void addMirrorObj(
+            smartObjPtr &&obj
         );
 
-        void addDirLight
-        ( DirectionalLight dirLight
+        void addDirLight( 
+            DirectionalLight dirLight
         );
 
-        void addPointLight
-        ( PointLight pointLight
+        void addPointLight( 
+            PointLight pointLight
         );
 
-        void addSpotLight
-        ( SpotLight spotLight
+        void addSpotLight( 
+            SpotLight spotLight
         );
         
-        objectsVec &getNormalObjs
-        (
+        objectsVec &getNormalObjs(
         );
 
-        objectsVec &getTransparentObjs
-        (
+        objectsVec &getTransparentObjs(
         );
 
-        mirrorObjsVec &getMirrorObjs
-        (
+        mirrorObjsVec &getMirrorObjs(
         );
 
-        dirLights &getDirLights
-        (
+        dirLights &getDirLights(
         );
 
-        pointLights &getPointLights
-        (
+        pointLights &getPointLights(
         );
 
-        spotLights &getSpotLights
-        (
+        spotLights &getSpotLights(
         );
 
-        void replaceSkybox
-        ( smartSkybox &&skybox
+        void replaceSkybox( 
+            smartSkybox &&skybox
         );
 
-        smartSkybox &getSkybox
-        (
+        smartSkybox &getSkybox(
         );
 
-        smartCamPtr &getCamera
-        (
+        smartCamPtr &getCamera(
         );
 
-    private:
+     private:
         smartCamPtr m_camera;
 
         objectsVec m_normalObjects;
