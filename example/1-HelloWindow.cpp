@@ -7,31 +7,30 @@ enum Screen {
     height = 800
 };
 
-void framebufferSizeCallback
-( GLFWwindow *window
-, int width
-, int height
+void framebufferSizeCallback( 
+    GLFWwindow *window,
+    int width, 
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processInput
-( GLFWwindow *window
+void processInput(
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
 
-void render
-( GLFWwindow *window
+void render(
+    GLFWwindow *window
 ) {
     glClearColor(0.3f, 0.15f, 0.6f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-int main
-(
+int main(
 ) {
     // Initialize GLFW
     if(!glfwInit()) {

@@ -19,31 +19,29 @@ enum Screen {
     height = 800
 };
 
-void framebufferSizeCallback
-( GLFWwindow *window
-, int width
-, int height
+void framebufferSizeCallback(
+    GLFWwindow *window, 
+    int width,
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processInput
-( GLFWwindow *window
+void processInput(
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-int main
-(
+int main(
 ) {
     // Initialize GLFW
     OGL::GLFWInitRAII glfwInitializer;

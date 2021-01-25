@@ -4,7 +4,9 @@
 namespace OGL::E1 {
 
     template<typename T, typename... Args>
-    std::unique_ptr<T> factory(Args&&... args) {
+    std::unique_ptr<T> factory(
+        Args&&... args
+    ) {
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
 

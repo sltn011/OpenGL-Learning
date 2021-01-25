@@ -3,12 +3,12 @@
 
 namespace OGL::E1 {
 
-    void keyboardInputCallback
-    (GLFWwindow *window
-    , int key
-    , int scancode
-    , int action
-    , int mods
+    void keyboardInputCallback(
+        GLFWwindow *window, 
+        int key, 
+        int scancode,
+        int action,
+        int mods
     ) {
         if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
             static int toCull[] = { GL_BACK, GL_FRONT, GL_FRONT_AND_BACK };

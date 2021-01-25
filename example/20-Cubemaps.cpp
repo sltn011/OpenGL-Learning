@@ -1,4 +1,8 @@
 #include "OGL_E1_for_learning_examples/20-Cubemaps/OGL_E1.hpp"
+#include "SpotLight.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+#include "FrameBufferObject.hpp"
 #include <map>
 
 int playgroundRenderMode = 0;
@@ -7,7 +11,9 @@ int windowRenderMode = 0;
 
 const int skyboxTextureID = 15;
 
-unsigned int loadSkyboxTexture(std::vector<std::string> const &paths) {
+unsigned int loadSkyboxTexture(
+    std::vector<std::string> const &paths
+) {
     unsigned int textureId;
     glGenTextures(1, &textureId);
     glActiveTexture(GL_TEXTURE0 + skyboxTextureID);
@@ -42,15 +48,21 @@ unsigned int loadSkyboxTexture(std::vector<std::string> const &paths) {
 
 class Test : public OGL::E1::Engine1Base {
 public:
-    Test(int width, int height) : Engine1Base{ width, height } {}
+    Test(
+        int width,
+        int height
+    ) : Engine1Base{
+        width,
+        height 
+    } {
+    }
 
     unsigned int m_skyboxVAO;
     unsigned int m_skyboxVBO;
     unsigned int m_skyboxEBO;
     unsigned int m_skyboxTexture;
 
-    bool userCreate
-    (
+    bool userCreate(
     ) override {
         m_shaders.emplace_back("shaders/16-cubemapsObjs.vert", "shaders/16-cubemapsObjs.frag");
         m_shaders.emplace_back("shaders/16-cubemapsSkybox.vert", "shaders/16-cubemapsSkybox.frag");
@@ -172,8 +184,8 @@ public:
         return true;
     }
 
-    bool userFrameUpdate
-    ( float elapsedTime
+    bool userFrameUpdate( 
+        float elapsedTime
     ) override {
         processInput(0.5f);
 
@@ -245,8 +257,7 @@ public:
         return true;
     }
 
-    bool userDestroy
-    (
+    bool userDestroy(
     ) override {
         glDeleteTextures(1, &m_skyboxTexture);
         return true;
@@ -258,7 +269,8 @@ public:
 // 2 - Switch crate render mode
 // 3 - Switch window render mode
 
-int main() {
+int main(
+) {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);

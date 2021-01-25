@@ -16,18 +16,18 @@ enum Screen {
     height = 800
 };
 
-void framebufferSizeCallback
-( GLFWwindow *window
-, int width
-, int height
+void framebufferSizeCallback(
+    GLFWwindow *window,
+    int width, 
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processInput
-( GLFWwindow *window
-, float *recVertices
-, OGL::Shader &shaderProgramm
+void processInput( 
+    GLFWwindow *window, 
+    float *recVertices,
+    OGL::Shader &shaderProgramm
 ) {
     static float mixing = 0.5f;
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
@@ -73,12 +73,12 @@ void processInput
     }
 }
 
-void switchTexFilter
-( GLFWwindow *window
-, int key
-, int scancode
-, int action
-, int mode
+void switchTexFilter( 
+    GLFWwindow *window, 
+    int key, 
+    int scancode,
+    int action,
+    int mode
 ) {
     static int texModeFilterMin[] = {GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_LINEAR};
     static int TMFMinI = 0;
@@ -100,15 +100,13 @@ void switchTexFilter
     }
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-int main
-(
+int main(
 ) {
     // Initialize GLFW
     OGL::GLFWInitRAII glfwInitializer;

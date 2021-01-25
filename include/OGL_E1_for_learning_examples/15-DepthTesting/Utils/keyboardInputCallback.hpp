@@ -5,12 +5,12 @@ extern int shaderNum;
 
 namespace OGL::E1 {
 
-    void keyboardInputCallback
-    ( GLFWwindow *window
-    , int key
-    , int scancode
-    , int action
-    , int mods
+    void keyboardInputCallback( 
+        GLFWwindow *window,
+        int key, 
+        int scancode,
+        int action, 
+        int mods
     ) {
         static int depthTestCurrent = 0;
         static int depthTestFunctions[] = { GL_LESS, GL_ALWAYS, GL_NEVER, GL_EQUAL, GL_LEQUAL, GL_GREATER, GL_NOTEQUAL, GL_GEQUAL };

@@ -44,16 +44,16 @@ OGL::CameraFree freeCam{
     45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 1.0f, 100.0f
 };
 
-void framebufferSizeCallback
-( GLFWwindow *window
-, int width
-, int height
+void framebufferSizeCallback( 
+    GLFWwindow *window, 
+    int width, 
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processKeyInput
-( GLFWwindow *window
+void processKeyInput(
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -88,26 +88,24 @@ void processKeyInput
     freeCam.processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
 }
 
-void keyboardInputCallback
-( GLFWwindow *window
-, int key
-, int scancode
-, int action
-, int mods
+void keyboardInputCallback(
+    GLFWwindow *window,
+    int key, 
+    int scancode,
+    int action, 
+    int mods
 ) {
     if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
         showcaseMode = (showcaseMode + 1) % numShowcaseModes;
     }
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-int main
-(
+int main(
 ) {
     OGL::GLFWInitRAII glfwInitializer;
 

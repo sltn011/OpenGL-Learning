@@ -54,16 +54,16 @@ OGL::CameraFree freeCam{
     45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
 
-void windowResizeCallback
-( GLFWwindow *window
-, int newWidth
-, int newHeight
+void windowResizeCallback(
+    GLFWwindow *window,
+    int newWidth,
+    int newHeight
 ) {
     glViewport(0, 0, newWidth, newHeight);
 }
 
-void processInput
-( GLFWwindow *window
+void processInput(
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -90,12 +90,12 @@ void processInput
 
 }
 
-void keyCallback
-( GLFWwindow *window
-, int key
-, int scancode
-, int action
-, int mods
+void keyCallback(
+    GLFWwindow *window,
+    int key,
+    int scancode,
+    int action,
+    int mods
 ) {
     if (key == GLFW_KEY_E && action == GLFW_PRESS) {
         Object::doExplode ^= true;
@@ -108,10 +108,10 @@ void keyCallback
     }
 }
 
-void mouseCallback
-( GLFWwindow *window
-, double xpos
-, double ypos
+void mouseCallback( 
+    GLFWwindow *window,
+    double xpos, 
+    double ypos
 ) {
     float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
     float yOffset = System::lastMouseYPos - static_cast<float>(ypos);
@@ -121,13 +121,13 @@ void mouseCallback
     freeCam.processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-int main() {
+int main(
+) {
     OGL::GLFWInitRAII glfwInitializer;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

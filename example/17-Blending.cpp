@@ -3,10 +3,16 @@
 
 class Test : public OGL::E1::Engine1Base {
 public:
-    Test(int width, int height) : Engine1Base{ width, height } {}
+    Test(
+        int width,
+        int height
+    ) : Engine1Base{
+        width,
+        height 
+    } {
+    }
 
-    bool userCreate
-    (
+    bool userCreate(
     ) override {
         m_shaders.emplace_back("shaders/14-blending.vert", "shaders/14-blending.frag");
 
@@ -63,8 +69,8 @@ public:
         return true;
     }
 
-    bool userFrameUpdate
-    (float elapsedTime
+    bool userFrameUpdate(
+        float elapsedTime
     ) override {
         processInput(0.5f);
 
@@ -115,7 +121,8 @@ public:
     }
 };
 
-int main() {
+int main(
+) {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);

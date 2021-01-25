@@ -1,4 +1,7 @@
 #include "OGL_E1_for_learning_examples/19-Framebuffers/OGL_E1.hpp"
+#include "SpotLight.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 #include "FrameBufferObject.hpp"
 #include <map>
 
@@ -6,14 +9,20 @@ int postprocessMode = 0;
 
 class Test : public OGL::E1::Engine1Base {
 public:
-    Test(int width, int height) : Engine1Base{ width, height } {}
+    Test(
+        int width,
+        int height
+    ) : Engine1Base{
+        width, 
+        height
+    } {
+    }
 
     OGL::E1::smartFBO m_fbo;
     OGL::E1::smartCBO m_cbo;
     OGL::E1::smartRBO m_rbo;
 
-    bool userCreate
-    (
+    bool userCreate(
     ) override {
         m_shaders.emplace_back("shaders/15-Framebuffer_ToFBO.vert", "shaders/15-Framebuffer_ToFBO.frag");
         m_shaders.emplace_back("shaders/15-Framebuffer_ToScreen.vert", "shaders/15-Framebuffer_ToScreen.frag");
@@ -89,8 +98,8 @@ public:
         return true;
     }
 
-    bool userFrameUpdate
-    (float elapsedTime
+    bool userFrameUpdate(
+        float elapsedTime
     ) override {
         processInput(0.5f);
 
@@ -163,7 +172,8 @@ public:
 
 // Press 1 to switch postprocessing effect
 
-int main() {
+int main(
+) {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);

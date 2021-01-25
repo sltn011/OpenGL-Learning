@@ -9,12 +9,12 @@ const int numModes = 4;
 
 namespace OGL::E1 {
 
-    void keyboardInputCallback
-    (GLFWwindow *window
-    , int key
-    , int scancode
-    , int action
-    , int mods
+    void keyboardInputCallback(
+        GLFWwindow *window,
+        int key, 
+        int scancode,
+        int action, 
+        int mods
     ) {
         if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
             playgroundRenderMode = (playgroundRenderMode + 1) % numModes;

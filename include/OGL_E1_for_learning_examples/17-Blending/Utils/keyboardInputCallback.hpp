@@ -3,12 +3,12 @@
 
 namespace OGL::E1 {
 
-    void keyboardInputCallback
-    (GLFWwindow *window
-    , int key
-    , int scancode
-    , int action
-    , int mods
+    void keyboardInputCallback(
+        GLFWwindow *window, 
+        int key, 
+        int scancode,
+        int action,
+        int mods
     ) {
         static int funcs[] = { GL_FUNC_ADD, GL_FUNC_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT, GL_MIN, GL_MAX };
         static int funcIndex = 0;

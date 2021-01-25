@@ -5,10 +5,10 @@
 
 namespace OGL::E1 {
 
-    void mouseInputCallback
-    ( GLFWwindow *window
-    , double xpos
-    , double ypos
+    void mouseInputCallback(
+        GLFWwindow *window,
+        double xpos, 
+        double ypos
     ) {
         float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
         float yOffset = System::lastMouseYPos - static_cast<float>(ypos);

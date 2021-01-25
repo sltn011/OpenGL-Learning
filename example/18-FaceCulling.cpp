@@ -3,10 +3,16 @@
 
 class Test : public OGL::E1::Engine1Base {
 public:
-    Test(int width, int height) : Engine1Base{ width, height } {}
+    Test(
+        int width,
+        int height
+    ) : Engine1Base{
+        width, 
+        height 
+    } {
+    }
 
-    bool userCreate
-    (
+    bool userCreate(
     ) override {
         m_shaders.emplace_back("shaders/14-blending.vert", "shaders/14-blending.frag");
 
@@ -61,8 +67,8 @@ public:
         return true;
     }
 
-    bool userFrameUpdate
-    (float elapsedTime
+    bool userFrameUpdate(
+        float elapsedTime
     ) override {
         processInput(0.5f);
 
@@ -116,7 +122,8 @@ public:
 // Key 1 - switch glCullFace GL_BACK/GL_FRONT/GL_FRONTAND_BACK
 // Key 2 - switch glFrontFace GL_CCW/GL_CW
 
-int main() {
+int main(
+) {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);

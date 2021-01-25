@@ -13,12 +13,18 @@ const int cubemapSize = 256;
 
 class Test : public OGL::E1::Engine1Base {
 public:
-    Test(int width, int height) : Engine1Base{ width, height } {}
+    Test(
+        int width, 
+        int height
+    ) : Engine1Base{ 
+        width, 
+        height 
+    } {
+    }
 
     OGL::E1::smartSkybox m_skybox;
 
-    bool userCreate
-    (
+    bool userCreate(
     ) override {
 
         int screenWidth, screenHeight;
@@ -112,8 +118,8 @@ public:
         return true;
     }
 
-    bool userFrameUpdate
-    ( float elapsedTime
+    bool userFrameUpdate( 
+        float elapsedTime
     ) override {
         processInput(0.5f);
 
@@ -128,14 +134,14 @@ public:
         return true;
     }
 
-    bool userDestroy
-    (
+    bool userDestroy(
     ) override {
         return true;
     }
 };
 
-int main() {
+int main(
+) {
     stbi_set_flip_vertically_on_load(true);
 
     Test t(1920, 1080);

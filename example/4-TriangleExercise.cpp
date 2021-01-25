@@ -36,25 +36,25 @@ namespace Shaders {
     ;
 }
 
-void framebufferSizeCallback
-( GLFWwindow *window
-, int width
-, int height
+void framebufferSizeCallback( 
+    GLFWwindow *window,
+    int width,
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processInput
-( GLFWwindow *window
+void processInput( 
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
 
-unsigned int compileGLShader
-( char const *sourceCode
-, int shaderType
+unsigned int compileGLShader(
+    char const *sourceCode, 
+    int shaderType
 ) {
     unsigned int shaderId = glCreateShader(shaderType);
     glShaderSource(shaderId, 1, &sourceCode, nullptr);
@@ -62,47 +62,45 @@ unsigned int compileGLShader
     return shaderId;
 }
 
-bool shaderCorrectlyCompiled
-( unsigned int shaderId
+bool shaderCorrectlyCompiled( 
+    unsigned int shaderId
 ) {
     int correctness;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &correctness);
     return correctness;
 }
 
-void reportShaderCompileError
-( unsigned int shaderId
+void reportShaderCompileError( 
+    unsigned int shaderId
 ) {
     char infoLog[512];
     glGetShaderInfoLog(shaderId, sizeof(infoLog), nullptr, infoLog);
     std::cerr << infoLog << std::endl;
 }
 
-bool programmCorrectlyLinked
-( unsigned int programmId
+bool programmCorrectlyLinked( 
+    unsigned int programmId
 ) {
     int correctness;
     glGetProgramiv(programmId, GL_LINK_STATUS, &correctness);
     return correctness;
 }
 
-void reportProgrammLinkError
-( unsigned int programmId
+void reportProgrammLinkError(
+    unsigned int programmId
 ) {
     char infoLog[512];
     glGetProgramInfoLog(programmId, sizeof(infoLog), nullptr, infoLog);
     std::cerr << infoLog << std::endl;
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-int main
-(
+int main(
 ) {
     // Initialize GLFW
     if(!glfwInit()) {

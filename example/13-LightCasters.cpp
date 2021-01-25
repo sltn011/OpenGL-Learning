@@ -47,16 +47,16 @@ OGL::CameraFree freeCam{
     45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
 
-void framebufferSizeCallback
-(GLFWwindow *window
-    , int width
-    , int height
+void framebufferSizeCallback(
+    GLFWwindow *window, 
+    int width, 
+    int height
 ) {
     glViewport(0, 0, width, height);
 }
 
-void processKeyInput
-(GLFWwindow *window
+void processKeyInput(
+    GLFWwindow *window
 ) {
     if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -83,22 +83,22 @@ void processKeyInput
     }
 }
 
-void switchLightMode
-( GLFWwindow *window
-, int key
-, int scancode
-, int action
-, int mode
+void switchLightMode( 
+    GLFWwindow *window,
+    int key,
+    int scancode,
+    int action,
+    int mode
 ) {
     if (key == GLFW_KEY_L && action == GLFW_PRESS) {
         currentLight = (LightMode)((currentLight + 1) % LightMode::SIZE);
     }
 }
 
-void mouseCallback
-(GLFWwindow *window
-    , double xpos
-    , double ypos
+void mouseCallback(
+    GLFWwindow *window,
+    double xpos, 
+    double ypos
 ) {
     float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
     float yOffset = System::lastMouseYPos - static_cast<float>(ypos);
@@ -108,7 +108,9 @@ void mouseCallback
     freeCam.processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
 }
 
-unsigned int loadTexture(std::string const &path) {
+unsigned int loadTexture(
+    std::string const &path
+) {
     unsigned int tID;
     glGenTextures(1, &tID);
 
@@ -154,15 +156,13 @@ unsigned int loadTexture(std::string const &path) {
     return tID;
 }
 
-void clearScreen
-(
+void clearScreen(
 ) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Also clears depth buffer
 }
 
-int main
-(
+int main(
 ) {
     // Initialize GLFW
     OGL::GLFWInitRAII glfwInitializer;

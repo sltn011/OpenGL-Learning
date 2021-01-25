@@ -3,12 +3,12 @@
 
 namespace OGL::E1 {
 
-    void keyboardInputCallback
-    ( GLFWwindow *window
-    , int key
-    , int scancode
-    , int action
-    , int mods
+    void keyboardInputCallback( 
+        GLFWwindow *window, 
+        int key, 
+        int scancode,
+        int action, 
+        int mods
     ) {
 
     }

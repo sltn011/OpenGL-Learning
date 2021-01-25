@@ -30,12 +30,12 @@
 namespace OGL::E1 {
 
     class Engine1Base {
-    public:
-        Engine1Base
-        ( int          screenWidth
-        , int          screenHeight
-        , std::string  title = "Engine1_v.0.1.2"
-        , bool         isWindowed = true
+     public:
+        Engine1Base(
+            int          screenWidth,
+            int          screenHeight,
+            std::string  title = "Engine1_v.0.1.2",
+            bool         isWindowed = true
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -51,7 +51,7 @@ namespace OGL::E1 {
 
             System::lastMouseXPos = screenWidth / 2.0f;
             System::lastMouseYPos = screenHeight / 2.0f;
-            
+
             m_title = title;
 
             glfwMakeContextCurrent(m_window);
@@ -67,12 +67,12 @@ namespace OGL::E1 {
             glEnable(GL_DEPTH_TEST);
         }
 
-        virtual ~Engine1Base(){
+        virtual ~Engine1Base(
+        ) {
             glfwDestroyWindow(m_window);
         }
 
-        void start
-        (
+        void start(
         ) {
             m_gameShouldRun = true;
             if (!userCreate()) {
@@ -103,20 +103,20 @@ namespace OGL::E1 {
             }
         }
 
-        void addModel
-        ( char const *path
-        , size_t modelId
+        void addModel(
+            char const *path,
+            size_t modelId
         ) {
             m_modelsTable[modelId] = OGL::E1::factory<OGL::Model>(path);
         }
 
         // Returns index of created object in m_objects
-        size_t addObject
-        ( size_t modelID
-        , glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }
-        , float scale = 1.0f
-        , float rotationAngleRadians = 0.0f
-        , glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
+        size_t addObject(
+            size_t modelID,
+            glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
+            float scale = 1.0f,
+            float rotationAngleRadians = 0.0f,
+            glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
             m_objects.emplace_back(
                 factory<Object>(
@@ -125,32 +125,32 @@ namespace OGL::E1 {
                     scale,
                     rotationAngleRadians,
                     rotationAxis
-                )
+                    )
             );
             return m_objects.size() - 1;
         }
 
         // Returns index of created dir light in m_dirLights
-        size_t addDirLight
-        ( glm::vec3 direction
-        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
+        size_t addDirLight(
+            glm::vec3 direction,
+            glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         ) {
             m_dirLights.emplace_back(
                 factory<DirectionalLight>(
                     direction,
                     color
-                )
+                    )
             );
             return m_dirLights.size() - 1;
         }
 
         // Returns index of created point light in m_pointLights
-        size_t addPointLight
-        ( glm::vec3 position
-        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
-        , float attenuationConst = 1.0f
-        , float attenuationLinear = 0.09f
-        , float attenuationQuadratic = 0.032f
+        size_t addPointLight(
+            glm::vec3 position,
+            glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
+            float attenuationConst = 1.0f,
+            float attenuationLinear = 0.09f,
+            float attenuationQuadratic = 0.032f
         ) {
             m_pointLights.emplace_back(
                 factory<PointLight>(
@@ -159,21 +159,21 @@ namespace OGL::E1 {
                     attenuationConst,
                     attenuationLinear,
                     attenuationQuadratic
-                )
+                    )
             );
             return m_pointLights.size() - 1;
         }
 
         // Returns index of created spot light in m_spotLights
-        size_t addSpotLight
-        ( glm::vec3 position
-        , glm::vec3 direction
-        , glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
-        , float cutOffAngleRadians = glm::radians(8.0f)
-        , float cutOffOuterAngleRadians = glm::radians(12.0f)
-        , float attenuationConst = 1.0f
-        , float attenuationLinear = 0.09f
-        , float attenuationQuadratic = 0.032f
+        size_t addSpotLight(
+            glm::vec3 position,
+            glm::vec3 direction,
+            glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
+            float cutOffAngleRadians = glm::radians(8.0f),
+            float cutOffOuterAngleRadians = glm::radians(12.0f),
+            float attenuationConst = 1.0f,
+            float attenuationLinear = 0.09f,
+            float attenuationQuadratic = 0.032f
         ) {
             m_spotLights.emplace_back(
                 factory<SpotLight>(
@@ -185,43 +185,41 @@ namespace OGL::E1 {
                     attenuationConst,
                     attenuationLinear,
                     attenuationQuadratic
-                )
+                    )
             );
             return m_spotLights.size() - 1;
         }
 
-        void setClearColor
-        ( glm::vec4 color
+        void setClearColor(
+            glm::vec4 color
         ) {
             glClearColor(color.r, color.g, color.b, color.a);
         }
 
-        void setClearColor
-        ( float r = 1.0f
-        , float g = 1.0f
-        , float b = 1.0f
-        , float a = 1.0f
+        void setClearColor(
+            float r = 1.0f,
+            float g = 1.0f,
+            float b = 1.0f,
+            float a = 1.0f
         ) {
             glClearColor(r, g, b, a);
         }
 
     protected:
-        virtual bool userCreate
-        (
+        virtual bool userCreate(
         ) = 0;
 
-        virtual bool userFrameUpdate
-        ( float elapsedTime
+        virtual bool userFrameUpdate(
+            float elapsedTime
         ) = 0;
 
-        virtual bool userDestroy
-        (
+        virtual bool userDestroy(
         ) {
             return true;
         }
 
-        virtual void processInput
-        ( float speedMult = 1.0f
+        virtual void processInput(
+            float speedMult = 1.0f
         ) {
             if (glfwGetKey(m_window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
                 glfwSetWindowShouldClose(m_window, true);
@@ -248,12 +246,12 @@ namespace OGL::E1 {
 
         }
 
-    protected:
+     protected:
         GLFWInitRAII     m_glfwInitializer;
-                        
+
         GLFWwindow      *m_window;
         std::string      m_title;
-                        
+
         eventsQueue      m_eventsQ;
         modelsTable      m_modelsTable;
         gameObjects      m_objects;
@@ -264,7 +262,7 @@ namespace OGL::E1 {
 
         std::atomic_bool m_gameShouldRun;
 
-    public:
+     public:
     };
 
 } // OGL::E1

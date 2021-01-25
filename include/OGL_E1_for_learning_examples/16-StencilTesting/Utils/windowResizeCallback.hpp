@@ -3,10 +3,10 @@
 
 namespace OGL::E1 {
 
-    void windowResizeCallback
-    ( GLFWwindow *window
-    , int newWidth
-    , int newHeight
+    void windowResizeCallback(
+        GLFWwindow *window, 
+        int newWidth, 
+        int newHeight
     ) {
         glViewport(0, 0, newWidth, newHeight);
     }
