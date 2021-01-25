@@ -5,10 +5,10 @@
 
 namespace OGL::E1 {
 
-    void mouseInputCallback
-    ( GLFWwindow *window
-    , double xpos
-    , double ypos
+    void mouseInputCallback( 
+        GLFWwindow *window,
+        double xpos,
+        double ypos
     ) {
         
     }
