@@ -12,7 +12,9 @@ const int cubemapTextureID = 16;
 const int cubemapSize = 256;
 
 std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
-    size_t numMatrices
+    size_t numMatrices,
+    glm::vec3 center,
+    float baseSize
 );
 
 class Test : public OGL::E1::Engine1Base {
@@ -103,7 +105,7 @@ public:
         size_t    asteroidInstances = 1000;
         glm::vec3 asteroidCircleCenter = planetPosition;
         float     asteroidScale = 0.1f;
-        auto      asteroidInstanceMatrices = generateTranslationMatrices(asteroidInstances);
+        auto      asteroidInstanceMatrices = generateTranslationMatrices(asteroidInstances, asteroidCircleCenter, asteroidScale);
         addInstancedObject(5, asteroidInstances, asteroidCircleCenter, asteroidScale);
         m_asteroidsVBO.bind();
         glBufferData(GL_ARRAY_BUFFER, asteroidInstances * sizeof(glm::mat4), asteroidInstanceMatrices.get(), GL_STATIC_DRAW);
@@ -145,7 +147,7 @@ public:
     bool userFrameUpdate( 
         float elapsedTime
     ) override {
-        processInput(0.5f);
+        processInput(1.0f);
 
         m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
 
@@ -176,14 +178,17 @@ int main(
 }
 
 std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
-    size_t numMatrices
+    size_t numMatrices,
+    glm::vec3 center,
+    float baseSize
 ) {
     std::unique_ptr<glm::mat4[]> matrices = std::make_unique<glm::mat4[]>(numMatrices);
-    float radius = 25.0f;
-    float offset = 4.0f;
+    float radius = 3.5f;
+    float offset = 0.25f;
     for (size_t i = 0; i < numMatrices; ++i) {
         // translate
         glm::mat4 matr(1.0);
+        matr = glm::translate(matr, center);
         float angle = static_cast<float>(i) / numMatrices * 360.0f;
         float displacement = (std::rand() % static_cast<int>(2 * 100 * offset)) / 100.0f - offset;
         float x = std::sin(angle) * radius + displacement;
@@ -193,9 +198,9 @@ std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
         float z = std::cos(angle) * radius + displacement;
         matr = glm::translate(matr, glm::vec3{ x, y, z });
 
-        //scale [0.05, 0.25]
+        //scale
         float scale = (std::rand() % 20) / 100.0f + 0.05f;
-        matr = glm::scale(matr, glm::vec3{ scale, scale, scale });
+        matr = glm::scale(matr, baseSize * glm::vec3{ scale, scale, scale });
 
         //rotate
         float rotation = static_cast<float>(std::rand() % 360);

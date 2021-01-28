@@ -13,8 +13,8 @@ out vec3 vertexNorm;
 out vec2 vertexTex;
 
 void main() {
-	vertexPos = vec3( model * instanceMatrix * vec4(aPos, 1.0));
-	vertexNorm = normalize(mat3(model) * mat3(instanceMatrix) * aNorm);
+	vertexPos = vec3(instanceMatrix * vec4(aPos, 1.0));
+	vertexNorm = normalize(mat3(instanceMatrix) * aNorm);
 	vertexTex = aTex;
-	gl_Position = projection * view * model * instanceMatrix * vec4(aPos, 1.0);
+	gl_Position = projection * view * instanceMatrix * vec4(aPos, 1.0);
 }
