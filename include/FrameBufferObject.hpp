@@ -14,7 +14,6 @@ namespace OGL {
 
     class FrameBufferObject : public Descriptor {
      protected:
-        GLenum m_bufferType;
 
         VertexArrayObject m_frameQuadVAO;
         VertexBufferObject m_frameQuadVBO;
@@ -24,20 +23,16 @@ namespace OGL {
 
         std::map<GLenum, unsigned int> m_colorAttachmentsTable;
 
-     public:
+     protected:
         static float const frameQuadData[];
 
      public:
         FrameBufferObject( 
-            GLenum bufferType
         );
 
-        FrameBufferObject( 
-            GLenum bufferType, 
-            float const *frameBufferQuadData,
-            size_t frameBufferQuadDataLength,
-            GLuint frameQuadVerticesVertexAttribIndex = 0,
-            GLuint frameQuadTexCoordVertexAttribIndex = 1
+        FrameBufferObject(
+            GLuint frameQuadVerticesVertexAttribIndex,
+            GLuint frameQuadTexCoordVertexAttribIndex
         );
 
         ~FrameBufferObject(
@@ -59,36 +54,50 @@ namespace OGL {
             FrameBufferObject &&rhs
         ) = default;
 
-        void attach( 
+        void attachColorBuffer( 
+            GLenum framebufferType,
             GLenum colorAttachment,
             GLenum targetTexture,
             ColorBufferObject &&obj
         );
 
-        void attach( 
+        void attachColorBufferMultisample(
+            GLenum framebufferType,
+            GLenum colorAttachment,
+            ColorBufferObject &&obj
+        );
+
+        void attachRenderBuffer( 
+            GLenum framebufferType,
+            GLenum attachment,
+            RenderBufferObject &&obj
+        );
+
+        void attachRenderBufferMultisample(
+            GLenum framebufferType,
             GLenum attachment,
             RenderBufferObject &&obj
         );
 
         void bind(
+            GLenum framebufferType
         ) const;
 
-        static void unbind( 
-            GLenum bufferType
+        void unbind( 
+            GLenum framebufferType
         );
 
         GLenum checkStatus(
+            GLenum framebufferType
         ) const;
 
         bool isComplete(
+            GLenum framebufferType
         ) const;
 
-        void drawQuad( 
+        void drawQuad(
             GLenum colorAttachment
         );
-
-        GLenum bufferType(
-        ) const;
     };
 
 } // OGL

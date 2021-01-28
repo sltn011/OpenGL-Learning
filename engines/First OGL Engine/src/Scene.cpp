@@ -8,23 +8,29 @@ namespace OGL::E1 {
     }
 
     void Scene::addNormalObj( 
-        smartObjPtr &&obj
+        Object obj
     ) {
         m_normalObjects.emplace_back(std::move(obj));
     }
 
     void Scene::addTransparentObj( 
-        smartObjPtr &&obj
+        Object obj
     ) {
         m_transparentObjects.emplace_back(std::move(obj));
     }
 
     void Scene::addMirrorObj(
-        smartObjPtr &&obj
+        Object obj
     ) {
-        std::pair<smartObjPtr, smartCubemap> pair;
-        pair.first = std::move(obj);
+        std::pair<Object, smartCubemap> pair{std::move(obj), nullptr};
         m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
+    }
+
+    void Scene::addInstancedObj(
+        Object obj,
+        size_t numInstances
+    ) {
+        m_instancedObjects.emplace_back(std::move(obj), numInstances);
     }
 
     void Scene::addDirLight( 
@@ -58,6 +64,11 @@ namespace OGL::E1 {
     mirrorObjsVec &Scene::getMirrorObjs(
     ) {
         return m_mirrorObjects;
+    }
+
+    instancedObjsVec &Scene::getInstancedObjs(
+    ) {
+        return m_instancedObjects;
     }
 
     dirLights &Scene::getDirLights(

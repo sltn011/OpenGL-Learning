@@ -3,22 +3,18 @@
 namespace OGL {
 
     FrameBufferObject::FrameBufferObject( 
-        GLenum bufferType
-    ) : m_bufferType{ bufferType } {
+    ) {
         glGenFramebuffers(1, &m_descriptor);
     }
 
-    FrameBufferObject::FrameBufferObject( 
-        GLenum bufferType, 
-        float const *frameBufferQuadData, 
-        size_t frameBufferQuadDataLength, 
+    FrameBufferObject::FrameBufferObject(
         GLuint frameQuadVerticesVertexAttribIndex,
         GLuint frameQuadTexCoordVertexAttribIndex
-    ) : m_bufferType{ bufferType } {
+    ) {
         glGenFramebuffers(1, &m_descriptor);
         glBindVertexArray(m_frameQuadVAO.value());
         glBindBuffer(GL_ARRAY_BUFFER, m_frameQuadVBO.value());
-        glBufferData(GL_ARRAY_BUFFER, frameBufferQuadDataLength, frameBufferQuadData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 96, frameQuadData, GL_STATIC_DRAW);
         glEnableVertexAttribArray(frameQuadVerticesVertexAttribIndex);
         glVertexAttribPointer(frameQuadVerticesVertexAttribIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(frameQuadTexCoordVertexAttribIndex);
@@ -31,43 +27,64 @@ namespace OGL {
         glDeleteFramebuffers(1, &m_descriptor);
     }
 
-    void FrameBufferObject::attach(
+    void FrameBufferObject::attachColorBuffer(
+        GLenum framebufferType,
         GLenum colorAttachment, 
         GLenum targetTexture, 
         ColorBufferObject &&obj
     ) {
-        glFramebufferTexture2D(m_bufferType, colorAttachment, targetTexture, obj.value(), 0);
+        glFramebufferTexture2D(framebufferType, colorAttachment, targetTexture, obj.value(), 0);
         m_colorAttachmentsTable[colorAttachment] = obj.value();
         m_colorBufferObjs.emplace(colorAttachment, std::move(obj));
     }
 
-    void FrameBufferObject::attach(
+    void FrameBufferObject::attachColorBufferMultisample(
+        GLenum framebufferType,
+        GLenum colorAttachment,
+        ColorBufferObject &&obj
+    ) {
+        attachColorBuffer(framebufferType, colorAttachment, GL_TEXTURE_2D_MULTISAMPLE, std::move(obj));
+    }
+
+    void FrameBufferObject::attachRenderBuffer(
+        GLenum framebufferType,
         GLenum attachment, 
         RenderBufferObject &&obj
     ) {
-        glFramebufferRenderbuffer(m_bufferType, attachment, GL_RENDERBUFFER, obj.value());
+        glFramebufferRenderbuffer(framebufferType, attachment, GL_RENDERBUFFER, obj.value());
         m_renderBufferObj = std::move(obj);
     }
 
+    void FrameBufferObject::attachRenderBufferMultisample(
+        GLenum framebufferType,
+        GLenum attachment,
+        RenderBufferObject &&obj
+    ) {
+        attachRenderBuffer(framebufferType, attachment, std::move(obj));
+    }
+
     void FrameBufferObject::bind(
+        GLenum framebufferType
     ) const {
-        glBindFramebuffer(m_bufferType, m_descriptor);
+        glBindFramebuffer(framebufferType, m_descriptor);
     }
 
     void FrameBufferObject::unbind( 
-        GLenum bufferType
+        GLenum framebufferType
     ) {
-        glBindFramebuffer(bufferType, 0);
+        glBindFramebuffer(framebufferType, 0);
     }
 
     GLenum FrameBufferObject::checkStatus(
+        GLenum framebufferType
     ) const {
-        return glCheckFramebufferStatus(m_bufferType);
+        return glCheckFramebufferStatus(framebufferType);
     }
 
     bool FrameBufferObject::isComplete(
+        GLenum framebufferType
     ) const {
-        return checkStatus() == GL_FRAMEBUFFER_COMPLETE;
+        return checkStatus(framebufferType) == GL_FRAMEBUFFER_COMPLETE;
     }
 
     void FrameBufferObject::drawQuad( 
@@ -78,11 +95,6 @@ namespace OGL {
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    GLenum FrameBufferObject::bufferType(
-    ) const {
-        return m_bufferType;
     }
 
     float const FrameBufferObject::frameQuadData[] = {

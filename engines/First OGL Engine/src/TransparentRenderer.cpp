@@ -10,7 +10,7 @@ namespace OGL::E1 {
 
     void TransparentRenderer::render( 
         Scene &scene, 
-        smartCamPtr const &camera
+        BasicCamera const *camera
     ) {
         m_shader.use();
         m_shader.setUniformMatrix4("view", camera->getViewMatrix());
@@ -36,14 +36,14 @@ namespace OGL::E1 {
             sceneSpotLights[i].loadInShader(m_shader, i);
         }
 
-        std::map<float, smartObjPtr const&> objectsMap;
+        std::map<float, Object const&> objectsMap;
         for (auto const &obj : scene.getTransparentObjs()) {
-            float dist = glm::distance(camPos, obj->m_postiton);
+            float dist = glm::distance(camPos, obj.m_postiton);
             objectsMap.emplace(dist, obj);
         }
 
         for (auto it = objectsMap.rbegin(); it != objectsMap.rend(); ++it) {
-            it->second->draw(m_shader);
+            it->second.draw(m_shader);
         }
     }
 

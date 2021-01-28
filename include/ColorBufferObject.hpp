@@ -35,6 +35,13 @@ namespace OGL {
             GLint colorComponents, 
             GLenum format
         );
+
+        void allocateStorageMultisample(
+            int width,
+            int height,
+            int numSamples,
+            GLenum format
+        );
     };
 
 } // OGL

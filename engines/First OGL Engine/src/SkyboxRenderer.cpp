@@ -10,7 +10,7 @@ namespace OGL::E1 {
 
     void SkyboxRenderer::render(
         Scene &scene,
-        smartCamPtr const &camera
+        BasicCamera const *camera
     ) {
         smartSkybox &skyboxPtr = scene.getSkybox();
         if (!skyboxPtr) {

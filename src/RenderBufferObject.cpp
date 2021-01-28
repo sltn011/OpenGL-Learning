@@ -22,4 +22,15 @@ namespace OGL {
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 
+    void RenderBufferObject::allocateStorageMultisample(
+        int width,
+        int height, 
+        int numSamples,
+        GLenum innertype
+    ) {
+        glBindRenderbuffer(GL_RENDERBUFFER, m_descriptor);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, numSamples, innertype, width, height);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    }
+
 } // OGL

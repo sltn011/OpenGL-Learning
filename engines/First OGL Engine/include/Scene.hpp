@@ -36,15 +36,20 @@ namespace OGL::E1 {
         ) = default;
 
         void addNormalObj( 
-            smartObjPtr &&obj
+            Object obj
         );
 
         void addTransparentObj(
-            smartObjPtr &&obj
+            Object obj
         );
 
         void addMirrorObj(
-            smartObjPtr &&obj
+            Object obj
+        );
+
+        void addInstancedObj(
+            Object obj,
+            size_t numInstances
         );
 
         void addDirLight( 
@@ -66,6 +71,9 @@ namespace OGL::E1 {
         );
 
         mirrorObjsVec &getMirrorObjs(
+        );
+
+        instancedObjsVec &getInstancedObjs(
         );
 
         dirLights &getDirLights(
@@ -93,6 +101,7 @@ namespace OGL::E1 {
         objectsVec m_normalObjects;
         objectsVec m_transparentObjects;
         mirrorObjsVec m_mirrorObjects;
+        instancedObjsVec m_instancedObjects;
 
         dirLights m_dirLights;
         pointLights m_pointLights;

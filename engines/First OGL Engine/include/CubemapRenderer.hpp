@@ -12,6 +12,7 @@
 #include "NormalRenderer.hpp"
 #include "TransparentRenderer.hpp"
 #include "SkyboxRenderer.hpp"
+#include "InstancesRenderer.hpp"
 
 namespace OGL::E1 {
 
@@ -43,17 +44,19 @@ namespace OGL::E1 {
             glm::vec3 mirrorPos,
             NormalRenderer *normalRenderer,
             SkyboxRenderer *skyboxRenderer, 
-            TransparentRenderer *transparentRenderer
+            TransparentRenderer *transparentRenderer,
+            InstancesRenderer *instancesRenderer
         );
 
      protected:
         void renderSide(
             Scene &scene,
-            smartCamPtr const &cubemapCamera,
+            CameraCubemap const *cubemapCamera,
             Cubemap &cubemap, 
             NormalRenderer *normalRenderer,
             SkyboxRenderer *skyboxRenderer,
-            TransparentRenderer *transparentRenderer
+            TransparentRenderer *transparentRenderer,
+            InstancesRenderer *instancesRenderer
         );
     };
 

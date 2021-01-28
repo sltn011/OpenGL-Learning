@@ -136,7 +136,6 @@ include_directories("${PATH_TO_ASSIMP_BUILT}/include")
 
 ######################################################################################################
 add_library(OpenGLTools STATIC
-        src/Utils.cpp
         src/GLFWInitRAII.cpp
         src/Shader.cpp
         src/Exception.cpp
@@ -183,6 +182,7 @@ add_library(OGL_E1_LIB STATIC
         "engines/First OGL Engine/src/CubemapRenderer.cpp"
         "engines/First OGL Engine/src/MirrorRenderer.cpp"
         "engines/First OGL Engine/src/SkyboxRenderer.cpp"
+        "engines/First OGL Engine/src/InstancesRenderer.cpp"
 )
 
 target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")

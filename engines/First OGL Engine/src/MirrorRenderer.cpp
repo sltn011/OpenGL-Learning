@@ -10,7 +10,7 @@ namespace OGL::E1 {
 
     void MirrorRenderer::render(
         Scene &scene, 
-        smartCamPtr const &camera
+        BasicCamera const *camera
     ) {
         m_shader.use();
         m_shader.setUniformMatrix4("view", camera->getViewMatrix());
@@ -41,7 +41,7 @@ namespace OGL::E1 {
             }
             m_shader.setUniformInt("cubemapSampler", pObjCubemap.second->unit() - GL_TEXTURE0);
             pObjCubemap.second->bind();
-            pObjCubemap.first->draw(m_shader);
+            pObjCubemap.first.draw(m_shader);
             Cubemap::unbind();
         }
     }

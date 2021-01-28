@@ -26,4 +26,15 @@ namespace OGL {
         glBindTexture(textureType, 0);
     }
 
+    void ColorBufferObject::allocateStorageMultisample(
+        int width,
+        int height,
+        int numSamples,
+        GLenum format
+    ) {
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_descriptor);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, format, width, height, GL_TRUE);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+    }
+
 } // OGL

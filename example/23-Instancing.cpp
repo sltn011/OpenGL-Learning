@@ -172,7 +172,7 @@ int main(
     OGL::Model planet("models/Planet/Planet/planet.obj");
     OGL::Model asteroid("models/Planet/Asteroid/asteroid.obj");
 
-    glm::vec3 planetCenter{ 0.0f, -2.0f, -20.0f };
+    glm::vec3 planetCenter{ 0.0f, -2.0f, -200.0f };
 
     OGL::Object planetObj(planet, planetCenter, 20.0f);
     OGL::Object asteroidObj(asteroid, planetCenter);

@@ -1,15 +1,15 @@
-#include "NormalRenderer.hpp"
+#include "InstancesRenderer.hpp"
 
 namespace OGL::E1 {
 
-    NormalRenderer::NormalRenderer( 
+    InstancesRenderer::InstancesRenderer(
         Shader &&shader
     ) : m_shader{ std::move(shader) } {
 
     }
 
-    void NormalRenderer::render( 
-        Scene &scene, 
+    void InstancesRenderer::render(
+        Scene &scene,
         BasicCamera const *camera
     ) {
         m_shader.use();
@@ -35,12 +35,14 @@ namespace OGL::E1 {
             sceneSpotLights[i].loadInShader(m_shader, i);
         }
 
-        for (auto const &obj : scene.getNormalObjs()) {
-            obj.draw(m_shader);
+        for (auto const &pObjInstances : scene.getInstancedObjs()) {
+            Object const &obj = pObjInstances.first;
+            size_t numInstances = pObjInstances.second;
+            obj.drawInstanced(m_shader, numInstances);
         }
     }
 
-    void NormalRenderer::setShader( 
+    void InstancesRenderer::setShader(
         Shader &&shader
     ) {
         m_shader = std::move(shader);

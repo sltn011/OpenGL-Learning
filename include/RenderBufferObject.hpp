@@ -37,6 +37,13 @@ namespace OGL {
             int height, 
             GLenum innertype
         );
+
+        void allocateStorageMultisample(
+            int width,
+            int height,
+            int numSamples,
+            GLenum innertype
+        );
     };
 
 } // OGL

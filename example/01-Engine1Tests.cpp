@@ -11,6 +11,10 @@ const int cubemapTextureID = 16;
 
 const int cubemapSize = 256;
 
+std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
+    size_t numMatrices
+);
+
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(
@@ -22,7 +26,7 @@ public:
     } {
     }
 
-    OGL::E1::smartSkybox m_skybox;
+    OGL::VertexBufferObject m_asteroidsVBO;
 
     bool userCreate(
     ) override {
@@ -40,27 +44,31 @@ public:
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
             0.01f,
-            100.0f
+            1000.0f
         );
 
         m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
 
-        OGL::Shader normalShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag"); normalShader.showWarnings(true);
-        OGL::Shader transpShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag"); transpShader.showWarnings(true);
-        OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag"); skyboxShader.showWarnings(true);
-        OGL::Shader mirrorShader("shaders/01-playgroundMirror.vert", "shaders/01-playgroundMirror.frag"); mirrorShader.showWarnings(true);
+        OGL::Shader normalShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
+        OGL::Shader transpShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
+        OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
+        OGL::Shader mirrorShader("shaders/01-playgroundMirror.vert", "shaders/01-playgroundMirror.frag");
+        OGL::Shader instancesShader("shaders/01-playgroundInstances.vert", "shaders/01-playgroundInstances.frag");
 
         m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
         m_transpRenderer = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
         m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
         m_mirrorRenderer = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
         m_cubemapRenderer = OGL::E1::factory<OGL::E1::CubemapRenderer>();
+        m_instancesRenderer = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
         addModel("models/Crate/crate.obj", 1);
         addModel("models/Window/window.obj", 2);
         addModel("models/Sphere/sphere.obj", 3);
+        addModel("models/Planet/Planet/planet.obj", 4);
+        addModel("models/Planet/Asteroid/asteroid.obj", 5);
 
         glm::vec3 playgroundPosition = { 0.0f, 0.0f, 0.0f };
         float     playgroundScale = 0.1f;
@@ -86,6 +94,22 @@ public:
         float     sphereScale = 0.1f;
         addMirrorObject(3, spherePosition, sphereScale);
 
+        glm::vec3 planetPosition{ -7.5f, 8.0f, -10.0f };
+        float     planetScale = 0.30f;
+        float     planetRotation = glm::radians(90.0f);
+        glm::vec3 planetRotationVec{ 1.0f, 0.0f, 0.0f };
+        addNormalObject(4, planetPosition, planetScale, planetRotation, planetRotationVec);
+
+        size_t    asteroidInstances = 1000;
+        glm::vec3 asteroidCircleCenter = planetPosition;
+        float     asteroidScale = 0.1f;
+        auto      asteroidInstanceMatrices = generateTranslationMatrices(asteroidInstances);
+        addInstancedObject(5, asteroidInstances, asteroidCircleCenter, asteroidScale);
+        m_asteroidsVBO.bind();
+        glBufferData(GL_ARRAY_BUFFER, asteroidInstances * sizeof(glm::mat4), asteroidInstanceMatrices.get(), GL_STATIC_DRAW);
+        m_scene->getInstancedObjs()[0].first.setVertexAttribInstancedModelMat4(3);
+        m_asteroidsVBO.unbind();
+
         // Lights
         glm::vec3 directionalLightDir{ 0.85f, -1.5f, -1.0f };
         glm::vec3 directionalLightColor{ 1.55f, 1.55f, 1.35f };
@@ -93,9 +117,8 @@ public:
         addDirLight(directionalLightDir, directionalLightColor);
 
         stbi_set_flip_vertically_on_load(false);
-        m_skybox = OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID);
+        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
-        m_scene->replaceSkybox(std::move(m_skybox));
 
         glViewport(0, 0, cubemapSize, cubemapSize);
 
@@ -105,10 +128,11 @@ public:
                     *m_scene,
                     cubemapSize,
                     GL_TEXTURE0 + cubemapTextureID,
-                    p.first->m_postiton,
+                    p.first.m_postiton,
                     m_normalRenderer.get(),
                     m_skyboxRenderer.get(),
-                    m_transpRenderer.get()
+                    m_transpRenderer.get(),
+                    m_instancesRenderer.get()
                 )
             );
         }
@@ -123,13 +147,15 @@ public:
     ) override {
         processInput(0.5f);
 
-        m_normalRenderer->render(*m_scene, m_scene->getCamera());
+        m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_mirrorRenderer->render(*m_scene, m_scene->getCamera());
+        m_mirrorRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_skyboxRenderer->render(*m_scene, m_scene->getCamera());
+        m_instancesRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_transpRenderer->render(*m_scene, m_scene->getCamera());
+        m_skyboxRenderer->render(*m_scene, m_scene->getCamera().get());
+
+        m_transpRenderer->render(*m_scene, m_scene->getCamera().get());
 
         return true;
     }
@@ -147,4 +173,35 @@ int main(
     Test t(1920, 1080);
     t.start();
     return 0;
+}
+
+std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
+    size_t numMatrices
+) {
+    std::unique_ptr<glm::mat4[]> matrices = std::make_unique<glm::mat4[]>(numMatrices);
+    float radius = 25.0f;
+    float offset = 4.0f;
+    for (size_t i = 0; i < numMatrices; ++i) {
+        // translate
+        glm::mat4 matr(1.0);
+        float angle = static_cast<float>(i) / numMatrices * 360.0f;
+        float displacement = (std::rand() % static_cast<int>(2 * 100 * offset)) / 100.0f - offset;
+        float x = std::sin(angle) * radius + displacement;
+        displacement = (std::rand() % static_cast<int>(2 * 100 * offset)) / 100.0f - offset;
+        float y = displacement * 0.25f;
+        displacement = (std::rand() % static_cast<int>(2 * 100 * offset)) / 100.0f - offset;
+        float z = std::cos(angle) * radius + displacement;
+        matr = glm::translate(matr, glm::vec3{ x, y, z });
+
+        //scale [0.05, 0.25]
+        float scale = (std::rand() % 20) / 100.0f + 0.05f;
+        matr = glm::scale(matr, glm::vec3{ scale, scale, scale });
+
+        //rotate
+        float rotation = static_cast<float>(std::rand() % 360);
+        matr = glm::rotate(matr, rotation, glm::vec3{ std::rand(), std::rand(), std::rand() });
+
+        matrices[i] = matr;
+    }
+    return matrices;
 }

@@ -13,6 +13,7 @@
 #include "TransparentRenderer.hpp"
 #include "CubemapRenderer.hpp"
 #include "MirrorRenderer.hpp"
+#include "InstancesRenderer.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -40,12 +41,14 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2", 
-            bool         isWindowed = true
+            std::string  title = "Engine1_v.0.2.1", 
+            bool         isWindowed = true,
+            int          numSamples = 8
         ) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_SAMPLES, numSamples);
 
             GLFWmonitor *monitor = isWindowed ? nullptr : glfwGetPrimaryMonitor();
 
@@ -71,12 +74,12 @@ namespace OGL::E1 {
             }
 
             glEnable(GL_DEPTH_TEST);
-
+            glEnable(GL_CULL_FACE);
+            glEnable(GL_MULTISAMPLE);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glBlendEquation(GL_FUNC_ADD);
 
-            glEnable(GL_CULL_FACE);
         }
 
         virtual ~Engine1Base(
@@ -119,7 +122,7 @@ namespace OGL::E1 {
             char const *path, 
             size_t modelId
         ) {
-            m_modelsTable[modelId] = OGL::E1::factory<OGL::Model>(path);
+            m_modelsTable[modelId] = Model(path);
         }
 
         void addNormalObject( 
@@ -130,13 +133,13 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
             m_scene->addNormalObj(
-                factory<Object>(
-                    *m_modelsTable[modelID].get(),
+                Object{
+                    m_modelsTable[modelID],
                     pos,
                     scale,
                     rotationAngleRadians,
                     rotationAxis
-                )
+                }
             );
         }
 
@@ -149,13 +152,13 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
             m_scene->addTransparentObj(
-                factory<Object>(
-                    *m_modelsTable[modelID].get(),
+                Object{
+                    m_modelsTable[modelID],
                     pos,
                     scale,
                     rotationAngleRadians,
                     rotationAxis
-                )
+                }
             );
         }
 
@@ -167,13 +170,33 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
             m_scene->addMirrorObj(
-                factory<Object>(
-                    *m_modelsTable[modelID].get(),
+                Object{
+                    m_modelsTable[modelID],
                     pos,
                     scale,
                     rotationAngleRadians,
                     rotationAxis
-                )
+                }
+            );
+        }
+
+        void addInstancedObject(
+            size_t modelID,
+            size_t numInstances,
+            glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
+            float scale = 1.0f,
+            float rotationAngleRadians = 0.0f,
+            glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
+        ) {
+            m_scene->addInstancedObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    rotationAngleRadians,
+                    rotationAxis
+                },
+                numInstances
             );
         }
 
@@ -182,7 +205,7 @@ namespace OGL::E1 {
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         ) {
             m_scene->addDirLight(
-                {
+                DirectionalLight{
                     direction,
                     color
                 }
@@ -197,7 +220,7 @@ namespace OGL::E1 {
             float attenuationQuadratic = 0.032f
         ) {
             m_scene->addPointLight(
-                {
+                PointLight{
                     position,
                     color,
                     attenuationConst,
@@ -218,7 +241,7 @@ namespace OGL::E1 {
             float attenuationQuadratic = 0.032f
         ) {
             m_scene->addSpotLight(
-                {
+                SpotLight{
                     position,
                     direction,
                     color,
@@ -306,6 +329,7 @@ namespace OGL::E1 {
         smartSkyboxRendererPtr      m_skyboxRenderer;
         smartCubemapRendererPtr     m_cubemapRenderer;
         smartMirrorRendererPtr      m_mirrorRenderer;
+        smartInstancesRendererPtr   m_instancesRenderer;
                         
         eventsQueue      m_eventsQ;
         modelsTable      m_modelsTable;

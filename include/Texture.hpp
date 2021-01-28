@@ -4,7 +4,6 @@
 #include "glad/glad.h"
 #include "Descriptor.hpp"
 #include "Exception.hpp"
-#include "Utils.hpp"
 
 #include "stb_image.h"
 

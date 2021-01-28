@@ -75,18 +75,18 @@ public:
 
         glEnable(GL_CULL_FACE);
 
-        m_fbo = OGL::E1::factory<OGL::FrameBufferObject>(GL_FRAMEBUFFER, OGL::FrameBufferObject::frameQuadData, 96);
+        m_fbo = OGL::E1::factory<OGL::FrameBufferObject>(0, 1);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo->value());
 
         m_cbo = OGL::E1::factory<OGL::ColorBufferObject>();
         m_cbo->allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGB, GL_RGB);
-        m_fbo->attach(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, std::move(*m_cbo));
+        m_fbo->attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, std::move(*m_cbo));
 
         m_rbo = OGL::E1::factory<OGL::RenderBufferObject>();
         m_rbo->allocateStorage(screenWidth, screenHeight, GL_DEPTH24_STENCIL8);
-        m_fbo->attach(GL_DEPTH_STENCIL_ATTACHMENT, std::move(*m_rbo));
+        m_fbo->attachRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, std::move(*m_rbo));
         
-        if (!m_fbo->isComplete()) {
+        if (!m_fbo->isComplete(GL_FRAMEBUFFER)) {
             throw OGL::Exception("Error creating FBO");
         }
 

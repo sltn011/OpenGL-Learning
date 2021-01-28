@@ -53,6 +53,8 @@ namespace OGL {
         using smartMirrorRendererPtr = std::unique_ptr<MirrorRenderer>;
         class SkyboxRenderer;
         using smartSkyboxRendererPtr = std::unique_ptr<SkyboxRenderer>;
+        class InstancesRenderer;
+        using smartInstancesRendererPtr = std::unique_ptr<InstancesRenderer>;
 
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;
@@ -76,9 +78,10 @@ namespace OGL {
         using smartPointLPtr = std::unique_ptr<PointLight>;
         using smartSpotLPtr = std::unique_ptr<SpotLight>;
 
-        using modelsTable = std::unordered_map<size_t, smartModelPtr>;
-        using objectsVec = std::vector<smartObjPtr>;
-        using mirrorObjsVec = std::vector<std::pair<smartObjPtr, smartCubemap>>;
+        using modelsTable = std::unordered_map<size_t, Model>;
+        using objectsVec = std::vector<Object>;
+        using mirrorObjsVec = std::vector<std::pair<Object, smartCubemap>>;
+        using instancedObjsVec = std::vector<std::pair<Object, size_t>>;
         using gameObjects = std::unordered_map<size_t, objectsVec>;
 
         using dirLights = std::vector<DirectionalLight>;

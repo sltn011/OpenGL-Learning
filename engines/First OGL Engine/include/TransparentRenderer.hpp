@@ -33,7 +33,7 @@ namespace OGL::E1 {
 
         void render(
             Scene &scene, 
-            smartCamPtr const &camera
+            BasicCamera const *camera
         );
 
         void setShader(
