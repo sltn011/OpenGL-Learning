@@ -52,4 +52,9 @@ namespace OGL::E1 {
         m_shader = std::move(shader);
     }
 
+    Shader &MirrorRenderer::getShader(
+    ) {
+        return m_shader;
+    }
+
 } // OGL::E1

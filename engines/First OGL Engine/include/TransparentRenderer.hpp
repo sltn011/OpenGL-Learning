@@ -40,6 +40,9 @@ namespace OGL::E1 {
             Shader &&shader
         );
 
+        Shader &getShader(
+        );
+
      protected:
         Shader m_shader;
     };
