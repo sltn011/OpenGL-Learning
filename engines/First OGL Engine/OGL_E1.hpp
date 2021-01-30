@@ -17,8 +17,6 @@
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
-#include "Utils/callbacks.hpp"
-#include "Utils/GameCamera.hpp"
 #include "Utils/System.hpp"
 #include "Utils/factory.hpp"
 
@@ -28,11 +26,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include <queue>
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include <atomic>
 
 namespace OGL::E1 {
 
@@ -41,7 +37,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.1", 
+            std::string  title = "Engine1_v.0.2.3", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -64,10 +60,24 @@ namespace OGL::E1 {
             m_title = title;
 
             glfwMakeContextCurrent(m_window);
-            glfwSetFramebufferSizeCallback(m_window, windowResizeCallback);
             glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            glfwSetKeyCallback(m_window, keyboardInputCallback);
-            glfwSetCursorPosCallback(m_window, mouseInputCallback);
+
+            glfwSetWindowUserPointer(m_window, this);
+
+            m_windowResizeFunc = [](GLFWwindow *window, int newWidth, int newHeight) {
+                static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->windowResizeCallback(newWidth, newHeight);
+            };
+            glfwSetWindowSizeCallback(m_window, m_windowResizeFunc);
+
+            m_keyCallbackFunc = [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+                static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->keyCallback(key, scancode, action, mods);
+            };
+            glfwSetKeyCallback(m_window, m_keyCallbackFunc);
+
+            m_cursorReposFunc = [](GLFWwindow *window, double xpos, double ypos) {
+                static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->cursorRepositionCallback(xpos, ypos);
+            };
+            glfwSetCursorPosCallback(m_window, m_cursorReposFunc);
 
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
                 throw OGL::Exception("Error loading GLAD!");
@@ -282,7 +292,7 @@ namespace OGL::E1 {
             return true;
         }
 
-        virtual void processInput( 
+        virtual void processInputPerFrame( 
             float speedMult = 1.0f
         ) {
             if (glfwGetKey(m_window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
@@ -317,6 +327,29 @@ namespace OGL::E1 {
             m_scene->getCamera()->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
         }
 
+        virtual void windowResizeCallback(
+            int newWidth,
+            int newHeight
+        ) {
+            glViewport(0, 0, newWidth, newHeight);
+        }
+
+        virtual void keyCallback(
+            int key,
+            int scancode,
+            int action,
+            int mods
+        ) {
+
+        }
+
+        virtual void cursorRepositionCallback(
+            double xpos,
+            double ypos
+        ) {
+
+        }
+
      protected:
         GLFWInitRAII     m_glfwInitializer;
                         
@@ -331,10 +364,14 @@ namespace OGL::E1 {
         smartMirrorRendererPtr      m_mirrorRenderer;
         smartInstancesRendererPtr   m_instancesRenderer;
                         
-        eventsQueue      m_eventsQ;
-        modelsTable      m_modelsTable;
+        modelsTable       m_modelsTable;
 
-        std::atomic_bool m_gameShouldRun;
+        bool              m_gameShouldRun;
+
+        GLFWwindowsizefun m_windowResizeFunc;
+        GLFWkeyfun        m_keyCallbackFunc;
+        GLFWcursorposfun  m_cursorReposFunc;
+
 
      public:
     };

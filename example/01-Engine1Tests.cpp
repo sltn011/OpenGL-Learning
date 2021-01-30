@@ -147,7 +147,7 @@ public:
     bool userFrameUpdate( 
         float elapsedTime
     ) override {
-        processInput(1.0f);
+        processInputPerFrame();
 
         m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
 
