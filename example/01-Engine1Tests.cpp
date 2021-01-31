@@ -114,8 +114,7 @@ public:
 
         // Lights
         glm::vec3 directionalLightDir{ 0.85f, -1.5f, -1.0f };
-        glm::vec3 directionalLightColor{ 1.55f, 1.55f, 1.35f };
-
+        glm::vec3 directionalLightColor{ 1.0f, 1.0f, 0.75f };
         addDirLight(directionalLightDir, directionalLightColor);
 
         stbi_set_flip_vertically_on_load(false);

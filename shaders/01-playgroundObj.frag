@@ -8,6 +8,8 @@ uniform vec3 viewerPos;
 
 out vec4 fragColor;
 
+float gamma = 2.2;
+
 struct Material {
 	sampler2D textureDiffuse1;
 	sampler2D textureSpecular1;
@@ -96,11 +98,12 @@ void main() {
 		res += calculateSpotLight(spotLight[i], norm, viewDir, vertexPos);
 	}
 
+	res = pow(res, vec3(1.0 / gamma));
 	fragColor = vec4(res, alpha);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
@@ -111,7 +114,7 @@ vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
@@ -129,7 +132,7 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexP
 
 	vec3 lightDir = normalize(vertexPos - light.position);
 
-	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float lightrayAngleCos = dot(normalize(light.direction), lightDir);

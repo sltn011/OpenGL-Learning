@@ -1,13 +1,15 @@
 #version 330 core
-out vec4 fragColor;
 
 in vec3 vertexPos;
 in vec3 vertexTex;
 in vec3 vertexNorm;
 
 uniform vec3 viewerPos;
-
 uniform samplerCube cubemapSampler;
+
+out vec4 fragColor;
+
+float gamma = 2.2;
 
 struct Material {
 	sampler2D textureDiffuse1;
@@ -94,7 +96,9 @@ void main() {
 
 	vec3 reflected = reflect(viewDir, norm);
 	reflected.yz *= -1;
-	fragColor = vec4(texture(cubemapSampler, reflected).rgb * res, 1.0);
+
+	res = pow(res, vec3(1.0 /gamma));
+	fragColor = vec4(texture(cubemapSampler, reflected).rgb * res.rgb, 1.0);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {

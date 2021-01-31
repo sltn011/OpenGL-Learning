@@ -6,9 +6,10 @@ in vec2 vertexTex;
 
 uniform vec3 viewerPos;
 
-out vec4 fragColor;
+uniform bool doGammaCorrection;
+uniform bool ifTrueDoubleElseLinear;
 
-float gamma = 2.2;
+out vec4 fragColor;
 
 struct Material {
 	sampler2D textureDiffuse1;
@@ -97,12 +98,12 @@ void main() {
 	for (int i = 0; i < numSpotLights; ++i) {
 		res += calculateSpotLight(spotLight[i], norm, viewDir, vertexPos);
 	}
-	res = pow(res, vec3(1.0/gamma));
+	res = pow(res, vec3(doGammaCorrection ? (1.0 / 2.2) : 1.0));
 	fragColor = vec4(res, alpha);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(doGammaCorrection ? 2.2 : 1.0));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
@@ -113,7 +114,7 @@ vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(doGammaCorrection ? 2.2 : 1.0));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
@@ -131,7 +132,7 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexP
 
 	vec3 lightDir = normalize(vertexPos - light.position);
 
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(doGammaCorrection ? 2.2 : 1.0));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
 	float lightrayAngleCos = dot(normalize(light.direction), lightDir);
@@ -148,13 +149,13 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexP
 
 float attenuationCoefficient(PointLight light, vec3 vertexPos) {
 	float dist = length(vertexPos - light.position);
-	float attenuation = 1.0 / (light.attenuationConst + light.attenuationLinear * dist + light.attenuationQuadratic * pow(dist, 2));
+	float attenuation = 1.0 / (1.0 + (ifTrueDoubleElseLinear ? (dist * dist) : dist));
 	return attenuation;
 }
 
 float attenuationCoefficient(SpotLight light, vec3 vertexPos) {
 	float dist = length(vertexPos - light.position);
-	float attenuation = 1.0 / (light.attenuationConst + light.attenuationLinear * dist + light.attenuationQuadratic * pow(dist, 2));
+	float attenuation = 1.0 / (1.0 + (ifTrueDoubleElseLinear ? (dist * dist) : dist));
 	return attenuation;
 }
 

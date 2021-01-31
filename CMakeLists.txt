@@ -221,6 +221,7 @@ add_executable(21-AdvancedGLSL example/21-AdvancedGLSL.cpp)
 add_executable(22-GeometryShader example/22-GeometryShader.cpp)
 add_executable(23-Instancing example/23-Instancing.cpp)
 add_executable(24-BlinnPhong example/24-BlinnPhong.cpp)
+add_executable(25-GammaCorrection example/25-GammaCorrection.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
@@ -250,5 +251,6 @@ target_link_libraries(21-AdvancedGLSL glad glfw OpenGLTools)
 target_link_libraries(22-GeometryShader glad glfw OpenGLTools)
 target_link_libraries(23-Instancing glad glfw OpenGLTools assimp)
 target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1_LIB)
+target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1_LIB)
 ######################################################################################################
 
