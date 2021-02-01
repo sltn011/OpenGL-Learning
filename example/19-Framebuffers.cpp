@@ -79,7 +79,7 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo->value());
 
         m_cbo = OGL::E1::factory<OGL::ColorBufferObject>();
-        m_cbo->allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGB, GL_RGB);
+        m_cbo->allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
         m_fbo->attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, std::move(*m_cbo));
 
         m_rbo = OGL::E1::factory<OGL::RenderBufferObject>();

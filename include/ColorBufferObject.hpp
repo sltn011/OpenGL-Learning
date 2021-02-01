@@ -33,7 +33,8 @@ namespace OGL {
             int height, 
             GLenum textureType, 
             GLint colorComponents, 
-            GLenum format
+            GLenum format,
+            GLenum type
         );
 
         void allocateStorageMultisample(

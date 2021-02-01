@@ -34,7 +34,6 @@ namespace OGL {
         ColorBufferObject &&obj
     ) {
         glFramebufferTexture2D(framebufferType, colorAttachment, targetTexture, obj.value(), 0);
-        m_colorAttachmentsTable[colorAttachment] = obj.value();
         m_colorBufferObjs.emplace(colorAttachment, std::move(obj));
     }
 
@@ -77,13 +76,13 @@ namespace OGL {
 
     GLenum FrameBufferObject::checkStatus(
         GLenum framebufferType
-    ) const {
+    ) {
         return glCheckFramebufferStatus(framebufferType);
     }
 
     bool FrameBufferObject::isComplete(
         GLenum framebufferType
-    ) const {
+    ) {
         return checkStatus(framebufferType) == GL_FRAMEBUFFER_COMPLETE;
     }
 
@@ -91,10 +90,20 @@ namespace OGL {
         GLenum colorAttachment
     ) {
         glBindVertexArray(m_frameQuadVAO.value());
-        glBindTexture(GL_TEXTURE_2D, m_colorAttachmentsTable[colorAttachment]);
+        glBindTexture(GL_TEXTURE_2D, m_colorBufferObjs[colorAttachment].value());
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    std::map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(
+    ) {
+        return m_colorBufferObjs;
+    }
+
+    RenderBufferObject &FrameBufferObject::getRenderBuffer(
+    ) {
+        return m_renderBufferObj;
     }
 
     float const FrameBufferObject::frameQuadData[] = {

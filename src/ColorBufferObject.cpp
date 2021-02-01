@@ -17,10 +17,11 @@ namespace OGL {
         int height, 
         GLenum textureType,
         GLint colorComponents,
-        GLenum format
+        GLenum format,
+        GLenum type
     ) {
         glBindTexture(textureType, m_descriptor);
-        glTexImage2D(textureType, 0, colorComponents, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(textureType, 0, colorComponents, width, height, 0, format, type, nullptr);
         glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(textureType, 0);

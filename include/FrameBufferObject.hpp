@@ -21,8 +21,6 @@ namespace OGL {
         std::map<GLenum, ColorBufferObject> m_colorBufferObjs;
         RenderBufferObject m_renderBufferObj;
 
-        std::map<GLenum, unsigned int> m_colorAttachmentsTable;
-
      protected:
         static float const frameQuadData[];
 
@@ -83,20 +81,26 @@ namespace OGL {
             GLenum framebufferType
         ) const;
 
-        void unbind( 
+        static void unbind( 
             GLenum framebufferType
         );
 
-        GLenum checkStatus(
+        static GLenum checkStatus(
             GLenum framebufferType
-        ) const;
+        );
 
-        bool isComplete(
+        static bool isComplete(
             GLenum framebufferType
-        ) const;
+        );
 
         void drawQuad(
             GLenum colorAttachment
+        );
+
+        std::map<GLenum, ColorBufferObject> &getColorBuffers(
+        );
+
+        RenderBufferObject &getRenderBuffer(
         );
     };
 
