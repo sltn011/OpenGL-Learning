@@ -143,7 +143,7 @@ void main() {
 	diffuse *= diffuseCol;
 	specular *= specularCol;
 
-	float bias = max(0.000005 * (1.0 - dot(norm, directionalLight[0].direction)), 0.0000005);
+	float bias = max(0.00025 * (1.0 - dot(norm, directionalLight[0].direction)), 0.000025);
 	float shadow = calculateShadow(fs_in.vertexPosLightSpace, bias);
 	vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular));
 

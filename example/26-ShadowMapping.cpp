@@ -10,7 +10,7 @@ const int skyboxTextureID = 15;
 const int depthMapTextureID = 20;
 size_t depthMapSize = 4096;
 
-glm::vec3 lightDir = glm::vec3{ 1.0f, -0.8f, -0.5f };
+glm::vec3 lightDir = glm::normalize(glm::vec3{ 1.0f, -0.8f, -0.5f });
 
 class Test : public OGL::E1::Engine1Base {
  public:
@@ -42,7 +42,7 @@ class Test : public OGL::E1::Engine1Base {
     ) override {
 
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
-            glm::vec3{ 0.0f, 0.15f, 0.0f },
+            glm::vec3{ 100.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
@@ -51,7 +51,7 @@ class Test : public OGL::E1::Engine1Base {
             45.0f,
             static_cast<float>(m_screenWidth) / static_cast<float>(m_screenHeight),
             0.01f,
-            100.0f
+            1000.0f
         );
 
         m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
@@ -72,18 +72,18 @@ class Test : public OGL::E1::Engine1Base {
         addModel("models/WoodPlanksPlane/woodPlanksPlane.obj", 0);
         addModel("models/Crate/crate.obj", 1);
 
-        glm::vec3 playgroundPosition = { -0.0f, 0.0f, -0.5f };
-        float     playgroundScale = 1.0f;
+        glm::vec3 playgroundPosition = { 100.0f, 0.0f, -0.0f };
+        float     playgroundScale = 10.0f;
         float     playgroundRotationRadians = glm::radians(0.0f);
         glm::vec3 playgroundRotationAxes = { 0.0f, 1.0f, 0.0f };
         addNormalObject(0, playgroundPosition, playgroundScale, playgroundRotationRadians, playgroundRotationAxes);
 
-        glm::vec3 cratesPosition[] = { { -0.5f, 0.2551f, -0.45f }, { -0.2f, 0.0651f, -0.7f }, { -0.05f, 0.1851f, -0.35f }, { -0.57f, 0.0551f, -0.8f } };
+        glm::vec3 cratesPositionOffset[] = { { -0.5f, 0.2551f, -0.45f }, { -0.2f, 0.0651f, -0.7f }, { -0.05f, 0.1851f, -0.35f }, { -0.57f, 0.0551f, -0.8f } };
         float     cratesScale[] = { 0.055f, 0.065f, 0.055f, 0.055f };
         float     cratesRotationRadians[] = { glm::radians(30.0f), glm::radians(45.0f), glm::radians(135.0f), glm::radians(60.0f) };
         glm::vec3 cratesRotationAxis[] = { {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f} };
         for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
-            addNormalObject(1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i], cratesRotationAxis[i]);
+            addNormalObject(1, cratesPositionOffset[i] + playgroundPosition, cratesScale[i], cratesRotationRadians[i], cratesRotationAxis[i]);
         }
 
         // Lights
@@ -120,20 +120,22 @@ class Test : public OGL::E1::Engine1Base {
         // Render depth map to fbo
         glViewport(0, 0, depthMapSize, depthMapSize);
         glClear(GL_DEPTH_BUFFER_BIT);
-        glm::mat4 lightProjMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 0.1f, 10.0f);
-        glm::mat4 lightViewMatrix = glm::lookAt(-lightDir, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f });
+        glm::mat4 lightProjMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 10.0f);
+        glm::mat4 lightViewMatrix = glm::lookAt(playgroundPosition - lightDir, playgroundPosition, glm::vec3{ 0.0f, 1.0f, 0.0f });
         m_lightProjView = lightProjMatrix * lightViewMatrix;
         m_depthMapRenderer->getShader().use();
         m_depthMapRenderer->getShader().setUniformMatrix4("lightProjView", m_lightProjView);
         m_depthMapRenderer->render(*m_scene, m_cameraPlaceholder.get());
         OGL::FrameBufferObject::unbind(GL_FRAMEBUFFER);
 
+        OGL::Texture::setActive(GL_TEXTURE0 + depthMapTextureID);
         glBindTexture(GL_TEXTURE_2D, m_depthMapFBO.getColorBuffers()[GL_DEPTH_ATTACHMENT].value());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
         glBindTexture(GL_TEXTURE_2D, 0);
+        OGL::Texture::setActive(GL_TEXTURE0);
 
         return true;
     }
