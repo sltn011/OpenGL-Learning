@@ -14,6 +14,7 @@
 #include "CubemapRenderer.hpp"
 #include "MirrorRenderer.hpp"
 #include "InstancesRenderer.hpp"
+#include "ShadowMapRenderer.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -37,7 +38,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.3", 
+            std::string  title = "Engine1_v.0.2.4", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -363,6 +364,7 @@ namespace OGL::E1 {
         smartCubemapRendererPtr     m_cubemapRenderer;
         smartMirrorRendererPtr      m_mirrorRenderer;
         smartInstancesRendererPtr   m_instancesRenderer;
+        smartShadowMapRendererPtr   m_shadowMapRenderer;
                         
         modelsTable       m_modelsTable;
 

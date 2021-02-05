@@ -20,7 +20,7 @@ namespace OGL::E1 {
         dirLights &sceneDirLights = scene.getDirLights();
         m_shader.setUniformInt("numDirLights", sceneDirLights.size());
         for (size_t i = 0; i < sceneDirLights.size(); ++i) {
-            sceneDirLights[i].loadInShader(m_shader, i);
+            sceneDirLights[i].first.loadInShader(m_shader, i);
         }
 
         pointLights &scenePointLights = scene.getPointLights();

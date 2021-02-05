@@ -1,11 +1,15 @@
 #version 330
 
+#define MAX_DIR_LIGHTS   4
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS  4
+
 in VS_OUT {
 
 	vec3 vertexPos;
 	vec3 vertexNorm;
 	vec2 vertexTex;
-	vec4 vertexPosLightSpace;
+	vec4 vertexPosLightSpace[MAX_DIR_LIGHTS];
 
 } fs_in;
 
@@ -55,13 +59,11 @@ struct SpotLight {
 
 uniform Material material;
 
-#define MAX_DIR_LIGHTS   4
-#define MAX_POINT_LIGHTS 4
-#define MAX_SPOT_LIGHTS  4
-
 uniform int numDirLights;
 uniform int numPointLights;
 uniform int numSpotLights;
+
+uniform sampler2D shadowMap[MAX_DIR_LIGHTS];
 
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
@@ -82,9 +84,7 @@ vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, v
 vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 
-uniform sampler2D depthMap;
-
-float calculateShadow(vec4 vertexPosLightSpace, float bias) {
+float calculateShadow(sampler2D map, vec4 vertexPosLightSpace, float bias) {
 	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w; // perspective divide
 	projCoords = projCoords * 0.5 + 0.5; // transform coords from [-1, 1] to [0, 1]
 	float currentDepth = projCoords.z;
@@ -92,14 +92,23 @@ float calculateShadow(vec4 vertexPosLightSpace, float bias) {
 		return 0.0;
 	}
 	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+	vec2 texelSize = 1.0 / textureSize(map, 0);
 	for (int x = -1; x < 2; ++x) {
 		for (int y = -1; y < 2; ++y) {
-			float mapDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r; // get depth from depth map
+			float mapDepth = texture(map, projCoords.xy + vec2(x, y) * texelSize).r; // get depth from depth map
 			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
 		}
 	}
 	return shadow / 9.0;
+}
+
+float calculateShadows(vec3 fragNormal) {
+	float shadows = 0.0;
+	for (int i = 0; i < numDirLights; ++i) {
+		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
+		shadows += calculateShadow(shadowMap[i], fs_in.vertexPosLightSpace[i], bias);
+	}
+	return shadows / numDirLights;
 }
 
 void main() {
@@ -119,33 +128,28 @@ void main() {
 	vec3 diffuse  = vec3(0.0, 0.0, 0.0);
 	vec3 specular = vec3(0.0, 0.0, 0.0);
 
-	//for (int i = 0; i < numDirLights; ++i) {
-	//	ambient += ambientComponent(material, directionalLight[i].color);
-	//	diffuse += diffuseComponent(material, directionalLight[i], norm);
-	//	specular += specularComponent(material, directionalLight[i], norm, viewDir);
-	//}
-	//for (int i = 0; i < numPointLights; ++i) {
-	//	ambient += ambientComponent(material, pointLight[i].color);
-	//	diffuse += diffuseComponent(material, pointLight[i], fs_in.vertexPos, norm);
-	//	specular += specularComponent(material, pointLight[i], fs_in.vertexPos, norm, viewDir);
-	//}
-	//for (int i = 0; i < numSpotLights; ++i) {
-	//	ambient += ambientComponent(material, spotLight[i].color);
-	//	diffuse += diffuseComponent(material, spotLight[i], fs_in.vertexPos, norm);
-	//	specular += specularComponent(material, spotLight[i], fs_in.vertexPos, norm, viewDir);
-	//}
-
-	ambient += ambientComponent(material, directionalLight[0].color);
-	diffuse += diffuseComponent(material, directionalLight[0], norm);
-	specular += specularComponent(material, directionalLight[0], norm, viewDir);
+	for (int i = 0; i < numDirLights; ++i) {
+		ambient += ambientComponent(material, directionalLight[i].color);
+		diffuse += diffuseComponent(material, directionalLight[i], norm);
+		specular += specularComponent(material, directionalLight[i], norm, viewDir);
+	}
+	for (int i = 0; i < numPointLights; ++i) {
+		ambient += ambientComponent(material, pointLight[i].color);
+		diffuse += diffuseComponent(material, pointLight[i], fs_in.vertexPos, norm);
+		specular += specularComponent(material, pointLight[i], fs_in.vertexPos, norm, viewDir);
+	}
+	for (int i = 0; i < numSpotLights; ++i) {
+		ambient += ambientComponent(material, spotLight[i].color);
+		diffuse += diffuseComponent(material, spotLight[i], fs_in.vertexPos, norm);
+		specular += specularComponent(material, spotLight[i], fs_in.vertexPos, norm, viewDir);
+	}
 
 	ambient *= diffuseCol;
 	diffuse *= diffuseCol;
 	specular *= specularCol;
 
-	float bias = max(0.00025 * (1.0 - dot(norm, directionalLight[0].direction)), 0.000025);
-	float shadow = calculateShadow(fs_in.vertexPosLightSpace, bias);
-	vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular));
+	float shadows = calculateShadows(norm);
+	vec3 result = (ambient + (1.0 - shadows) * (diffuse + specular));
 
 	result = pow(result, vec3(1.0 / gamma));
 	fragColor = vec4(result, alpha);

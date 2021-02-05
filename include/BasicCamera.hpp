@@ -44,17 +44,23 @@ namespace OGL {
             float far = 100.0f
         );
 
-        virtual ~BasicCamera();
+        virtual ~BasicCamera(
+        );
 
-        glm::mat4 getViewMatrix() const;
+        virtual glm::mat4 getViewMatrix(
+        ) const;
 
-        glm::mat4 getProjectionMatrix() const;
+        virtual glm::mat4 getProjectionMatrix(
+        ) const;
 
-        glm::vec3 getPos() const;
+        glm::vec3 getPos(
+        ) const;
 
-        glm::vec3 getForward() const;
+        glm::vec3 getForward(
+        ) const;
 
-        glm::vec3 getUp() const;
+        glm::vec3 getUp(
+        ) const;
 
         virtual void processMoveInput(
             CameraMovementDirection dir,
@@ -69,7 +75,8 @@ namespace OGL {
         ) = 0;
 
      protected:
-        virtual void updateVectors();
+        virtual void updateVectors(
+        );
     };
 
 } // OGL

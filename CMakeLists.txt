@@ -161,6 +161,8 @@ add_library(OpenGLTools STATIC
         src/Texture.cpp
         src/Cubemap.cpp
         src/Skybox.cpp
+        src/Shadowmap.cpp
+        src/CameraShadowMap.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
@@ -183,6 +185,7 @@ add_library(OGL_E1_LIB STATIC
         "engines/First OGL Engine/src/MirrorRenderer.cpp"
         "engines/First OGL Engine/src/SkyboxRenderer.cpp"
         "engines/First OGL Engine/src/InstancesRenderer.cpp"
+        "engines/First OGL Engine/src/ShadowMapRenderer.cpp"
 )
 
 target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")

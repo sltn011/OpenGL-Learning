@@ -23,7 +23,6 @@ namespace OGL {
         m_aspect{ aspect }, 
         m_near{ near }, 
         m_far{ far } {
-        updateVectors();
     }
 
     BasicCamera::~BasicCamera(

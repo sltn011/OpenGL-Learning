@@ -4,6 +4,7 @@
 #include "First OGL Engine/Utils/EngineTypes.hpp"
 #include "Cubemap.hpp"
 #include "Skybox.hpp"
+#include "ShadowMap.hpp"
 #include "Object.hpp"
 #include "CameraFirstPerson.hpp"
 #include "CameraFree.hpp"

@@ -36,7 +36,7 @@ namespace OGL::E1 {
     void Scene::addDirLight( 
         DirectionalLight dirLight
     ) {
-        m_dirLights.push_back(dirLight);
+        m_dirLights.push_back(std::make_pair(dirLight, nullptr));
     }
 
     void Scene::addPointLight( 

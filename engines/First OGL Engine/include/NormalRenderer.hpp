@@ -5,6 +5,7 @@
 #include "Object.hpp"
 #include "Shader.hpp"
 #include "Scene.hpp"
+#include "ShadowMap.hpp"
 
 namespace OGL::E1 {
 
