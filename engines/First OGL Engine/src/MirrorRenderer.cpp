@@ -20,7 +20,13 @@ namespace OGL::E1 {
         dirLights &sceneDirLights = scene.getDirLights();
         m_shader.setUniformInt("numDirLights", sceneDirLights.size());
         for (size_t i = 0; i < sceneDirLights.size(); ++i) {
-            sceneDirLights[i].first.loadInShader(m_shader, i);
+            auto &pairLightShadowMap = sceneDirLights[i];
+            DirectionalLight &light = pairLightShadowMap.first;
+            smartShadowMap &pShadowMap = pairLightShadowMap.second;
+            light.loadInShader(m_shader, i);
+            pShadowMap->bindTexture();
+            m_shader.setUniformMatrix4("lightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            m_shader.setUniformInt("shadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
         }
 
         pointLights &scenePointLights = scene.getPointLights();
