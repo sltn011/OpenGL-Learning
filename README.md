@@ -1,7 +1,7 @@
 # OpenGL-Learning
 My code from learning OpenGL with book from https://learnopengl.com/ + my own tests with computer graphics  
   
-![Render](https://github.com/sltn011/OpenGL-Learning/blob/main/images/playground1.png)  
+![Render](https://github.com/sltn011/OpenGL-Learning/blob/main/images/playground2.png)  
   
 OpenGLTools is a library by me that encapsulates some of boilerplate OpenGL code  
 Engines folder right now contains my first OpenGL engine made by me for learning and testing purposes. It's still far from being great but I'm working on it
