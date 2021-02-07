@@ -161,7 +161,7 @@ add_library(OpenGLTools STATIC
         src/Texture.cpp
         src/Cubemap.cpp
         src/Skybox.cpp
-        src/Shadowmap.cpp
+        src/ShadowMap.cpp
         src/CameraShadowMap.cpp
 )
 
