@@ -1,4 +1,3 @@
-#include "..\include\Model.hpp"
 #include "Model.hpp"
 
 namespace OGL {

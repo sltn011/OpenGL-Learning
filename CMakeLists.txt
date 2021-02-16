@@ -162,7 +162,9 @@ add_library(OpenGLTools STATIC
         src/Cubemap.cpp
         src/Skybox.cpp
         src/ShadowMap.cpp
+        src/ShadowCubemap.cpp
         src/CameraShadowMap.cpp
+        src/CameraShadowCubemap.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
@@ -226,6 +228,7 @@ add_executable(23-Instancing example/23-Instancing.cpp)
 add_executable(24-BlinnPhong example/24-BlinnPhong.cpp)
 add_executable(25-GammaCorrection example/25-GammaCorrection.cpp)
 add_executable(26-ShadowMapping example/26-ShadowMapping.cpp)
+add_executable(27-PointShadow example/27-PointShadow.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
@@ -257,5 +260,6 @@ target_link_libraries(23-Instancing glad glfw OpenGLTools assimp)
 target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1_LIB)
 target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1_LIB)
 target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1_LIB)
+target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1_LIB)
 ######################################################################################################
 

@@ -11,7 +11,7 @@ const int cubemapTextureID = 16;
 const int shadowMapFirstTextureID = 17;
 
 const int cubemapSize = 512;
-const int shadowMapSize = 1024 * 5;
+const int shadowMapSize = 1024 * 2;
 
 std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
     size_t numMatrices,
@@ -117,7 +117,8 @@ public:
         m_asteroidsVBO.unbind();
 
         // Lights
-        glm::vec3 directionalLightDir = glm::vec3{ -1.5f, -2.0f, -1.25f };
+        glm::vec3 directionalLightDir = glm::normalize(glm::vec3{ -1.5f, -2.0f, -1.25f });
+        directionalLightDir *= 3;
         glm::vec3 directionalLightColor{ 1.0f, 1.0f, 0.75f };
         addDirLight(directionalLightDir, directionalLightColor);
 
@@ -128,7 +129,7 @@ public:
         glViewport(0, 0, shadowMapSize, shadowMapSize);
         int cnt = 0;
         for (auto &p : m_scene->getDirLights()) {
-            OGL::CameraShadowMap cam{ p.first, playgroundPosition, 4.0f, 0.1f, 4.0f };
+            OGL::CameraShadowMap cam{ p.first, playgroundPosition, 2.5f, 0.1f, 6.0f };
             p.second = OGL::E1::factory<OGL::ShadowMap>(
                 m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapFirstTextureID + cnt, shadowMapSize)
                 );

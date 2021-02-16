@@ -108,7 +108,12 @@ float calculateShadows(vec3 fragNormal) {
 		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
 		shadows += calculateShadow(shadowMap[i], fs_in.vertexPosLightSpace[i], bias);
 	}
-	return shadows / numDirLights;
+	if (numDirLights == 0) {
+		return 0.0;
+	}
+	else {
+		return shadows / numDirLights;
+	}
 }
 
 void main() {
@@ -129,19 +134,28 @@ void main() {
 	vec3 specular = vec3(0.0, 0.0, 0.0);
 
 	for (int i = 0; i < numDirLights; ++i) {
-		ambient += ambientComponent(material, directionalLight[i].color);
-		diffuse += diffuseComponent(material, directionalLight[i], norm);
-		specular += specularComponent(material, directionalLight[i], norm, viewDir);
+		vec3 amb  = ambientComponent(material, directionalLight[i].color);
+		vec3 diff = diffuseComponent(material, directionalLight[i], norm);
+		vec3 spec = specularComponent(material, directionalLight[i], norm, viewDir);
+		ambient += amb;
+		diffuse += diff;
+		specular += spec * (diff == 0.0 ? 0 : 1);
 	}
 	for (int i = 0; i < numPointLights; ++i) {
-		ambient += ambientComponent(material, pointLight[i].color);
-		diffuse += diffuseComponent(material, pointLight[i], fs_in.vertexPos, norm);
-		specular += specularComponent(material, pointLight[i], fs_in.vertexPos, norm, viewDir);
+		vec3 amb  = ambientComponent(material, pointLight[i].color);
+		vec3 diff = diffuseComponent(material, pointLight[i], fs_in.vertexPos, norm);
+		vec3 spec = specularComponent(material, pointLight[i], fs_in.vertexPos, norm, viewDir);
+		ambient += amb;
+		diffuse += diff;
+		specular += spec * (diff == 0.0 ? 0 : 1);
 	}
 	for (int i = 0; i < numSpotLights; ++i) {
-		ambient += ambientComponent(material, spotLight[i].color);
-		diffuse += diffuseComponent(material, spotLight[i], fs_in.vertexPos, norm);
-		specular += specularComponent(material, spotLight[i], fs_in.vertexPos, norm, viewDir);
+		vec3 amb  = ambientComponent(material, spotLight[i].color);
+		vec3 diff = diffuseComponent(material, spotLight[i], fs_in.vertexPos, norm);
+		vec3 spec = specularComponent(material, spotLight[i], fs_in.vertexPos, norm, viewDir);
+		ambient += amb;
+		diffuse += diff;
+		specular += spec * (diff == 0.0 ? 0 : 1);
 	}
 
 	ambient *= diffuseCol;

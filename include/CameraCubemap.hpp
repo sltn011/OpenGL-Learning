@@ -6,7 +6,7 @@
 
 namespace OGL {
     class CameraCubemap : public BasicCamera {
-    public:
+     public:
         CameraCubemap( 
             glm::vec3 position, 
             float near, 
