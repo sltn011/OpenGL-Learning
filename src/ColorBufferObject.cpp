@@ -38,4 +38,10 @@ namespace OGL {
         glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
     }
 
+    void ColorBufferObject::bindAsTexture(
+        GLenum textureType
+    ) const {
+        glBindTexture(textureType, m_descriptor);
+    }
+
 } // OGL

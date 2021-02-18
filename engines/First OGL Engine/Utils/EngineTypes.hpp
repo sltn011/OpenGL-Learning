@@ -22,6 +22,7 @@ namespace OGL {
     class Cubemap;
     class Skybox;
     class ShadowMap;
+    class ShadowCubemap;
 
     class BasicCamera;
     class CameraFirstPerson;
@@ -58,6 +59,8 @@ namespace OGL {
         using smartInstancesRendererPtr = std::unique_ptr<InstancesRenderer>;
         class ShadowMapRenderer;
         using smartShadowMapRendererPtr = std::unique_ptr<ShadowMapRenderer>;
+        class ShadowCubemapRenderer;
+        using smartShadowCubemapRendererPtr = std::unique_ptr<ShadowCubemapRenderer>;
 
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;
@@ -69,6 +72,7 @@ namespace OGL {
         using smartCubemap = std::unique_ptr<Cubemap>;
         using smartSkybox = std::unique_ptr<Skybox>;
         using smartShadowMap = std::unique_ptr<ShadowMap>;
+        using smartShadowCubemap = std::unique_ptr<ShadowCubemap>;
 
         using smartCamPtr = std::unique_ptr<BasicCamera>;
         using smartFPCamPtr = std::unique_ptr<CameraFirstPerson>;
@@ -89,7 +93,7 @@ namespace OGL {
         using gameObjects = std::unordered_map<size_t, objectsVec>;
 
         using dirLights = std::vector<std::pair<DirectionalLight, smartShadowMap>>;
-        using pointLights = std::vector<PointLight>;
+        using pointLights = std::vector<std::pair<PointLight, smartShadowCubemap>>;
         using spotLights = std::vector<SpotLight>;
 
         using shadersPack = std::vector<Shader>;

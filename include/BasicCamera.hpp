@@ -22,9 +22,11 @@ namespace OGL {
         glm::vec3 m_right;
         glm::vec3 m_up;
         glm::vec3 m_worldUp;
-        float m_speed;
         float m_yaw;    // Y rotation
         float m_pitch;  // X rotation
+        float m_speed;
+
+     public:
         float m_fov;
         float m_aspect;
         float m_near;

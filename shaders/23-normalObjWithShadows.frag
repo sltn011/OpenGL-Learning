@@ -5,12 +5,9 @@
 #define MAX_SPOT_LIGHTS  4
 
 in VS_OUT {
-
 	vec3 vertexPos;
 	vec3 vertexNorm;
 	vec2 vertexTex;
-	vec4 vertexPosLightSpace[MAX_DIR_LIGHTS];
-
 } fs_in;
 
 uniform vec3 viewerPos;
@@ -63,7 +60,8 @@ uniform int numDirLights;
 uniform int numPointLights;
 uniform int numSpotLights;
 
-uniform sampler2D dirLightShadowMap[MAX_DIR_LIGHTS];
+uniform samplerCube pointLightShadowMap[MAX_POINT_LIGHTS];
+uniform float pointLightShadowMapFarPlane[MAX_POINT_LIGHTS];
 
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
@@ -84,36 +82,21 @@ vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, v
 vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 
-float calculateShadow(sampler2D map, vec4 vertexPosLightSpace, float bias) {
-	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
-	float currentDepth = projCoords.z;
-	if (currentDepth > 1.0) {
-		return 0.0;
-	}
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(map, 0);
-	for (int x = -1; x < 2; ++x) {
-		for (int y = -1; y < 2; ++y) {
-			float mapDepth = texture(map, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
-		}
-	}
-	return shadow / 9.0;
+float calculateShadow(PointLight light, samplerCube map, float mapFarPlane, vec3 fragPos, float bias) {
+	vec3 fragToLight = fragPos - light.position;
+	fragToLight.yz *= -1;
+	float closestDepth = texture(map, normalize(fragToLight)).r * mapFarPlane;
+	float currentDepth = length(fragToLight);
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	return shadow;
 }
 
-float calculateShadows(vec3 fragNormal) {
+float calculateShadows(vec3 fragPos) {
 	float shadows = 0.0;
-	for (int i = 0; i < numDirLights; ++i) {
-		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
-		shadows += calculateShadow(dirLightShadowMap[i], fs_in.vertexPosLightSpace[i], bias);
+	for (int i = 0; i < numPointLights; ++i) {
+		shadows += calculateShadow(pointLight[i], pointLightShadowMap[i], pointLightShadowMapFarPlane[i], fragPos, 0.005); 
 	}
-	if (numDirLights == 0) {
-		return 0.0;
-	}
-	else {
-		return shadows / numDirLights;
-	}
+	return shadows / float(numPointLights);
 }
 
 void main() {
@@ -162,7 +145,7 @@ void main() {
 	diffuse *= diffuseCol;
 	specular *= specularCol;
 
-	float shadows = calculateShadows(norm);
+	float shadows = calculateShadows(fs_in.vertexPos); 
 	vec3 result = (ambient + (1.0 - shadows) * (diffuse + specular));
 
 	result = pow(result, vec3(1.0 / gamma));

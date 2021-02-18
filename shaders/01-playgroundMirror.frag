@@ -66,7 +66,7 @@ uniform int numDirLights;
 uniform int numPointLights;
 uniform int numSpotLights;
 
-uniform sampler2D shadowMap[MAX_DIR_LIGHTS];
+uniform sampler2D dirLightShadowMap[MAX_DIR_LIGHTS];
 
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
@@ -109,7 +109,7 @@ float calculateShadows(vec3 fragNormal) {
 	float shadows = 0.0;
 	for (int i = 0; i < numDirLights; ++i) {
 		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
-		shadows += calculateShadow(shadowMap[i], fs_in.vertexPosLightSpace[i], bias);
+		shadows += calculateShadow(dirLightShadowMap[i], fs_in.vertexPosLightSpace[i], bias);
 	}
 	return shadows / numDirLights;
 }

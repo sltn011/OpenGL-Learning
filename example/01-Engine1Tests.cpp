@@ -117,7 +117,7 @@ public:
         m_asteroidsVBO.unbind();
 
         // Lights
-        glm::vec3 directionalLightDir = glm::normalize(glm::vec3{ -1.5f, -2.0f, -1.25f });
+        glm::vec3 directionalLightDir = glm::normalize(glm::vec3{ 1.5f, -2.0f, -1.25f });
         directionalLightDir *= 3;
         glm::vec3 directionalLightColor{ 1.0f, 1.0f, 0.75f };
         addDirLight(directionalLightDir, directionalLightColor);

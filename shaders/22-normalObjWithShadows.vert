@@ -9,7 +9,7 @@ layout (location = 2) in vec2 aTex;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform mat4 lightProjView[MAX_DIR_LIGHTS];
+uniform mat4 dirLightProjView[MAX_DIR_LIGHTS];
 
 uniform int numDirLights;
 
@@ -26,7 +26,7 @@ void main() {
 	vs_out.vertexNorm = normalize(mat3(model) * aNorm);
 	vs_out.vertexTex = aTex;
 	for (int i = 0; i < numDirLights; ++i) {
-		vs_out.vertexPosLightSpace[i] = lightProjView[i] * vec4(vs_out.vertexPos, 1.0);
+		vs_out.vertexPosLightSpace[i] = dirLightProjView[i] * vec4(vs_out.vertexPos, 1.0);
 	}
 	gl_Position = projection * view * vec4(vs_out.vertexPos, 1.0);
 }

@@ -9,7 +9,7 @@ namespace OGL {
         Texture::setActive(cubemapTextureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
         for (size_t i = 0; i < 6; ++i) {
-            Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, size, size, GL_RGB, nullptr);
+            Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, size, size, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         }
 
         Texture::setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -47,7 +47,7 @@ namespace OGL {
                 stbi_image_free(data);
                 throw OGL::Exception("Error loading cubemap texture " + filePath);
             }
-            Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, width, height, GL_RGB, data);
+            Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         }
 
@@ -62,14 +62,14 @@ namespace OGL {
 
     void Cubemap::bind(
     ) const {
-        glActiveTexture(m_textureUnit);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture.value());
+        Texture::setActive(m_textureUnit);
+        m_texture.bind(GL_TEXTURE_CUBE_MAP);
     }
 
     void Cubemap::unbind(
     ) {
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        glActiveTexture(GL_TEXTURE0);
+        Texture::unbind(GL_TEXTURE_CUBE_MAP);
+        Texture::setActive(GL_TEXTURE0);
     }
 
     unsigned int Cubemap::value(

@@ -188,6 +188,7 @@ add_library(OGL_E1_LIB STATIC
         "engines/First OGL Engine/src/SkyboxRenderer.cpp"
         "engines/First OGL Engine/src/InstancesRenderer.cpp"
         "engines/First OGL Engine/src/ShadowMapRenderer.cpp"
+        "engines/First OGL Engine/src/ShadowCubemapRenderer.cpp"
 )
 
 target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")

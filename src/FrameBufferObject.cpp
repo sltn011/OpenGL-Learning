@@ -30,6 +30,15 @@ namespace OGL {
     void FrameBufferObject::attachColorBuffer(
         GLenum framebufferType,
         GLenum colorAttachment, 
+        ColorBufferObject &&obj
+    ) {
+        glFramebufferTexture(framebufferType, colorAttachment, obj.value(), 0);
+        m_colorBufferObjs.emplace(colorAttachment, std::move(obj));
+    }
+
+    void FrameBufferObject::attachColorBuffer(
+        GLenum framebufferType,
+        GLenum colorAttachment, 
         GLenum targetTexture, 
         ColorBufferObject &&obj
     ) {
