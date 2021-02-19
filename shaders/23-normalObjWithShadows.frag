@@ -83,12 +83,22 @@ vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 
 float calculateShadow(PointLight light, samplerCube map, float mapFarPlane, vec3 fragPos, float bias) {
+	float shadow = 0.0;
+	float numSamples = 4;
+	float offset = 0.005;
+	float delta = ((2 * offset) / numSamples);
 	vec3 fragToLight = fragPos - light.position;
 	fragToLight.yz *= -1;
-	float closestDepth = texture(map, normalize(fragToLight)).r * mapFarPlane;
-	float currentDepth = length(fragToLight);
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-	return shadow;
+	for (float x = -offset; x < offset; x += delta) {
+		for (float y = -offset; y < offset; y += delta) {
+			for (float z = -offset; z < offset; z += delta) {
+				float closestDepth = texture(map, normalize(fragToLight + vec3(x, y, z))).r * mapFarPlane;
+				float currentDepth = length(fragToLight);
+				shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+			}
+		}
+	}
+	return shadow / float(pow(numSamples, 3));
 }
 
 float calculateShadows(vec3 fragPos) {
