@@ -67,6 +67,8 @@ uniform int numPointLights;
 uniform int numSpotLights;
 
 uniform sampler2D dirLightShadowMap[MAX_DIR_LIGHTS];
+uniform samplerCube pointLightShadowMap[MAX_POINT_LIGHTS];
+uniform float pointLightShadowMapFarPlane[MAX_POINT_LIGHTS];
 
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
@@ -240,4 +242,71 @@ vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 
 	float dotProduct = dot(halfwayDir, normal);
 	float spec = pow(-min(0.0, dotProduct), material.specularExponent);
 	return spec * material.colorSpecular * light.color;
+}
+
+float calculateDirectShadow(sampler2D map, vec4 vertexPosLightSpace, float bias) {
+	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	float currentDepth = projCoords.z;
+	if (currentDepth > 1.0) {
+		return 0.0;
+	}
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(map, 0);
+	for (int x = -1; x < 2; ++x) {
+		for (int y = -1; y < 2; ++y) {
+			float mapDepth = texture(map, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
+		}
+	}
+	return shadow / 9.0;
+}
+
+float calculateDirectShadows(vec3 fragNormal) {
+	float shadows = 0.0;
+	for (int i = 0; i < numDirLights; ++i) {
+		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
+		shadows += calculateDirectShadow(dirLightShadowMap[i], fs_in.vertexPosLightSpace[i], bias);
+	}
+	if (numDirLights == 0) {
+		return 0.0;
+	}
+	else {
+		return shadows;
+	}
+}
+
+float calculatePointShadow(PointLight light, samplerCube map, float mapFarPlane, vec3 fragPos, float bias) {
+	float shadow = 0.0;
+	float numSamples = 4;
+	float offset = 0.005;
+	float delta = ((2 * offset) / numSamples);
+	vec3 fragToLight = fragPos - light.position;
+	fragToLight.yz *= -1;
+	for (float x = -offset; x < offset; x += delta) {
+		for (float y = -offset; y < offset; y += delta) {
+			for (float z = -offset; z < offset; z += delta) {
+				float closestDepth = texture(map, normalize(fragToLight + vec3(x, y, z))).r * mapFarPlane;
+				float currentDepth = length(fragToLight);
+				shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+			}
+		}
+	}
+	return shadow / float(pow(numSamples, 3));
+}
+
+float calculatePointShadows(vec3 fragPos) {
+	float shadows = 0.0;
+	for (int i = 0; i < numPointLights; ++i) {
+		shadows += calculatePointShadow(pointLight[i], pointLightShadowMap[i], pointLightShadowMapFarPlane[i], fragPos, 0.005); 
+	}
+	return shadows;
+}
+
+float calculateShadow(vec3 fragPos, vec3 fragNorm) {
+	float shadow = 0.0;
+	shadow += calculateDirectShadows(fragNorm);
+	shadow += calculatePointShadows(fragPos);
+	//shadow += calculateSpotShadows(...); TODO!
+	return shadow / float(numDirLights + numPointLights + numSpotLights);
 }
