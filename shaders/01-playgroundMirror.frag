@@ -89,32 +89,11 @@ vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, v
 vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 
-float calculateShadow(sampler2D map, vec4 vertexPosLightSpace, float bias) {
-	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
-	float currentDepth = projCoords.z;
-	if (currentDepth > 1.0) {
-		return 0.0;
-	}
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(map, 0);
-	for (int x = -1; x < 2; ++x) {
-		for (int y = -1; y < 2; ++y) {
-			float mapDepth = texture(map, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
-		}
-	}
-	return shadow / 9.0;
-}
-
-float calculateShadows(vec3 fragNormal) {
-	float shadows = 0.0;
-	for (int i = 0; i < numDirLights; ++i) {
-		float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[i].direction))), 0.000025);
-		shadows += calculateShadow(dirLightShadowMap[i], fs_in.vertexPosLightSpace[i], bias);
-	}
-	return shadows / numDirLights;
-}
+float calculateDirectShadow(sampler2D map, vec4 vertexPosLightSpace, float bias);
+float calculateDirectShadows(vec3 fragNormal);
+float calculatePointShadow(PointLight light, samplerCube map, float mapFarPlane, vec3 fragPos, float bias);
+float calculatePointShadows(vec3 fragPos);
+float calculateShadow(vec3 fragPos, vec3 fragNorm);
 
 void main() {
 	vec3 norm = normalize(fs_in.vertexNorm);
@@ -143,7 +122,7 @@ void main() {
 	vec3 reflected = reflect(viewDir, norm);
 	reflected.yz *= -1;
 
-	float shadows = calculateShadows(norm);
+	float shadows = calculateShadow(fs_in.vertexPos, norm);
 	vec3 result = (ambient + (1.0 - shadows) * (diffuse + specular));
 
 	result = pow(result, vec3(1.0 /gamma));
