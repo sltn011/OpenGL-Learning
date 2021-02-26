@@ -53,9 +53,6 @@ namespace OGL::E1 {
         TransparentRenderer *transparentRenderer,
         InstancesRenderer *instancesRenderer
     ) {
-        if (skyboxRenderer) {
-            skyboxRenderer->render(scene, cubemapCamera);
-        }
         if (normalRenderer) {
             normalRenderer->render(scene, cubemapCamera);
         }
@@ -64,6 +61,9 @@ namespace OGL::E1 {
         }
         if (transparentRenderer) {
             transparentRenderer->render(scene, cubemapCamera);
+        }
+        if (skyboxRenderer) {
+            skyboxRenderer->render(scene, cubemapCamera);
         }
     }
 
