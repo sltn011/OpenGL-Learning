@@ -86,13 +86,13 @@ public:
             "shaders/01-playgroundShadowCubemapRenderer.frag"
         );
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_transpRenderer = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
-        m_mirrorRenderer = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
-        m_cubemapRenderer = OGL::E1::factory<OGL::E1::CubemapRenderer>();
-        m_instancesRenderer = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
-        m_shadowMapRenderer = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
+        m_normalRenderer        = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+        m_transpRenderer        = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
+        m_skyboxRenderer        = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_mirrorRenderer        = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
+        m_cubemapRenderer       = OGL::E1::factory<OGL::E1::CubemapRenderer>();
+        m_instancesRenderer     = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
+        m_shadowMapRenderer     = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
         m_shadowCubemapRenderer = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
 
         // Objects
@@ -166,7 +166,7 @@ public:
         glViewport(0, 0, shadowCubemapSize, shadowCubemapSize);
         for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
             auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
-            OGL::CameraShadowCubemap cam(pointLight, 0.01f, 2.5f);
+            OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
             shadowCubemap = std::make_unique<OGL::ShadowCubemap>(
                 m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstTextureID + i, shadowCubemapSize)
             );
