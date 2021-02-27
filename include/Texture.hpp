@@ -48,7 +48,8 @@ namespace OGL {
             int width,
             int height,
             GLenum format,
-            void *data = nullptr
+            GLenum type,
+            void *data
         );
 
         void load( 
@@ -65,6 +66,11 @@ namespace OGL {
         void bind(
             GLenum textureType
         ) const;
+
+        static void bind(
+            GLenum textureType,
+            int texture
+        );
 
         static void unbind(
             GLenum textureType

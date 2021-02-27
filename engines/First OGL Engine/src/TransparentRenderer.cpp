@@ -21,19 +21,21 @@ namespace OGL::E1 {
         dirLights &sceneDirLights = scene.getDirLights();
         m_shader.setUniformInt("numDirLights", sceneDirLights.size());
         for (size_t i = 0; i < sceneDirLights.size(); ++i) {
-            auto &pairLightShadowMap = sceneDirLights[i];
-            DirectionalLight &light = pairLightShadowMap.first;
-            smartShadowMap &pShadowMap = pairLightShadowMap.second;
+            auto &[light, pShadowMap] = sceneDirLights[i];
             light.loadInShader(m_shader, i);
             pShadowMap->bindTexture();
-            m_shader.setUniformMatrix4("lightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
-            m_shader.setUniformInt("shadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
+            m_shader.setUniformMatrix4("dirLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            m_shader.setUniformInt("dirLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
         }
 
         pointLights &scenePointLights = scene.getPointLights();
         m_shader.setUniformInt("numPointLights", scenePointLights.size());
         for (size_t i = 0; i < scenePointLights.size(); ++i) {
-            scenePointLights[i].loadInShader(m_shader, i);
+            auto &[light, pShadowCubemap] = scenePointLights[i];
+            light.loadInShader(m_shader, i);
+            pShadowCubemap->bindTexture();
+            m_shader.setUniformInt("pointLightShadowMap[" + std::to_string(i) + "]", pShadowCubemap->textureUnit() - GL_TEXTURE0);
+            m_shader.setUniformFloat("pointLightShadowMapFarPlane[" + std::to_string(i) + "]", pShadowCubemap->farPlane());
         }
 
         spotLights &sceneSpotLights = scene.getSpotLights();

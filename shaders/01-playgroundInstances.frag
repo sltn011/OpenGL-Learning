@@ -1,14 +1,11 @@
 #version 330
 
-in vec3 vertexPos;
-in vec3 vertexNorm;
-in vec2 vertexTex;
-
-uniform vec3 viewerPos;
-
-out vec4 fragColor;
-
+#define MAX_DIR_LIGHTS   4
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS  4
 float gamma = 2.2;
+
+
 
 struct Material {
 	sampler2D textureDiffuse1;
@@ -48,19 +45,28 @@ struct SpotLight {
 	float attenuationQuadratic;
 };
 
+
+
+in vec3 vertexPos;
+in vec3 vertexNorm;
+in vec2 vertexTex;
+
+
+
+out vec4 fragColor;
+
+
+
 uniform Material material;
-
-#define MAX_DIR_LIGHTS   4
-#define MAX_POINT_LIGHTS 4
-#define MAX_SPOT_LIGHTS  4
-
+uniform vec3 viewerPos;
 uniform int numDirLights;
 uniform int numPointLights;
 uniform int numSpotLights;
-
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
 uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
+
+
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos);
@@ -76,6 +82,8 @@ vec3 diffuseComponent(Material material, SpotLight light, vec3 vertexPos, vec3 n
 vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
+
+
 
 void main() {
 	vec3 norm = normalize(vertexNorm);
@@ -100,6 +108,8 @@ void main() {
 	res = pow(res, vec3(1.0/gamma));
 	fragColor = vec4(res, alpha);
 }
+
+
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, vertexTex)), vec3(gamma));

@@ -15,6 +15,7 @@
 #include "MirrorRenderer.hpp"
 #include "InstancesRenderer.hpp"
 #include "ShadowMapRenderer.hpp"
+#include "ShadowCubemapRenderer.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -38,7 +39,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.4", 
+            std::string  title = "Engine1_v.0.2.5", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -357,14 +358,15 @@ namespace OGL::E1 {
         GLFWwindow      *m_window;
         std::string      m_title;
 
-        smartScenePtr               m_scene;
-        smartNormalRendererPtr      m_normalRenderer;
-        smartTransparentRendererPtr m_transpRenderer;
-        smartSkyboxRendererPtr      m_skyboxRenderer;
-        smartCubemapRendererPtr     m_cubemapRenderer;
-        smartMirrorRendererPtr      m_mirrorRenderer;
-        smartInstancesRendererPtr   m_instancesRenderer;
-        smartShadowMapRendererPtr   m_shadowMapRenderer;
+        smartScenePtr                 m_scene;
+        smartNormalRendererPtr        m_normalRenderer;
+        smartTransparentRendererPtr   m_transpRenderer;
+        smartSkyboxRendererPtr        m_skyboxRenderer;
+        smartCubemapRendererPtr       m_cubemapRenderer;
+        smartMirrorRendererPtr        m_mirrorRenderer;
+        smartInstancesRendererPtr     m_instancesRenderer;
+        smartShadowMapRendererPtr     m_shadowMapRenderer;
+        smartShadowCubemapRendererPtr m_shadowCubemapRenderer;
                         
         modelsTable       m_modelsTable;
 

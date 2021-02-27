@@ -42,7 +42,7 @@ namespace OGL::E1 {
     void Scene::addPointLight( 
         PointLight pointLight
     ) {
-        m_pointLights.push_back(pointLight);
+        m_pointLights.push_back(std::make_pair(pointLight, nullptr));
     }
 
     void Scene::addSpotLight( 

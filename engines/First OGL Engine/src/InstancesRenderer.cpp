@@ -26,7 +26,7 @@ namespace OGL::E1 {
         pointLights &scenePointLights = scene.getPointLights();
         m_shader.setUniformInt("numPointLights", scenePointLights.size());
         for (size_t i = 0; i < scenePointLights.size(); ++i) {
-            scenePointLights[i].loadInShader(m_shader, i);
+            scenePointLights[i].first.loadInShader(m_shader, i);
         }
 
         spotLights &sceneSpotLights = scene.getSpotLights();

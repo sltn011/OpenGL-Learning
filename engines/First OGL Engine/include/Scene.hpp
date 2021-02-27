@@ -5,6 +5,7 @@
 #include "Cubemap.hpp"
 #include "Skybox.hpp"
 #include "ShadowMap.hpp"
+#include "ShadowCubemap.hpp"
 #include "Object.hpp"
 #include "CameraFirstPerson.hpp"
 #include "CameraFree.hpp"

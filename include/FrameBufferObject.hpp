@@ -52,6 +52,12 @@ namespace OGL {
             FrameBufferObject &&rhs
         ) = default;
 
+        void attachColorBuffer(
+            GLenum framebufferType,
+            GLenum colorAttachment,
+            ColorBufferObject &&obj
+        );
+
         void attachColorBuffer( 
             GLenum framebufferType,
             GLenum colorAttachment,

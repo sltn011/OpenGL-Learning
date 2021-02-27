@@ -27,10 +27,11 @@ namespace OGL {
         GLenum textureType, 
         int width, 
         int height, 
-        GLenum format, 
+        GLenum format,
+        GLenum type,
         void *data
     ) {
-        glTexImage2D(textureType, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(textureType, 0, format, width, height, 0, format, type, data);
     }
 
     void Texture::load( 
@@ -80,6 +81,13 @@ namespace OGL {
         GLenum textureType
     ) const {
         glBindTexture(textureType, m_descriptor);
+    }
+
+    void Texture::bind(
+        GLenum textureType,
+        int texture
+    ) {
+        glBindTexture(textureType, texture);
     }
 
     void Texture::unbind( 

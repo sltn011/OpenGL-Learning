@@ -1,17 +1,14 @@
-#include "Cubemap.hpp"
-#include <map>
-#include "Cubemap.hpp"
-#include "Skybox.hpp"
-#include "CameraCubemap.hpp"
-#include "FrameBufferObject.hpp"
 #include "First OGL Engine/OGL_E1.hpp"
 
-const int skyboxTextureID = 15;
-const int cubemapTextureID = 16;
-const int shadowMapFirstTextureID = 17;
+const int shadowMapFirstTextureID = 10;
+const int shadowCubemapFirstTextureID = shadowMapFirstTextureID + 4;
+const int skyboxTextureID = 20;
+const int cubemapTextureID = 21;
+
 
 const int cubemapSize = 512;
-const int shadowMapSize = 1024 * 5;
+const int shadowMapSize = 1024 * 2;
+const int shadowCubemapSize = 1024;
 
 std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
     size_t numMatrices,
@@ -22,11 +19,11 @@ std::unique_ptr<glm::mat4[]> generateTranslationMatrices(
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(
-        int width, 
+        int width,
         int height
-    ) : Engine1Base{ 
-        width, 
-        height 
+    ) : Engine1Base{
+        width,
+        height
     } {
     }
 
@@ -39,7 +36,7 @@ public:
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
-            glm::vec3{ 0.0f, 0.0f, 0.0f },
+            glm::vec3{ 0.0f, 0.15f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
@@ -48,25 +45,55 @@ public:
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
             0.01f,
-            1000.0f
+            100.0f
         );
 
         m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
 
-        OGL::Shader normalShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
-        OGL::Shader transpShader("shaders/01-playgroundObj.vert", "shaders/01-playgroundObj.frag");
-        OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
-        OGL::Shader mirrorShader("shaders/01-playgroundMirror.vert", "shaders/01-playgroundMirror.frag");
-        OGL::Shader instancesShader("shaders/01-playgroundInstances.vert", "shaders/01-playgroundInstances.frag");
-        OGL::Shader shadowMapRender("shaders/01-playgroundShadowMapRenderer.vert", "shaders/01-playgroundShadowMapRenderer.frag");
+        OGL::Shader normalShader(
+            "shaders/01-playgroundObj.vert",
+            "shaders/01-playgroundObj.frag"
+        );
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_transpRenderer = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
-        m_mirrorRenderer = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
-        m_cubemapRenderer = OGL::E1::factory<OGL::E1::CubemapRenderer>();
-        m_instancesRenderer = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
-        m_shadowMapRenderer = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
+        OGL::Shader transpShader(
+            "shaders/01-playgroundObj.vert",
+            "shaders/01-playgroundObj.frag"
+        );
+
+        OGL::Shader skyboxShader(
+            "shaders/01-playgroundSkybox.vert",
+            "shaders/01-playgroundSkybox.frag"
+        );
+
+        OGL::Shader mirrorShader(
+            "shaders/01-playgroundMirror.vert",
+            "shaders/01-playgroundMirror.frag"
+        );
+
+        OGL::Shader instancesShader(
+            "shaders/01-playgroundInstances.vert",
+            "shaders/01-playgroundInstances.frag"
+        );
+
+        OGL::Shader shadowMapRender(
+            "shaders/01-playgroundShadowMapRenderer.vert",
+            "shaders/01-playgroundShadowMapRenderer.frag"
+        );
+
+        OGL::Shader shadowCubemapRenderer(
+            "shaders/01-playgroundShadowCubemapRenderer.vert",
+            "shaders/01-playgroundShadowCubemapRenderer.geom",
+            "shaders/01-playgroundShadowCubemapRenderer.frag"
+        );
+
+        m_normalRenderer        = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+        m_transpRenderer        = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
+        m_skyboxRenderer        = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_mirrorRenderer        = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
+        m_cubemapRenderer       = OGL::E1::factory<OGL::E1::CubemapRenderer>();
+        m_instancesRenderer     = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
+        m_shadowMapRenderer     = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
+        m_shadowCubemapRenderer = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -117,7 +144,8 @@ public:
         m_asteroidsVBO.unbind();
 
         // Lights
-        glm::vec3 directionalLightDir = glm::vec3{ -1.5f, -2.0f, -1.25f };
+        glm::vec3 directionalLightDir = glm::normalize(glm::vec3{ 1.5f, -2.0f, -1.25f });
+        directionalLightDir *= 3;
         glm::vec3 directionalLightColor{ 1.0f, 1.0f, 0.75f };
         addDirLight(directionalLightDir, directionalLightColor);
 
@@ -128,11 +156,20 @@ public:
         glViewport(0, 0, shadowMapSize, shadowMapSize);
         int cnt = 0;
         for (auto &p : m_scene->getDirLights()) {
-            OGL::CameraShadowMap cam{ p.first, playgroundPosition, 4.0f, 0.1f, 4.0f };
+            OGL::CameraShadowMap cam{ p.first, playgroundPosition, 2.5f, 0.1f, 6.0f };
             p.second = OGL::E1::factory<OGL::ShadowMap>(
                 m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapFirstTextureID + cnt, shadowMapSize)
-                );
+            );
             ++cnt;
+        }
+
+        glViewport(0, 0, shadowCubemapSize, shadowCubemapSize);
+        for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
+            auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
+            OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
+            shadowCubemap = std::make_unique<OGL::ShadowCubemap>(
+                m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstTextureID + i, shadowCubemapSize)
+            );
         }
 
         glViewport(0, 0, cubemapSize, cubemapSize);
@@ -155,7 +192,7 @@ public:
         return true;
     }
 
-    bool userFrameUpdate( 
+    bool userFrameUpdate(
         float elapsedTime
     ) override {
         processInputPerFrame();
