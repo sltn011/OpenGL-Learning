@@ -59,11 +59,11 @@ namespace OGL::E1 {
         if (instancesRenderer) {
             instancesRenderer->render(scene, cubemapCamera);
         }
-        if (transparentRenderer) {
-            transparentRenderer->render(scene, cubemapCamera);
-        }
         if (skyboxRenderer) {
             skyboxRenderer->render(scene, cubemapCamera);
+        }
+        if (transparentRenderer) {
+            transparentRenderer->render(scene, cubemapCamera);
         }
     }
 
