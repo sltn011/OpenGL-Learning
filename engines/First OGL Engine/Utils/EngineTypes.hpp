@@ -61,6 +61,8 @@ namespace OGL {
         using smartShadowMapRendererPtr = std::unique_ptr<ShadowMapRenderer>;
         class ShadowCubemapRenderer;
         using smartShadowCubemapRendererPtr = std::unique_ptr<ShadowCubemapRenderer>;
+        class LightSourcesDebugRenderer;
+        using smartLightSourcesDebugRendererPtr = std::unique_ptr<LightSourcesDebugRenderer>;
 
         using smartDescriptor = std::unique_ptr<Descriptor>;
         using smartVAO = std::unique_ptr<VertexArrayObject>;

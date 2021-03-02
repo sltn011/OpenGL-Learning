@@ -86,14 +86,20 @@ public:
             "shaders/01-playgroundShadowCubemapRenderer.frag"
         );
 
-        m_normalRenderer        = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_transpRenderer        = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
-        m_skyboxRenderer        = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
-        m_mirrorRenderer        = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
-        m_cubemapRenderer       = OGL::E1::factory<OGL::E1::CubemapRenderer>();
-        m_instancesRenderer     = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
-        m_shadowMapRenderer     = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
-        m_shadowCubemapRenderer = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
+        OGL::Shader lightSourcesRenderer(
+            "shaders/01-playgroundLightSourcesRenderer.vert",
+            "shaders/01-playgroundLightSourcesRenderer.frag"
+        );
+
+        m_normalRenderer            = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+        m_transpRenderer            = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
+        m_skyboxRenderer            = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_mirrorRenderer            = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
+        m_cubemapRenderer           = OGL::E1::factory<OGL::E1::CubemapRenderer>();
+        m_instancesRenderer         = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
+        m_shadowMapRenderer         = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
+        m_shadowCubemapRenderer     = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
+        m_lightSourcesDebugRenderer = OGL::E1::factory<OGL::E1::LightSourcesDebugRenderer>(std::move(lightSourcesRenderer), 0.01f);
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -202,6 +208,8 @@ public:
         m_mirrorRenderer->render(*m_scene, m_scene->getCamera().get());
 
         m_instancesRenderer->render(*m_scene, m_scene->getCamera().get());
+
+        m_lightSourcesDebugRenderer->render(*m_scene, m_scene->getCamera().get());
 
         m_skyboxRenderer->render(*m_scene, m_scene->getCamera().get());
 

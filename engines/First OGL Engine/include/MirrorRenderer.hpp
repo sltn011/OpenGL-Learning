@@ -9,6 +9,9 @@
 namespace OGL::E1 {
 
     class MirrorRenderer {
+     protected:
+        Shader m_shader;
+
      public:
         MirrorRenderer( 
             Shader &&shader
@@ -41,9 +44,6 @@ namespace OGL::E1 {
 
         Shader &getShader(
         );
-
-     protected:
-        Shader m_shader;
     };
 
 } // OGL::E1

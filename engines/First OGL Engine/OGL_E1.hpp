@@ -16,6 +16,7 @@
 #include "InstancesRenderer.hpp"
 #include "ShadowMapRenderer.hpp"
 #include "ShadowCubemapRenderer.hpp"
+#include "LightSourcesDebugRenderer.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -39,7 +40,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.5", 
+            std::string  title = "Engine1_v.0.2.6", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -358,15 +359,16 @@ namespace OGL::E1 {
         GLFWwindow      *m_window;
         std::string      m_title;
 
-        smartScenePtr                 m_scene;
-        smartNormalRendererPtr        m_normalRenderer;
-        smartTransparentRendererPtr   m_transpRenderer;
-        smartSkyboxRendererPtr        m_skyboxRenderer;
-        smartCubemapRendererPtr       m_cubemapRenderer;
-        smartMirrorRendererPtr        m_mirrorRenderer;
-        smartInstancesRendererPtr     m_instancesRenderer;
-        smartShadowMapRendererPtr     m_shadowMapRenderer;
-        smartShadowCubemapRendererPtr m_shadowCubemapRenderer;
+        smartScenePtr                     m_scene;
+        smartNormalRendererPtr            m_normalRenderer;
+        smartTransparentRendererPtr       m_transpRenderer;
+        smartSkyboxRendererPtr            m_skyboxRenderer;
+        smartCubemapRendererPtr           m_cubemapRenderer;
+        smartMirrorRendererPtr            m_mirrorRenderer;
+        smartInstancesRendererPtr         m_instancesRenderer;
+        smartShadowMapRendererPtr         m_shadowMapRenderer;
+        smartShadowCubemapRendererPtr     m_shadowCubemapRenderer;
+        smartLightSourcesDebugRendererPtr m_lightSourcesDebugRenderer;
                         
         modelsTable       m_modelsTable;
 
@@ -375,7 +377,6 @@ namespace OGL::E1 {
         GLFWwindowsizefun m_windowResizeFunc;
         GLFWkeyfun        m_keyCallbackFunc;
         GLFWcursorposfun  m_cursorReposFunc;
-
 
      public:
     };

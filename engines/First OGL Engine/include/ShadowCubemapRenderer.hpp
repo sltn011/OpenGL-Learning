@@ -10,6 +10,9 @@
 namespace OGL::E1 {
 
     class ShadowCubemapRenderer {
+     protected:
+        Shader m_shader;
+
      public:
         ShadowCubemapRenderer(
             Shader &&shader
@@ -44,9 +47,6 @@ namespace OGL::E1 {
 
         Shader &getShader(
         );
-
-     protected:
-        Shader m_shader;
     };
 
 } // OGL::E1

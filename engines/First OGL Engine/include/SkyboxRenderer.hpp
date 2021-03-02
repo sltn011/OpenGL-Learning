@@ -9,6 +9,9 @@
 namespace OGL::E1 {
 
     class SkyboxRenderer {
+     protected:
+        Shader m_shader;
+
      public:
         SkyboxRenderer(
             Shader &&shader
@@ -41,9 +44,6 @@ namespace OGL::E1 {
 
         Shader &getShader(
         );
-
-     protected:
-        Shader m_shader;
     };
 
 } // OGL::E1
