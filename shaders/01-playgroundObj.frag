@@ -126,14 +126,15 @@ void main() {
 	}
 	for (int i = 0; i < numPointLights; ++i) {
 		PointLight light = pointLight[i];
+		float attenuation = attenuationCoefficient(light, fs_in.vertexPos);
 		float shadow = calculatePointShadow(i, fs_in.vertexPos);
 		vec3 amb  = ambientComponent(material, light.color); // not affected by shadow
 		light.color *= (1.0 - shadow);
 		vec3 diff = diffuseComponent(material, light, fs_in.vertexPos, norm);
 		vec3 spec = specularComponent(material, light, fs_in.vertexPos, norm, viewDir);
-		ambient += amb;
-		diffuse += diff;
-		specular += spec * (diff == 0.0 ? 0 : 1);
+		ambient += amb * attenuation;
+		diffuse += diff * attenuation;
+		specular += spec * attenuation * (diff == 0.0 ? 0 : 1);
 	}
 	// TODO
 	//for (int i = 0; i < numSpotLights; ++i) {
