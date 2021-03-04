@@ -3,17 +3,25 @@
 
 #include "BasicCamera.hpp"
 #include "DirectionalLight.hpp"
+#include "SpotLight.hpp"
 
 namespace OGL {
 
     class CameraShadowMap : public BasicCamera {
         float m_scale;
+        bool  m_hasPerspective;
 
      public:
         CameraShadowMap(
             DirectionalLight dirLight,
             glm::vec3 sceneCenter,
             float sceneDownscale,
+            float nearPlane,
+            float farPlane
+        );
+
+        CameraShadowMap(
+            SpotLight spotLight,
             float nearPlane,
             float farPlane
         );

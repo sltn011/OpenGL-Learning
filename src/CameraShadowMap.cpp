@@ -19,7 +19,26 @@ namespace OGL {
         1.0f,
         nearPlane,
         farPlane },
-        m_scale {sceneDownscale} {
+        m_scale {sceneDownscale},
+        m_hasPerspective{ false } {
+    }
+
+    CameraShadowMap::CameraShadowMap(
+        SpotLight spotLight,
+        float nearPlane,
+        float farPlane
+    ) : BasicCamera {
+        spotLight.m_position,
+        spotLight.m_direction,
+        {0.0f, 1.0f, 0.0f},
+        0.0f,
+        0.0f,
+        0.0f,
+        90.0f,
+        1.0f,
+        nearPlane,
+        farPlane },
+        m_hasPerspective{ true } {
     }
 
     glm::mat4 CameraShadowMap::getViewMatrix(
@@ -29,7 +48,12 @@ namespace OGL {
 
     glm::mat4 CameraShadowMap::getProjectionMatrix(
     ) const {
-        return glm::ortho(-1.0f * m_scale, 1.0f * m_scale, -1.0f * m_scale, 1.0f * m_scale, m_near, m_far);
+        if (m_hasPerspective) {
+            return glm::perspective(glm::radians(m_fov), m_aspect, m_near, m_far);
+        }
+        else {
+            return glm::ortho(-1.0f * m_scale, 1.0f * m_scale, -1.0f * m_scale, 1.0f * m_scale, m_near, m_far);
+        }
     }
 
     void CameraShadowMap::processMoveInput(
