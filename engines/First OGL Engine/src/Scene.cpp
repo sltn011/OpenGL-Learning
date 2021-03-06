@@ -48,7 +48,7 @@ namespace OGL::E1 {
     void Scene::addSpotLight( 
         SpotLight spotLight
     ) {
-        m_spotLights.push_back(spotLight);
+        m_spotLights.push_back(std::make_pair(spotLight, nullptr));
     }
 
     objectsVec &Scene::getNormalObjs(

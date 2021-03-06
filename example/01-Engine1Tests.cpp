@@ -1,9 +1,10 @@
 #include "First OGL Engine/OGL_E1.hpp"
 
-const int shadowMapFirstTextureID = 10;
-const int shadowCubemapFirstTextureID = shadowMapFirstTextureID + 4;
-const int skyboxTextureID = 20;
-const int cubemapTextureID = 21;
+const int shadowMapDirLightFirstTextureID = 10;
+const int shadowCubemapFirstTextureID = shadowMapDirLightFirstTextureID + 4;
+const int shadowMapSpotLightFirstTextureID = shadowCubemapFirstTextureID + 4;
+const int skyboxTextureID = 22;
+const int cubemapTextureID = 23;
 
 
 const int cubemapSize = 512;
@@ -99,7 +100,7 @@ public:
         m_instancesRenderer         = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
         m_shadowMapRenderer         = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
         m_shadowCubemapRenderer     = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
-        m_lightSourcesDebugRenderer = OGL::E1::factory<OGL::E1::LightSourcesDebugRenderer>(std::move(lightSourcesRenderer), 0.01f);
+        m_lightSourcesDebugRenderer = OGL::E1::factory<OGL::E1::LightSourcesDebugRenderer>(std::move(lightSourcesRenderer), 0.005f);
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -160,13 +161,12 @@ public:
         stbi_set_flip_vertically_on_load(true);
 
         glViewport(0, 0, shadowMapSize, shadowMapSize);
-        int cnt = 0;
-        for (auto &p : m_scene->getDirLights()) {
-            OGL::CameraShadowMap cam{ p.first, playgroundPosition, 2.5f, 0.1f, 6.0f };
-            p.second = OGL::E1::factory<OGL::ShadowMap>(
-                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapFirstTextureID + cnt, shadowMapSize)
+        for (size_t i = 0; i < m_scene->getDirLights().size(); ++i) {
+            auto &[dirLight, shadowMap] = m_scene->getDirLights()[i];
+            OGL::CameraShadowMap cam{ dirLight, playgroundPosition, 2.5f, 0.1f, 6.0f };
+            shadowMap = OGL::E1::factory<OGL::ShadowMap>(
+                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapDirLightFirstTextureID + i, shadowMapSize)
             );
-            ++cnt;
         }
 
         glViewport(0, 0, shadowCubemapSize, shadowCubemapSize);
@@ -175,6 +175,15 @@ public:
             OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
             shadowCubemap = std::make_unique<OGL::ShadowCubemap>(
                 m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstTextureID + i, shadowCubemapSize)
+            );
+        }
+
+        glViewport(0, 0, shadowMapSize, shadowMapSize);
+        for (size_t i = 0; i < m_scene->getSpotLights().size(); ++i) {
+            auto &[spotLight, shadowMap] = m_scene->getSpotLights()[i];
+            OGL::CameraShadowMap cam{ spotLight, 0.1f, 6.0f };
+            shadowMap = OGL::E1::factory<OGL::ShadowMap>(
+                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapSpotLightFirstTextureID + i, shadowMapSize)
             );
         }
 

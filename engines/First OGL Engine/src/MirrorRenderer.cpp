@@ -40,7 +40,11 @@ namespace OGL::E1 {
         spotLights &sceneSpotLights = scene.getSpotLights();
         m_shader.setUniformInt("numSpotLights", sceneSpotLights.size());
         for (size_t i = 0; i < sceneSpotLights.size(); ++i) {
-            sceneSpotLights[i].loadInShader(m_shader, i);
+            auto &[light, pShadowMap] = sceneSpotLights[i];
+            light.loadInShader(m_shader, i);
+            pShadowMap->bindTexture();
+            m_shader.setUniformMatrix4("spotLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            m_shader.setUniformInt("spotLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
         }
 
         for (auto const &pObjCubemap : scene.getMirrorObjs()) {

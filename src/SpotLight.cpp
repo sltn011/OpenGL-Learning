@@ -6,8 +6,8 @@ namespace OGL {
         glm::vec3 position,
         glm::vec3 direction,
         glm::vec3 color, 
-        float cutOffAngleRadians,
-        float cutOffOuterAngleRadians,
+        float cutOffAngle,
+        float cutOffOuterAngle,
         float attenuationConst, 
         float attenuationLinear,
         float attenuationQuadratic
@@ -18,8 +18,8 @@ namespace OGL {
         attenuationLinear,
         attenuationQuadratic}, 
         m_direction{direction}, 
-        m_cutOffAngle{ cutOffAngleRadians }, 
-        m_cutOffOuterAngle{ cutOffOuterAngleRadians } {
+        m_cutOffAngle{ cutOffAngle }, 
+        m_cutOffOuterAngle{ cutOffOuterAngle } {
     }
 
     void SpotLight::loadInShader( 
@@ -32,8 +32,8 @@ namespace OGL {
         shader.setUniformFloat(objName + ".attenuationConst", m_attenuationConst);
         shader.setUniformFloat(objName + ".attenuationLinear", m_attenuationLinear);
         shader.setUniformFloat(objName + ".attenuationQuadratic", m_attenuationQuadratic);
-        shader.setUniformFloat(objName + ".cutOffAngle", m_cutOffAngle);
-        shader.setUniformFloat(objName + ".cutOffOuterAngle", m_cutOffOuterAngle);
+        shader.setUniformFloat(objName + ".cutOffCos", std::cos(glm::radians(m_cutOffAngle)));
+        shader.setUniformFloat(objName + ".cutOffOuterCos", std::cos(glm::radians(m_cutOffOuterAngle)));
     }
 
     void SpotLight::loadInShader( 
@@ -47,8 +47,8 @@ namespace OGL {
         shader.setUniformFloat(objName + ".attenuationConst", m_attenuationConst);
         shader.setUniformFloat(objName + ".attenuationLinear", m_attenuationLinear);
         shader.setUniformFloat(objName + ".attenuationQuadratic", m_attenuationQuadratic);
-        shader.setUniformFloat(objName + ".cutOffAngle", m_cutOffAngle);
-        shader.setUniformFloat(objName + ".cutOffOuterAngle", m_cutOffOuterAngle);
+        shader.setUniformFloat(objName + ".cutOffCos", glm::cos(glm::radians(m_cutOffAngle)));
+        shader.setUniformFloat(objName + ".cutOffOuterCos", std::cos(glm::radians(m_cutOffOuterAngle)));
     }
 
 

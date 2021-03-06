@@ -57,7 +57,7 @@ namespace OGL::E1 {
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
         }
 
-        for (auto const &light : scene.getSpotLights()) {
+        for (auto const &[light, pShadow] : scene.getSpotLights()) {
             glm::mat4 model = glm::identity<glm::mat4>();
             model = glm::translate(model, light.m_position);
             model = glm::scale(model, glm::vec3{ m_lightCubeSize, m_lightCubeSize, m_lightCubeSize });

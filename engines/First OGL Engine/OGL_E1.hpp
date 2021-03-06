@@ -40,7 +40,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.6", 
+            std::string  title = "Engine1_v.0.2.7", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -247,8 +247,8 @@ namespace OGL::E1 {
             glm::vec3 position, 
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
-            float cutOffAngleRadians = glm::radians(8.0f),
-            float cutOffOuterAngleRadians = glm::radians(12.0f), 
+            float cutOffAngle = 8.0f,
+            float cutOffOuterAngle = 12.0f, 
             float attenuationConst = 1.0f, 
             float attenuationLinear = 0.09f, 
             float attenuationQuadratic = 0.032f
@@ -258,8 +258,8 @@ namespace OGL::E1 {
                     position,
                     direction,
                     color,
-                    cutOffAngleRadians,
-                    cutOffOuterAngleRadians,
+                    cutOffAngle,
+                    cutOffOuterAngle,
                     attenuationConst,
                     attenuationLinear,
                     attenuationQuadratic
