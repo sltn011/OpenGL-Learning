@@ -58,19 +58,19 @@ namespace OGL {
 
             switch (m_textures[i].type) {
             case TextureType::Diffuse:
-                name = "textureDiffuse" + std::to_string(++diffuseTexCnt);
+                name = "textureDiffuse[" + std::to_string(diffuseTexCnt++) + "]";
                 break;
 
             case TextureType::Specular:
-                name = "textureSpecular" + std::to_string(++specularTexCnt);
+                name = "textureSpecular[" + std::to_string(specularTexCnt++) + "]";
                 break;
 
             case TextureType::Normal:
-                name = "textureNormal" + std::to_string(++normalTexCnt);
+                name = "textureNormal[" + std::to_string(normalTexCnt++) + "]";
                 break;
 
             case TextureType::Height:
-                name = "textureHeight" + std::to_string(++heightTexCnt);
+                name = "textureHeight[" + std::to_string(heightTexCnt++) + "]";
                 break;
 
             default:
@@ -78,14 +78,18 @@ namespace OGL {
                 break;
             }
 
-            shader.setUniformInt("material." + name, i);
+            shader.setUniformInt("material." + std::move(name), i);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);
 
-        shader.setUniformVec3 ("material.colorAmbient",     m_colors.ambient);
-        shader.setUniformVec3 ("material.colorDiffuse",     m_colors.diffuse);
-        shader.setUniformVec3 ("material.colorSpecular",    m_colors.specular);
+        shader.setUniformInt("material.numDiffuseTextures", diffuseTexCnt);
+        shader.setUniformInt("material.numSpecularTextures", specularTexCnt);
+        shader.setUniformInt("material.numNormalTextures", normalTexCnt);
+        shader.setUniformInt("material.numHeightTextures", heightTexCnt);
+        shader.setUniformVec3("material.colorAmbient", m_colors.ambient);
+        shader.setUniformVec3("material.colorDiffuse", m_colors.diffuse);
+        shader.setUniformVec3("material.colorSpecular", m_colors.specular);
         shader.setUniformFloat("material.specularExponent", m_colors.specularExponent);
 
         glBindVertexArray(m_VAO);
@@ -109,19 +113,19 @@ namespace OGL {
 
             switch (m_textures[i].type) {
             case TextureType::Diffuse:
-                name = "textureDiffuse" + std::to_string(++diffuseTexCnt);
+                name = "textureDiffuse[" + std::to_string(diffuseTexCnt++) + "]";
                 break;
 
             case TextureType::Specular:
-                name = "textureSpecular" + std::to_string(++specularTexCnt);
+                name = "textureSpecular[" + std::to_string(specularTexCnt++) + "]";
                 break;
 
             case TextureType::Normal:
-                name = "textureNormal" + std::to_string(++normalTexCnt);
+                name = "textureNormal[" + std::to_string(normalTexCnt++) + "]";
                 break;
 
             case TextureType::Height:
-                name = "textureHeight" + std::to_string(++heightTexCnt);
+                name = "textureHeight[" + std::to_string(heightTexCnt++) + "]";
                 break;
 
             default:
@@ -129,11 +133,15 @@ namespace OGL {
                 break;
             }
 
-            shader.setUniformInt("material." + name, i);
+            shader.setUniformInt("material." + std::move(name), i);
             glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);
 
+        shader.setUniformInt("material.numDiffuseTextures", diffuseTexCnt);
+        shader.setUniformInt("material.numSpecularTextures", specularTexCnt);
+        shader.setUniformInt("material.numNormalTextures", normalTexCnt);
+        shader.setUniformInt("material.numHeightTextures", heightTexCnt);
         shader.setUniformVec3("material.colorAmbient", m_colors.ambient);
         shader.setUniformVec3("material.colorDiffuse", m_colors.diffuse);
         shader.setUniformVec3("material.colorSpecular", m_colors.specular);

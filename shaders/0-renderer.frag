@@ -1,4 +1,8 @@
 #version 330 core
+#define MAX_DIFFUSE_TEXTURES  1
+#define MAX_SPECULAR_TEXTURES 1
+#define MAX_NORMAL_TEXTURES   1
+#define MAX_HEIGHT_TEXTURES   1
 out vec4 FragColor;
 
 in GS_OUT {
@@ -8,8 +12,14 @@ in GS_OUT {
 } gs_out;
 
 struct Material {
-	sampler2D textureDiffuse1;
-	sampler2D textureSpecular1;
+	sampler2D textureDiffuse[MAX_DIFFUSE_TEXTURES];
+	int numDiffuseTextures;
+	sampler2D textureSpecular[MAX_SPECULAR_TEXTURES];
+	int numSpecularTextures;
+	sampler2D textureNormal[MAX_NORMAL_TEXTURES];
+	int numNormalTextures;
+	sampler2D textureHeight[MAX_HEIGHT_TEXTURES];
+	int numHeightTextures;
 
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
@@ -44,7 +54,7 @@ void main() {
 	vec3 viewDir = normalize(gs_out.vertPos - viewerPos);
 
 	vec3 res = vec3(0.0, 0.0, 0.0);
-	float alpha = vec4(texture(material.textureDiffuse1, gs_out.texCoords)).a;
+	float alpha = vec4(texture(material.textureDiffuse[0], gs_out.texCoords)).a;
 	
 	if (alpha < 0.1) {
 		discard;
@@ -60,8 +70,8 @@ vec3 ambientComponent(Material material, vec3 lightColor) {
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, gs_out.texCoords));
-	vec3 specularCol = vec3(texture(material.textureSpecular1, gs_out.texCoords));
+	vec3 diffuseCol = vec3(texture(material.textureDiffuse[0], gs_out.texCoords));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], gs_out.texCoords));
 
 	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
 	vec3 diffuse = diffuseComponent(material, light, normal) * diffuseCol;

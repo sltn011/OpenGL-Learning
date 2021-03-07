@@ -156,9 +156,7 @@ public:
         glm::vec3 directionalLightColor{ 1.0f, 1.0f, 0.75f };
         addDirLight(directionalLightDir, directionalLightColor);
 
-        stbi_set_flip_vertically_on_load(false);
         m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
-        stbi_set_flip_vertically_on_load(true);
 
         glViewport(0, 0, shadowMapSize, shadowMapSize);
         for (size_t i = 0; i < m_scene->getDirLights().size(); ++i) {

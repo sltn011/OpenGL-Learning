@@ -3,13 +3,23 @@
 #define MAX_DIR_LIGHTS   4
 #define MAX_POINT_LIGHTS 4
 #define MAX_SPOT_LIGHTS  4
+#define MAX_DIFFUSE_TEXTURES  1
+#define MAX_SPECULAR_TEXTURES 1
+#define MAX_NORMAL_TEXTURES   1
+#define MAX_HEIGHT_TEXTURES   1
 float gamma = 2.2;
 
 
 
 struct Material {
-	sampler2D textureDiffuse1;
-	sampler2D textureSpecular1;
+	sampler2D textureDiffuse[MAX_DIFFUSE_TEXTURES];
+	int numDiffuseTextures;
+	sampler2D textureSpecular[MAX_SPECULAR_TEXTURES];
+	int numSpecularTextures;
+	sampler2D textureNormal[MAX_NORMAL_TEXTURES];
+	int numNormalTextures;
+	sampler2D textureHeight[MAX_HEIGHT_TEXTURES];
+	int numHeightTextures;
 
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
@@ -96,13 +106,34 @@ float calculateSpotShadow(int lightIndex, vec3 fragNormal);
 
 
 
+// COMPARISON TOOLS
+vec4 whenEq(vec4 x, vec4 y); // ==
+vec4 whenNe(vec4 x, vec4 y); // !=
+vec4 whenGt(vec4 x, vec4 y); // >
+vec4 whenLt(vec4 x, vec4 y); // <
+vec4 whenGe(vec4 x, vec4 y); // >=
+vec4 whenLe(vec4 x, vec4 y); // <=
+vec4 and(vec4 x, vec4 y);
+vec4 or(vec4 x, vec4 y);
+
+float whenEq(float x, float y); // ==
+float whenNe(float x, float y); // !=
+float whenGt(float x, float y); // >
+float whenLt(float x, float y); // <
+float whenGe(float x, float y); // >=
+float whenLe(float x, float y); // <=
+float and(float x, float y);
+float or(float x, float y);
+
+
+
 void main() {
 	vec3 norm = normalize(fs_in.vertexNorm);
 	vec3 viewDir = normalize(fs_in.vertexPos - viewerPos);
 
-	vec3 ambient  = vec3(0.0, 0.0, 0.0);
-	vec3 diffuse  = vec3(0.0, 0.0, 0.0);
-	vec3 specular = vec3(0.0, 0.0, 0.0);
+	vec3 ambient  = vec3(0.0);
+	vec3 diffuse  = vec3(0.0);
+	vec3 specular = vec3(0.0);
 
 	for (int i = 0; i < numDirLights; ++i) {
 		DirectionalLight light = directionalLight[i];
@@ -113,7 +144,7 @@ void main() {
 		vec3 spec = specularComponent(material, light, norm, viewDir);
 		ambient += amb;
 		diffuse += diff;
-		specular += spec * (diff == 0.0 ? 0 : 1);
+		specular += spec * whenNe(vec4(diffuse, 1.0), vec4(0.0)).x;
 	}
 	for (int i = 0; i < numPointLights; ++i) {
 		PointLight light = pointLight[i];
@@ -125,7 +156,7 @@ void main() {
 		vec3 spec = specularComponent(material, light, fs_in.vertexPos, norm, viewDir);
 		ambient += amb * attenuation;
 		diffuse += diff * attenuation;
-		specular += spec * attenuation * (diff == 0.0 ? 0 : 1);
+		specular += spec * attenuation * whenNe(vec4(diffuse, 1.0), vec4(0.0)).x;
 	}
 	for (int i = 0; i < numSpotLights; ++i) {
 		SpotLight light = spotLight[i];
@@ -138,7 +169,7 @@ void main() {
 		vec3 spec = specularComponent(material, light, fs_in.vertexPos, norm, viewDir);
 		ambient += amb * attenuation;
 		diffuse += diff * attenuation * litCoeff;
-		specular += spec * attenuation * litCoeff * (diff == 0.0 ? 0 : 1);
+		specular += spec * attenuation * whenNe(vec4(diffuse, 1.0), vec4(0.0)).x;
 	}
 
 	vec3 reflected = reflect(viewDir, norm);
@@ -220,22 +251,20 @@ vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 
 
 float calculateDirectShadow(int lightIndex, vec3 fragNormal) {
 	float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[lightIndex].direction))), 0.000025);
-	vec4 vertexPosLightSpace = fs_in.vertexPosDirLightSpace[lightIndex];
-	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w;
+	vec4 vertexPosDirLightSpace = fs_in.vertexPosDirLightSpace[lightIndex];
+	vec3 projCoords = vertexPosDirLightSpace.xyz / vertexPosDirLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
 	float currentDepth = projCoords.z;
-	if (currentDepth > 1.0) {
-		return 0.0;
-	}
+	
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(dirLightShadowMap[lightIndex], 0);
 	for (int x = -1; x < 2; ++x) {
 		for (int y = -1; y < 2; ++y) {
 			float mapDepth = texture(dirLightShadowMap[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
+			shadow += 1.0 * whenGt(currentDepth - bias, mapDepth);
 		}
 	}
-	return shadow / 9.0;
+	return (shadow / 9.0) * whenLe(currentDepth, 1.0);
 }
 
 float calculatePointShadow(int lightIndex, vec3 fragPos) {
@@ -251,7 +280,7 @@ float calculatePointShadow(int lightIndex, vec3 fragPos) {
 			for (float z = -offset; z < offset; z += delta) {
 				float closestDepth = texture(pointLightShadowMap[lightIndex], normalize(fragToLight + vec3(x, y, z))).r * pointLightShadowMapFarPlane[lightIndex];
 				float currentDepth = length(fragToLight);
-				shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+				shadow += 1.0 * whenGt(currentDepth - bias, closestDepth);
 			}
 		}
 	}
@@ -264,16 +293,82 @@ float calculateSpotShadow(int lightIndex, vec3 fragNormal) {
 	vec3 projCoords = vertexPosSpotLightSpace.xyz / vertexPosSpotLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
 	float currentDepth = projCoords.z;
-	if (currentDepth > 1.0) {
-		return 0.0;
-	}
+	
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(spotLightShadowMap[lightIndex], 0);
 	for (int x = -1; x < 2; ++x) {
 		for (int y = -1; y < 2; ++y) {
 			float mapDepth = texture(spotLightShadowMap[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
+			shadow += 1.0 * whenGt(currentDepth - bias, mapDepth);
 		}
 	}
-	return shadow / 9.0;
+	return (shadow / 9.0) * whenLe(currentDepth, 1.0);
+}
+
+
+
+// COMPARISON TOOLS
+vec4 whenEq(vec4 x, vec4 y) {
+	return 1.0 - abs(sign(x - y));
+}
+
+vec4 whenNe(vec4 x, vec4 y){
+	return abs(sign(x - y));
+}
+
+vec4 whenGt(vec4 x, vec4 y){
+	return max(sign(x - y), 0.0);
+}
+
+vec4 whenLt(vec4 x, vec4 y){
+	return max(sign(y - x), 0.0);
+}
+
+vec4 whenGe(vec4 x, vec4 y){
+	return 1.0 - whenLt(x, y);
+}
+
+vec4 whenLe(vec4 x, vec4 y){
+	return 1.0 - whenGt(x, y);
+}
+
+vec4 and(vec4 x, vec4 y){
+	return x * y;
+}
+
+vec4 or(vec4 x, vec4 y){
+	return min(x + y, 1.0);
+}
+
+
+float whenEq(float x, float y) {
+	return 1.0 - abs(sign(x - y));
+}
+
+float whenNe(float x, float y){
+	return abs(sign(x - y));
+}
+
+float whenGt(float x, float y){
+	return max(sign(x - y), 0.0);
+}
+
+float whenLt(float x, float y){
+	return max(sign(y - x), 0.0);
+}
+
+float whenGe(float x, float y){
+	return 1.0 - whenLt(x, y);
+}
+
+float whenLe(float x, float y){
+	return 1.0 - whenGt(x, y);
+}
+
+float and(float x, float y){
+	return x * y;
+}
+
+float or(float x, float y){
+	return min(x + y, 1.0);
 }

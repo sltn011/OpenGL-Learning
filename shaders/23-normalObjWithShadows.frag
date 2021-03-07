@@ -3,6 +3,10 @@
 #define MAX_DIR_LIGHTS   4
 #define MAX_POINT_LIGHTS 4
 #define MAX_SPOT_LIGHTS  4
+#define MAX_DIFFUSE_TEXTURES  1
+#define MAX_SPECULAR_TEXTURES 1
+#define MAX_NORMAL_TEXTURES   1
+#define MAX_HEIGHT_TEXTURES   1
 
 in VS_OUT {
 	vec3 vertexPos;
@@ -17,8 +21,14 @@ out vec4 fragColor;
 float gamma = 2.2;
 
 struct Material {
-	sampler2D textureDiffuse1;
-	sampler2D textureSpecular1;
+	sampler2D textureDiffuse[MAX_DIFFUSE_TEXTURES];
+	int numDiffuseTextures;
+	sampler2D textureSpecular[MAX_SPECULAR_TEXTURES];
+	int numSpecularTextures;
+	sampler2D textureNormal[MAX_NORMAL_TEXTURES];
+	int numNormalTextures;
+	sampler2D textureHeight[MAX_HEIGHT_TEXTURES];
+	int numHeightTextures;
 
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
@@ -113,14 +123,14 @@ void main() {
 	vec3 norm = normalize(fs_in.vertexNorm);
 	vec3 viewDir = normalize(fs_in.vertexPos - viewerPos);
 
-	float alpha = vec4(texture(material.textureDiffuse1, fs_in.vertexTex)).a;
+	float alpha = vec4(texture(material.textureDiffuse[0], fs_in.vertexTex)).a;
 	
 	if (alpha < 0.1) {
 		discard;
 	}
 
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, fs_in.vertexTex)), vec3(gamma));
-	vec3 specularCol = vec3(texture(material.textureSpecular1, fs_in.vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)), vec3(gamma));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], fs_in.vertexTex));
 
 	vec3 ambient  = vec3(0.0, 0.0, 0.0);
 	vec3 diffuse  = vec3(0.0, 0.0, 0.0);
@@ -163,8 +173,8 @@ void main() {
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, fs_in.vertexTex)), vec3(gamma));
-	vec3 specularCol = vec3(texture(material.textureSpecular1, fs_in.vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)), vec3(gamma));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], fs_in.vertexTex));
 
 	vec3 ambient =  ambientComponent(material, light.color) * diffuseCol;
 	vec3 diffuse = diffuseComponent(material, light, normal) * diffuseCol;
@@ -174,8 +184,8 @@ vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 }
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, fs_in.vertexTex)), vec3(gamma));
-	vec3 specularCol = vec3(texture(material.textureSpecular1, fs_in.vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)), vec3(gamma));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], fs_in.vertexTex));
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
 
@@ -189,8 +199,8 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 verte
 vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
 	vec3 lightDir = normalize(vertexPos - light.position);
 
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse1, fs_in.vertexTex)), vec3(gamma));
-	vec3 specularCol = vec3(texture(material.textureSpecular1, fs_in.vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)), vec3(gamma));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], fs_in.vertexTex));
 
 	float lightRayAngleCos = dot(normalize(light.direction), lightDir);
 	float fadingCoefficient = light.cutOffCos - light.cutOffOuterCos;
