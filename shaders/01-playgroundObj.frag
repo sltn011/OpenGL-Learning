@@ -175,7 +175,7 @@ float attenuationCoefficient(SpotLight light, vec3 vertexPos) {
 
 float spotLightLitArea(SpotLight light, vec3 vertexPos) {
 	vec3 lightRayDir = normalize(vertexPos - light.position);
-	float lightRayAngleCos = dot(normalize(light.direction), lightRayDir);
+	float lightRayAngleCos = dot(light.direction, lightRayDir);
 	float fadingCoefficient = light.cutOffCos - light.cutOffOuterCos;
 	float intensity = clamp((lightRayAngleCos - light.cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
 	return intensity; 
