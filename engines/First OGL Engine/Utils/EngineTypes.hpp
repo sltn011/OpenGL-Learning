@@ -96,7 +96,7 @@ namespace OGL {
 
         using dirLights = std::vector<std::pair<DirectionalLight, smartShadowMap>>;
         using pointLights = std::vector<std::pair<PointLight, smartShadowCubemap>>;
-        using spotLights = std::vector<SpotLight>;
+        using spotLights = std::vector<std::pair<SpotLight, smartShadowMap>>;
 
         using shadersPack = std::vector<Shader>;
 

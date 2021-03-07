@@ -37,8 +37,8 @@ struct SpotLight {
 	vec3 position;
 	vec3 direction;
 
-	float cutOffAngle;
-	float cutOffOuterAngle;
+	float cutOffCos;
+	float cutOffOuterCos;
 
 	float attenuationConst;
 	float attenuationLinear;
@@ -51,7 +51,8 @@ in VS_OUT {
 	vec3 vertexPos;
 	vec3 vertexNorm;
 	vec3 vertexTex;
-	vec4 vertexPosLightSpace[MAX_DIR_LIGHTS];
+	vec4 vertexPosDirLightSpace[MAX_DIR_LIGHTS];
+	vec4 vertexPosSpotLightSpace[MAX_SPOT_LIGHTS];
 } fs_in;
 
 
@@ -69,18 +70,17 @@ uniform int numSpotLights;
 uniform sampler2D dirLightShadowMap[MAX_DIR_LIGHTS];
 uniform samplerCube pointLightShadowMap[MAX_POINT_LIGHTS];
 uniform float pointLightShadowMapFarPlane[MAX_POINT_LIGHTS];
+uniform sampler2D spotLightShadowMap[MAX_SPOT_LIGHTS];
 uniform DirectionalLight directionalLight[MAX_DIR_LIGHTS];
 uniform PointLight pointLight[MAX_POINT_LIGHTS];
 uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
 
 
 
-vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos);
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexPos);
-
 float attenuationCoefficient(PointLight light, vec3 vertexPos);
 float attenuationCoefficient(SpotLight light, vec3 vertexPos);
+
+float spotLightLitArea(SpotLight light, vec3 vertexPos);
 
 vec3 ambientComponent(Material material, vec3 lightColor);
 vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal);
@@ -92,6 +92,7 @@ vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 
 
 float calculateDirectShadow(int lightIndex, vec3 fragNormal);
 float calculatePointShadow(int lightIndex, vec3 fragPos);
+float calculateSpotShadow(int lightIndex, vec3 fragNormal);
 
 
 
@@ -126,15 +127,19 @@ void main() {
 		diffuse += diff * attenuation;
 		specular += spec * attenuation * (diff == 0.0 ? 0 : 1);
 	}
-	// TODO
-	//for (int i = 0; i < numSpotLights; ++i) {
-	//	vec3 amb  = ambientComponent(material, spotLight[i].color);
-	//	vec3 diff = diffuseComponent(material, spotLight[i], fs_in.vertexPos, norm);
-	//	vec3 spec = specularComponent(material, spotLight[i], fs_in.vertexPos, norm, viewDir);
-	//	ambient += amb;
-	//	diffuse += diff;
-	//	specular += spec * (diff == 0.0 ? 0 : 1);
-	//}
+	for (int i = 0; i < numSpotLights; ++i) {
+		SpotLight light = spotLight[i];
+		float attenuation = attenuationCoefficient(light, fs_in.vertexPos);
+		float litCoeff = spotLightLitArea(light, fs_in.vertexPos);
+		float shadow = calculateSpotShadow(i, norm);
+		vec3 amb  = ambientComponent(material, light.color); // not affected by shadow
+		light.color *= (1.0 - shadow);
+		vec3 diff = diffuseComponent(material, light, fs_in.vertexPos, norm);
+		vec3 spec = specularComponent(material, light, fs_in.vertexPos, norm, viewDir);
+		ambient += amb * attenuation;
+		diffuse += diff * attenuation * litCoeff;
+		specular += spec * attenuation * litCoeff * (diff == 0.0 ? 0 : 1);
+	}
 
 	vec3 reflected = reflect(viewDir, norm);
 	reflected.yz *= -1;
@@ -147,42 +152,6 @@ void main() {
 
 
 
-vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
-	vec3 ambient =  ambientComponent(material, light.color);
-	vec3 diffuse = diffuseComponent(material, light, normal);
-	vec3 specular = specularComponent(material, light, normal, viewDir);
-
-	return (ambient + diffuse + specular);
-}
-
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	float attenuation = attenuationCoefficient(light, vertexPos);
-
-	vec3 ambient = ambientComponent(material, light.color);
-	vec3 diffuse = diffuseComponent(material, light, vertexPos, normal);
-	vec3 specular = specularComponent(material, light, vertexPos, normal, viewDir);
-
-	return (ambient + diffuse + specular) * attenuation;
-}
-
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	float cutOffCos = cos(light.cutOffAngle);
-	float cutOffOuterCos = cos(light.cutOffOuterAngle);
-
-	vec3 lightDir = normalize(vertexPos - light.position);
-
-	float lightrayAngleCos = dot(normalize(light.direction), lightDir);
-	float fadingCoefficient = cutOffCos - cutOffOuterCos;
-	float intensity = clamp((lightrayAngleCos - cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
-
-	float attenuation = attenuationCoefficient(light, vertexPos);
-
-    vec3 diffuse = diffuseComponent(material, light, vertexPos, normal);
-    vec3 specular = specularComponent(material, light, vertexPos, normal, viewDir);
-    
-    return (diffuse + specular) * attenuation * intensity;
-}
-
 float attenuationCoefficient(PointLight light, vec3 vertexPos) {
 	float dist = length(vertexPos - light.position);
 	float attenuation = 1.0 / (light.attenuationConst + light.attenuationLinear * dist + light.attenuationQuadratic * pow(dist, 2));
@@ -193,6 +162,14 @@ float attenuationCoefficient(SpotLight light, vec3 vertexPos) {
 	float dist = length(vertexPos - light.position);
 	float attenuation = 1.0 / (light.attenuationConst + light.attenuationLinear * dist + light.attenuationQuadratic * pow(dist, 2));
 	return attenuation;
+}
+
+float spotLightLitArea(SpotLight light, vec3 vertexPos) {
+	vec3 lightRayDir = normalize(vertexPos - light.position);
+	float lightRayAngleCos = dot(normalize(light.direction), lightRayDir);
+	float fadingCoefficient = light.cutOffCos - light.cutOffOuterCos;
+	float intensity = clamp((lightRayAngleCos - light.cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
+	return intensity; 
 }
 
 vec3 ambientComponent(Material material, vec3 lightColor) {
@@ -243,7 +220,7 @@ vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 
 
 float calculateDirectShadow(int lightIndex, vec3 fragNormal) {
 	float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(directionalLight[lightIndex].direction))), 0.000025);
-	vec4 vertexPosLightSpace = fs_in.vertexPosLightSpace[lightIndex];
+	vec4 vertexPosLightSpace = fs_in.vertexPosDirLightSpace[lightIndex];
 	vec3 projCoords = vertexPosLightSpace.xyz / vertexPosLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
 	float currentDepth = projCoords.z;
@@ -279,4 +256,24 @@ float calculatePointShadow(int lightIndex, vec3 fragPos) {
 		}
 	}
 	return shadow / float(pow(numSamples, 3));
+}
+
+float calculateSpotShadow(int lightIndex, vec3 fragNormal) {
+	float bias = max(0.00025 * (1.0 - dot(fragNormal, normalize(spotLight[lightIndex].direction))), 0.000025);
+	vec4 vertexPosSpotLightSpace = fs_in.vertexPosSpotLightSpace[lightIndex];
+	vec3 projCoords = vertexPosSpotLightSpace.xyz / vertexPosSpotLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	float currentDepth = projCoords.z;
+	if (currentDepth > 1.0) {
+		return 0.0;
+	}
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(spotLightShadowMap[lightIndex], 0);
+	for (int x = -1; x < 2; ++x) {
+		for (int y = -1; y < 2; ++y) {
+			float mapDepth = texture(spotLightShadowMap[lightIndex], projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > mapDepth ? 1.0 : 0.0;
+		}
+	}
+	return shadow / 9.0;
 }

@@ -14,8 +14,8 @@ namespace OGL {
         float near,
         float far
     ) : m_position{ positionVec }, 
-        m_forward{ forwardVec }, 
-        m_worldUp{ worldUpVec }, 
+        m_forward{ glm::normalize(forwardVec) }, 
+        m_worldUp{ glm::normalize(worldUpVec) },
         m_speed{ moveSpeed }, 
         m_yaw{ yawAngle }, 
         m_pitch{ pitchAngle }, 

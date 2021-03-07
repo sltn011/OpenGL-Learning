@@ -38,8 +38,8 @@ struct SpotLight {
 	vec3 position;
 	vec3 direction;
 
-	float cutOffAngle;
-	float cutOffOuterAngle;
+	float cutOffCos;
+	float cutOffOuterCos;
 
 	float attenuationConst;
 	float attenuationLinear;
@@ -121,17 +121,14 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 verte
 }
 
 vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 vertexPos) {
-	float cutOffCos = cos(light.cutOffAngle);
-	float cutOffOuterCos = cos(light.cutOffOuterAngle);
-
 	vec3 lightDir = normalize(vertexPos - light.position);
 
 	vec3 diffuseCol = vec3(texture(material.textureDiffuse1, vertexTex));
 	vec3 specularCol = vec3(texture(material.textureSpecular1, vertexTex));
 
-	float lightrayAngleCos = dot(normalize(light.direction), lightDir);
-	float fadingCoefficient = cutOffCos - cutOffOuterCos;
-	float intensity = clamp((lightrayAngleCos - cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
+	float lightRayAngleCos = dot(normalize(light.direction), lightDir);
+	float fadingCoefficient = light.cutOffCos - light.cutOffOuterCos;
+	float intensity = clamp((lightrayAngleCos - light.cutOffOuterCos)/fadingCoefficient, 0.0, 1.0);
 
 	float attenuation = attenuationCoefficient(light, vertexPos);
 
