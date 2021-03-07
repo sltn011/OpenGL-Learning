@@ -4,7 +4,8 @@ My code from learning OpenGL with book from https://learnopengl.com/ + my own te
 ![Render](https://github.com/sltn011/OpenGL-Learning/blob/main/images/playground2.png)  
   
 OpenGLTools is a library by me that encapsulates some of boilerplate OpenGL code  
-Engines folder right now contains my first OpenGL engine made by me for learning and testing purposes. It's still far from being great but I'm working on it
+Engines folder right now contains my first OpenGL engine made by me for learning and testing purposes.  
+Engine can render shadows from all three currently implemented light sources  
   
 Code requires GLAD OpenGL Loader, GLFW, GLM and STB_Image libraries  
 GLAD: https://glad.dav1d.de/  
