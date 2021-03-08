@@ -54,6 +54,21 @@ namespace OGL {
         return m_up;
     }
 
+    glm::vec3 BasicCamera::getRight(
+    ) const {
+        return m_right;
+    }
+
+    float BasicCamera::getYaw(
+    ) const {
+        return m_yaw;
+    }
+
+    float BasicCamera::getPitch(
+    ) const {
+        return m_pitch;
+    }
+
     void BasicCamera::updateVectors(
     ) {
         m_forward.x = std::cos(glm::radians(m_pitch)) * std::cos(glm::radians(m_yaw));

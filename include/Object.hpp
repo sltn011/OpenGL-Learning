@@ -11,7 +11,7 @@ namespace OGL {
             Model &model, 
             glm::vec3 position = { 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
-            float rotationAngleRadians = 0.0f, 
+            float rotationAngle = 0.0f, 
             glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f }
         );
 
@@ -35,7 +35,7 @@ namespace OGL {
         glm::vec3 m_postiton;
         float     m_scale;
         glm::vec3 m_rotationAxis;
-        float     m_rotationAngleRadians;
+        float     m_rotationAngle;
 
     };
 

@@ -109,6 +109,7 @@ public:
         addModel("models/Sphere/sphere.obj", 3);
         addModel("models/Planet/Planet/planet.obj", 4);
         addModel("models/Planet/Asteroid/asteroid.obj", 5);
+        addModel("models/Gun/gun.obj", 6);
 
         glm::vec3 playgroundPosition = { 0.0f, 0.0f, 0.0f };
         float     playgroundScale = 0.05f;
@@ -149,6 +150,8 @@ public:
         glBufferData(GL_ARRAY_BUFFER, asteroidInstances * sizeof(glm::mat4), asteroidInstanceMatrices.get(), GL_STATIC_DRAW);
         m_scene->getInstancedObjs()[0].first.setVertexAttribInstancedModelMat4(3);
         m_asteroidsVBO.unbind();
+
+        addNormalObject(6, { -0.4f, 0.05f, 0.4f }, 0.01f, 60.0f);
 
         // Lights
         glm::vec3 directionalLightDir = glm::normalize(glm::vec3{ 1.5f, -2.0f, -1.25f });

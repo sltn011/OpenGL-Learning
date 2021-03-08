@@ -7,48 +7,48 @@ namespace OGL::E1 {
     ) : m_camera{ std::move(camera) } {
     }
 
-    void Scene::addNormalObj( 
+    Object &Scene::addNormalObj(
         Object obj
     ) {
-        m_normalObjects.emplace_back(std::move(obj));
+        return m_normalObjects.emplace_back(std::move(obj));
     }
 
-    void Scene::addTransparentObj( 
+    Object &Scene::addTransparentObj(
         Object obj
     ) {
-        m_transparentObjects.emplace_back(std::move(obj));
+        return m_transparentObjects.emplace_back(std::move(obj));
     }
 
-    void Scene::addMirrorObj(
+    std::pair<Object, smartCubemap> &Scene::addMirrorObj(
         Object obj
     ) {
         std::pair<Object, smartCubemap> pair{std::move(obj), nullptr};
-        m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
+        return m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
     }
 
-    void Scene::addInstancedObj(
+    std::pair<Object, size_t> &Scene::addInstancedObj(
         Object obj,
         size_t numInstances
     ) {
-        m_instancedObjects.emplace_back(std::move(obj), numInstances);
+        return m_instancedObjects.emplace_back(std::move(obj), numInstances);
     }
 
-    void Scene::addDirLight( 
+    std::pair<DirectionalLight, smartShadowMap> &Scene::addDirLight(
         DirectionalLight dirLight
     ) {
-        m_dirLights.push_back(std::make_pair(dirLight, nullptr));
+       return m_dirLights.emplace_back(dirLight, nullptr);
     }
 
-    void Scene::addPointLight( 
+    std::pair<PointLight, smartShadowCubemap> &Scene::addPointLight(
         PointLight pointLight
     ) {
-        m_pointLights.push_back(std::make_pair(pointLight, nullptr));
+        return m_pointLights.emplace_back(pointLight, nullptr);
     }
 
-    void Scene::addSpotLight( 
+    std::pair<SpotLight, smartShadowMap> &Scene::addSpotLight(
         SpotLight spotLight
     ) {
-        m_spotLights.push_back(std::make_pair(spotLight, nullptr));
+       return m_spotLights.emplace_back(spotLight, nullptr);
     }
 
     objectsVec &Scene::getNormalObjs(

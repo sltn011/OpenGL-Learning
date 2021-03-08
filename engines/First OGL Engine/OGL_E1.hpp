@@ -40,7 +40,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.7", 
+            std::string  title = "Engine1_v.0.2.7.1", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -138,86 +138,86 @@ namespace OGL::E1 {
             m_modelsTable[modelId] = Model(path);
         }
 
-        void addNormalObject( 
+        Object &addNormalObject( 
             size_t modelID, 
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
-            float rotationAngleRadians = 0.0f,
+            float rotationAngle = 0.0f,
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_scene->addNormalObj(
+            return m_scene->addNormalObj(
                 Object{
                     m_modelsTable[modelID],
                     pos,
                     scale,
-                    rotationAngleRadians,
+                    rotationAngle,
                     rotationAxis
                 }
             );
         }
 
-        void addTransparentObject( 
+        Object &addTransparentObject( 
             size_t modelID, 
             glm::vec3 pos = 
             glm::vec3{ 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
-            float rotationAngleRadians = 0.0f, 
+            float rotationAngle = 0.0f, 
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_scene->addTransparentObj(
+            return m_scene->addTransparentObj(
                 Object{
                     m_modelsTable[modelID],
                     pos,
                     scale,
-                    rotationAngleRadians,
+                    rotationAngle,
                     rotationAxis
                 }
             );
         }
 
-        void addMirrorObject(
+        std::pair<Object, smartCubemap> &addMirrorObject(
             size_t modelID,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
-            float rotationAngleRadians = 0.0f,
+            float rotationAngle = 0.0f,
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_scene->addMirrorObj(
+            return m_scene->addMirrorObj(
                 Object{
                     m_modelsTable[modelID],
                     pos,
                     scale,
-                    rotationAngleRadians,
+                    rotationAngle,
                     rotationAxis
                 }
             );
         }
 
-        void addInstancedObject(
+        std::pair<Object, size_t> &addInstancedObject(
             size_t modelID,
             size_t numInstances,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
-            float rotationAngleRadians = 0.0f,
+            float rotationAngle = 0.0f,
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         ) {
-            m_scene->addInstancedObj(
+            return m_scene->addInstancedObj(
                 Object{
                     m_modelsTable[modelID],
                     pos,
                     scale,
-                    rotationAngleRadians,
+                    rotationAngle,
                     rotationAxis
                 },
                 numInstances
             );
         }
 
-        void addDirLight( 
+        std::pair<DirectionalLight, smartShadowMap> &addDirLight( 
             glm::vec3 direction, 
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         ) {
-            m_scene->addDirLight(
+            return m_scene->addDirLight(
                 DirectionalLight{
                     direction,
                     color
@@ -225,14 +225,14 @@ namespace OGL::E1 {
             );
         }
 
-        void addPointLight(
+        std::pair<PointLight, smartShadowCubemap> &addPointLight(
             glm::vec3 position,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f), 
             float attenuationConst = 1.0f, 
             float attenuationLinear = 0.09f, 
             float attenuationQuadratic = 0.032f
         ) {
-            m_scene->addPointLight(
+            return m_scene->addPointLight(
                 PointLight{
                     position,
                     color,
@@ -243,7 +243,7 @@ namespace OGL::E1 {
             );
         }
 
-        void addSpotLight( 
+        std::pair<SpotLight, smartShadowMap> &addSpotLight( 
             glm::vec3 position, 
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -253,7 +253,7 @@ namespace OGL::E1 {
             float attenuationLinear = 0.09f, 
             float attenuationQuadratic = 0.032f
         ) {
-            m_scene->addSpotLight(
+            return m_scene->addSpotLight(
                 SpotLight{
                     position,
                     direction,

@@ -6,12 +6,12 @@ namespace OGL {
         Model &model, 
         glm::vec3 position,
         float scale,
-        float rotationAngleRadians,
+        float rotationAngle,
         glm::vec3 rotationAxis
     ) : m_model{model},
         m_postiton{position}, 
         m_scale{scale},
-        m_rotationAngleRadians{rotationAngleRadians}, 
+        m_rotationAngle{rotationAngle}, 
         m_rotationAxis{rotationAxis} {
     }
 
@@ -22,7 +22,7 @@ namespace OGL {
 
         glm::mat4 model = glm::identity<glm::mat4>();
         model = glm::translate(model, m_postiton);
-        model = glm::rotate(model, m_rotationAngleRadians, glm::normalize(m_rotationAxis));
+        model = glm::rotate(model, glm::radians(m_rotationAngle), glm::normalize(m_rotationAxis));
         model = glm::scale(model, scaleVec);
         shader.setUniformMatrix4("model", model);
         m_model.draw(shader);
@@ -36,7 +36,7 @@ namespace OGL {
 
         glm::mat4 model = glm::identity<glm::mat4>();
         model = glm::translate(model, m_postiton);
-        model = glm::rotate(model, m_rotationAngleRadians, glm::normalize(m_rotationAxis));
+        model = glm::rotate(model, m_rotationAngle, glm::normalize(m_rotationAxis));
         model = glm::scale(model, scaleVec);
         shader.setUniformMatrix4("model", model);
         m_model.drawInstanced(shader, amount);

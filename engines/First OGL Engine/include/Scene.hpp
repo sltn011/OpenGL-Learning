@@ -37,32 +37,32 @@ namespace OGL::E1 {
             Scene &&rhs
         ) = default;
 
-        void addNormalObj( 
+        Object &addNormalObj( 
             Object obj
         );
 
-        void addTransparentObj(
+        Object &addTransparentObj(
             Object obj
         );
 
-        void addMirrorObj(
+        std::pair<Object, smartCubemap> &addMirrorObj(
             Object obj
         );
 
-        void addInstancedObj(
+        std::pair<Object, size_t> &addInstancedObj(
             Object obj,
             size_t numInstances
         );
 
-        void addDirLight( 
+        std::pair<DirectionalLight, smartShadowMap> &addDirLight( 
             DirectionalLight dirLight
         );
 
-        void addPointLight( 
+        std::pair<PointLight, smartShadowCubemap> &addPointLight(
             PointLight pointLight
         );
 
-        void addSpotLight( 
+        std::pair<SpotLight, smartShadowMap> &addSpotLight(
             SpotLight spotLight
         );
         
