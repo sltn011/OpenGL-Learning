@@ -28,8 +28,6 @@ namespace OGL::E1 {
     using pointLights    = std::vector<smartPointLPtr>;
     using spotLights     = std::vector<smartSpotLPtr>;
     using shadersPack    = std::vector<Shader>;
-                         
-    using eventsQueue    = std::queue<Events>;
 
 } // OGL::E1
 

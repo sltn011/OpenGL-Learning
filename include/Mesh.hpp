@@ -15,9 +15,9 @@
 namespace OGL {
 
     struct Vertex {
-        glm::vec3 pos;
-        glm::vec3 norm;
-        glm::vec2 tex;
+        glm::vec3 m_pos;
+        glm::vec3 m_norm;
+        glm::vec2 m_tex;
     };
 
     enum TextureType {
@@ -28,16 +28,16 @@ namespace OGL {
     };
 
     struct ModelTexture {
-        unsigned int id;
-        TextureType  type;
-        std::string  path;
+        unsigned int m_id;
+        TextureType  m_type;
+        std::string  m_path;
     };
 
     struct Colors {
-        glm::vec3 ambient;
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        float     specularExponent;
+        glm::vec3 m_ambient;
+        glm::vec3 m_diffuse;
+        glm::vec3 m_specular;
+        float     m_specularExponent;
     };
 
     class Mesh {

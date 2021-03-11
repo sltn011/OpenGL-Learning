@@ -9,7 +9,6 @@
 #include "Shader.hpp"
 
 #include "Utils/EngineTypes.hpp"
-#include "Utils/Events.hpp"
 #include "Utils/callbacks.hpp"
 #include "Utils/GameCamera.hpp"
 #include "Utils/System.hpp"
@@ -252,7 +251,6 @@ namespace OGL::E1 {
         GLFWwindow      *m_window;
         std::string      m_title;
 
-        eventsQueue      m_eventsQ;
         modelsTable      m_modelsTable;
         gameObjects      m_objects;
         shadersPack      m_shaders;

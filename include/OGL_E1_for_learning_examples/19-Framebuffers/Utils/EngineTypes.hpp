@@ -62,9 +62,6 @@ namespace OGL {
         
         using shadersPack = std::vector<Shader>;
 
-        enum Events;
-        using eventsQueue = std::queue<Events>;
-
     } // E1
     
 } // OGL

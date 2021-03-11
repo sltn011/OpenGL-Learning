@@ -42,20 +42,20 @@ namespace OGL {
         Colors                    colors{};
 
         for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-            vertices[i].pos.x = mesh->mVertices[i].x;
-            vertices[i].pos.y = mesh->mVertices[i].y;
-            vertices[i].pos.z = mesh->mVertices[i].z;
+            vertices[i].m_pos.x = mesh->mVertices[i].x;
+            vertices[i].m_pos.y = mesh->mVertices[i].y;
+            vertices[i].m_pos.z = mesh->mVertices[i].z;
 
-            vertices[i].norm.x = mesh->mNormals[i].x;
-            vertices[i].norm.y = mesh->mNormals[i].y;
-            vertices[i].norm.z = mesh->mNormals[i].z;
+            vertices[i].m_norm.x = mesh->mNormals[i].x;
+            vertices[i].m_norm.y = mesh->mNormals[i].y;
+            vertices[i].m_norm.z = mesh->mNormals[i].z;
 
             if (mesh->mTextureCoords[0]) {
-                vertices[i].tex.x = mesh->mTextureCoords[0][i].x;
-                vertices[i].tex.y = mesh->mTextureCoords[0][i].y;
+                vertices[i].m_tex.x = mesh->mTextureCoords[0][i].x;
+                vertices[i].m_tex.y = mesh->mTextureCoords[0][i].y;
             }
             else {
-                vertices[i].tex = glm::vec2{0.0f, 0.0f};
+                vertices[i].m_tex = glm::vec2{0.0f, 0.0f};
             }
         }
 
@@ -91,12 +91,12 @@ namespace OGL {
             material->Get(AI_MATKEY_COLOR_SPECULAR, spec);
 
             for (int i = 0; i < 3; ++i) {
-                colors.ambient[i] = amb[i];
-                colors.diffuse[i] = diff[i];
-                colors.specular[i] = spec[i];
+                colors.m_ambient[i] = amb[i];
+                colors.m_diffuse[i] = diff[i];
+                colors.m_specular[i] = spec[i];
             }
 
-            material->Get(AI_MATKEY_SHININESS, colors.specularExponent);
+            material->Get(AI_MATKEY_SHININESS, colors.m_specularExponent);
         }
         
         return Mesh{ vertices, indices, textures, colors };
@@ -114,7 +114,7 @@ namespace OGL {
 
             bool alreadyLoaded = false;
             for (size_t i = 0; i < m_loadedTextures.size(); ++i) {
-                if (!std::strcmp(m_loadedTextures[i].path.c_str(), str.C_Str())) {
+                if (!std::strcmp(m_loadedTextures[i].m_path.c_str(), str.C_Str())) {
                     textures.push_back(m_loadedTextures[i]);
                     alreadyLoaded = true;
                     break;
@@ -123,9 +123,9 @@ namespace OGL {
 
             if (!alreadyLoaded) {
                 ModelTexture texture;
-                texture.id = textureFromFile(str.C_Str(), m_directory);
-                texture.type = typeName;
-                texture.path = str.C_Str();
+                texture.m_id = textureFromFile(str.C_Str(), m_directory);
+                texture.m_type = typeName;
+                texture.m_path = str.C_Str();
                 textures.push_back(texture);
                 m_loadedTextures.push_back(texture);
             }

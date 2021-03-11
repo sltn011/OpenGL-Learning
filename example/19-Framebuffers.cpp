@@ -54,14 +54,14 @@ public:
 
         glm::vec3 cratesPosition[] = { { -0.8f, -0.0955f, -0.75f }, { -0.5f, -0.0855f, -1.0f }, { -0.35f, -0.0955f, -0.65f }, { -0.87f, -0.0955f, -1.1f } };
         float     cratesScale[] = { 0.055f, 0.065f, 0.055f, 0.055f };
-        float     cratesRotationRadians[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
+        float     cratesRotation[] = { 0.0f, 45.0f, 30.0f, 60.0f };
         for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
-            addObject(1, 1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
+            addObject(1, 1, cratesPosition[i], cratesScale[i], cratesRotation[i]);
         }
 
         glm::vec3 windowsPosition[] = { { 0.8f, -0.05f, 0.75f }, { 0.5f, -0.05f, 1.0f }, { 0.35f, -0.05f, 0.65f }, { 0.87f, -0.05f, 1.1f } };
         float     windowsScale[] = { 0.1f, 0.1f, 0.1f, 0.1f };
-        float     windowsRotation[] = { glm::radians(0.0f), glm::radians(45.0f), glm::radians(30.0f), glm::radians(60.0f) };
+        float     windowsRotation[] = { 0.0f, 45.0f, 30.0f, 60.0f };
         for (size_t i = 0; i < sizeof(windowsPosition) / sizeof(windowsPosition[0]); ++i) {
             addObject(2, 2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
         }

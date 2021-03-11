@@ -1,7 +1,7 @@
 #ifndef OGL_SHADOWCUBEMAP_H
 #define OGL_SHADOWCUBEMAP_H
 
-#include "FramebufferObject.hpp"
+#include "FrameBufferObject.hpp"
 #include "Texture.hpp"
 #include <array>
 

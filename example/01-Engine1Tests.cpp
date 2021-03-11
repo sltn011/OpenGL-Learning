@@ -113,20 +113,20 @@ public:
 
         glm::vec3 playgroundPosition = { 0.0f, 0.0f, 0.0f };
         float     playgroundScale = 0.05f;
-        float     playgroundRotationRadians = glm::radians(0.0f);
+        float     playgroundRotation = 0.0f;
         glm::vec3 playgroundRotationAxes = { 0.0f, 1.0f, 0.0f };
-        addNormalObject(0, playgroundPosition, playgroundScale, playgroundRotationRadians, playgroundRotationAxes);
+        addNormalObject(0, playgroundPosition, playgroundScale, playgroundRotation, playgroundRotationAxes);
 
         glm::vec3 cratesPosition[] = { { -0.3f, -0.02f, -0.55f }, { 0.0f, -0.0135f, -0.7f }, { -0.15f, -0.02f, -0.35f }, { -0.37f, -0.02f, -0.9f } };
         float     cratesScale[] = { 0.055f, 0.065f, 0.055f, 0.055f };
-        float     cratesRotationRadians[] = { glm::radians(30.0f), glm::radians(45.0f), glm::radians(0.0f), glm::radians(60.0f) };
+        float     cratesRotation[] = { 30.0f, 45.0f, 0.0f, 60.0f };
         for (size_t i = 0; i < sizeof(cratesScale) / sizeof(cratesScale[0]); ++i) {
-            addNormalObject(1, cratesPosition[i], cratesScale[i], cratesRotationRadians[i]);
+            addNormalObject(1, cratesPosition[i], cratesScale[i], cratesRotation[i]);
         }
 
         glm::vec3 windowsPosition[] = { { 0.8f, 0.024f, 0.45f }, { 0.6f, 0.024f, 0.1f }, { 0.35f, 0.024f, 0.1f }, { 0.0f, 0.024f, 0.2f } };
         float     windowsScale[] = { 0.1f, 0.1f, 0.1f, 0.1f };
-        float     windowsRotation[] = { glm::radians(100.0f), glm::radians(-25.0f), glm::radians(-65.0f), glm::radians(80.0f) };
+        float     windowsRotation[] = { 100.0f, -25.0f, -65.0f, 80.0f };
         for (size_t i = 0; i < sizeof(windowsPosition) / sizeof(windowsPosition[0]); ++i) {
             addTransparentObject(2, windowsPosition[i], windowsScale[i], windowsRotation[i]);
         }
@@ -137,7 +137,7 @@ public:
 
         glm::vec3 planetPosition{ 8.5f, 2.5f, -7.0f };
         float     planetScale = 0.30f;
-        float     planetRotation = glm::radians(90.0f);
+        float     planetRotation = 90.0f;
         glm::vec3 planetRotationVec{ 1.0f, 0.0f, 0.0f };
         addNormalObject(4, planetPosition, planetScale, planetRotation, planetRotationVec);
 
