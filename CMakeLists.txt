@@ -9,89 +9,109 @@ project(OpenGLLearning)
 ######################################################################################################
 # USER DEFINED VARIABLES!!!
 # Path to directory with GLFW Source
-set(PATH_TO_GLFW_SOURCE "D:/OpenGL/Libs/GLFW_3.3.2" CACHE PATH "Path to directory with GLFW source")
-set(PATH_TO_GLFW_BUILT "${PATH_TO_GLFW_SOURCE}/build" CACHE PATH "Path to directory with GLFW built files")
+set(GLFW_SOURCE "D:/OpenGL/Libs/GLFW_3.3.2" CACHE PATH "Path to directory with GLFW source")
+set(GLFW_BUILT "${GLFW_SOURCE}/build" CACHE PATH "Path to directory with GLFW built files")
 
 # Path to directory with GLAD Source
-set(PATH_TO_GLAD_SOURCE "D:/OpenGL/Libs/GLAD" CACHE PATH "Path to directory with GLAD source")
-set(PATH_TO_GLAD_BUILT "${PATH_TO_GLAD_SOURCE}/build" CACHE PATH "Path to directory with GLAD built files")
+set(GLAD_SOURCE "D:/OpenGL/Libs/GLAD" CACHE PATH "Path to directory with GLAD source")
+set(GLAD_BUILT "${GLAD_SOURCE}/build" CACHE PATH "Path to directory with GLAD built files")
 
 # Path to directory with GLM library headers
-set(PATH_TO_GLM_INCLUDES "D:/OpenGL/Libs/GLM_0.9.9.8" CACHE PATH "Path to directory with GLM headers")
+set(GLM_INCLUDES "D:/OpenGL/Libs/GLM_0.9.9.8" CACHE PATH "Path to directory with GLM headers")
 
 # Path to directory with STB Image library headers
-set(PATH_TO_STB_INCLUDE "D:/OpenGL/Libs/STB_Image" CACHE PATH "Path to directory with STB header")
+set(STB_INCLUDE "D:/OpenGL/Libs/STB_Image" CACHE PATH "Path to directory with STB header")
 
 # Path to directory with Assimp Source
-set(PATH_TO_ASSIMP_SOURCE "D:/OpenGL/Libs/assimp-5.0.1" CACHE PATH "Path to directory with Assimp source")
-set(PATH_TO_ASSIMP_BUILT "${PATH_TO_ASSIMP_SOURCE}/build" CACHE PATH "Path to directory with Assimp built files")
+set(ASSIMP_SOURCE "D:/OpenGL/Libs/assimp-5.0.1" CACHE PATH "Path to directory with Assimp source")
+set(ASSIMP_BUILT "${ASSIMP_SOURCE}/build" CACHE PATH "Path to directory with Assimp built files")
 
-SET (ASSIMP_BUILD_TESTS CACHE BOOL OFF)
-SET (ASSIMP_BUILD_NO_EXPORT CACHE BOOL ON)
-SET (ASSIMP_BUILD_ASSIMP_TOOLS CACHE BOOL OFF)
-
-SET (ASSIMP_BUILD_AMF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_ASE_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_3D_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_3DS_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_AC_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_ACE_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_ASSBIN_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_B3D_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_BVH_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_DXF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_CSM_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_HMP_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_IRRMESH_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_IRR_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_LWO_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_LWS_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MD2_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MD3_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MD5_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MDC_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MDL_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_NFF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_NDO_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_OFF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_OGRE_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_OPENGEX_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MS3D_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_COB_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_BLEND_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_IFC_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_XGL_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_FBX_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_Q3D_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_Q3BSP_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_RAW_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_SIB_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_SMD_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_STL_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_TERRAGEN_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_X_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_X3D_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_GLTF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_3MF_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_MMD_IMPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_STEP_IMPORTER CACHE BOOL OFF)
-
-SET (ASSIMP_BUILD_ASSBIN_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_ASSXML_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_COLLADA_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_OPENGEX_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_PLY_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_FBX_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_STL_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_X_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_X3D_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_GLTF_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_3MF_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_ASSJSON_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_STEP_EXPORTER CACHE BOOL OFF)
-SET (ASSIMP_BUILD_3DS_EXPORTER CACHE BOOL OFF)
+# Path to directory with Dear ImGui Source
+set(DEARIMGUI_SOURCE "D:/OpenGL/Libs/Dear_ImGui" CACHE PATH "Path to directory with Dear ImGui source")
 ######################################################################################################
 
+
+
+######################################################################################################
+set (ASSIMP_BUILD_TESTS CACHE BOOL OFF)
+set (ASSIMP_BUILD_NO_EXPORT CACHE BOOL ON)
+set (ASSIMP_BUILD_ASSIMP_TOOLS CACHE BOOL OFF)
+
+set (ASSIMP_BUILD_AMF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_ASE_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_3D_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_3DS_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_AC_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_ACE_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_ASSBIN_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_B3D_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_BVH_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_DXF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_CSM_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_HMP_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_IRRMESH_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_IRR_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_LWO_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_LWS_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MD2_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MD3_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MD5_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MDC_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MDL_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_NFF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_NDO_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_OFF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_OGRE_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_OPENGEX_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MS3D_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_COB_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_BLEND_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_IFC_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_XGL_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_FBX_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_Q3D_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_Q3BSP_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_RAW_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_SIB_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_SMD_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_STL_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_TERRAGEN_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_X_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_X3D_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_GLTF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_3MF_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_MMD_IMPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_STEP_IMPORTER CACHE BOOL OFF)
+
+set (ASSIMP_BUILD_ASSBIN_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_ASSXML_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_COLLADA_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_OPENGEX_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_PLY_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_FBX_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_STL_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_X_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_X3D_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_GLTF_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_3MF_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_ASSJSON_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_STEP_EXPORTER CACHE BOOL OFF)
+set (ASSIMP_BUILD_3DS_EXPORTER CACHE BOOL OFF)
+######################################################################################################
+
+
+
+######################################################################################################
+set(DEARIMGUI_FILES
+    ${DEARIMGUI_SOURCE}/imgui.cpp
+    ${DEARIMGUI_SOURCE}/imgui_demo.cpp
+    ${DEARIMGUI_SOURCE}/imgui_draw.cpp
+    ${DEARIMGUI_SOURCE}/imgui_tables.cpp
+    ${DEARIMGUI_SOURCE}/imgui_widgets.cpp
+    ${DEARIMGUI_SOURCE}/backends/imgui_impl_glfw.cpp 
+    ${DEARIMGUI_SOURCE}/backends/imgui_impl_opengl3.cpp 
+)
+######################################################################################################
 
 
 ######################################################################################################
@@ -107,13 +127,13 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 # Include GLFW Source to be built
-add_subdirectory(${PATH_TO_GLFW_SOURCE} ${PATH_TO_GLFW_BUILT})
+add_subdirectory(${GLFW_SOURCE} ${GLFW_BUILT})
 
 # Include GLAD Source to be built
-add_subdirectory(${PATH_TO_GLAD_SOURCE} ${PATH_TO_GLAD_BUILT})
+add_subdirectory(${GLAD_SOURCE} ${GLAD_BUILT})
 
 # Include Assimp Source to be built
-add_subdirectory(${PATH_TO_ASSIMP_SOURCE} ${PATH_TO_ASSIMP_BUILT})
+add_subdirectory(${ASSIMP_SOURCE} ${ASSIMP_BUILT})
 ######################################################################################################
 
 
@@ -124,12 +144,14 @@ add_subdirectory(${PATH_TO_ASSIMP_SOURCE} ${PATH_TO_ASSIMP_BUILT})
 
 # Folder with header files
 include_directories(include)
-include_directories("${PATH_TO_GLFW_SOURCE}/include")
-include_directories("${PATH_TO_GLAD_SOURCE}/include")
-include_directories(${PATH_TO_GLM_INCLUDES})
-include_directories(${PATH_TO_STB_INCLUDE})
-include_directories("${PATH_TO_ASSIMP_SOURCE}/include")
-include_directories("${PATH_TO_ASSIMP_BUILT}/include")
+include_directories("${GLFW_SOURCE}/include")
+include_directories("${GLAD_SOURCE}/include")
+include_directories(${GLM_INCLUDES})
+include_directories(${STB_INCLUDE})
+include_directories("${ASSIMP_SOURCE}/include")
+include_directories("${ASSIMP_BUILT}/include")
+include_directories(${DEARIMGUI_SOURCE})
+include_directories("${DEARIMGUI_SOURCE}/backends")
 ######################################################################################################
 
 
@@ -173,6 +195,7 @@ target_link_libraries(OpenGLTools)
 ######################################################################################################
 
 
+
 ######################################################################################################
 # ENGINE FILES
 # Engines folder
@@ -202,6 +225,7 @@ target_link_libraries(OGL_E1_LIB OpenGLTools)
 ######################################################################################################
 # Executable location
 add_executable(01-Engine1Tests example/01-Engine1Tests.cpp)
+add_executable(02-ImGuiTests example/02-ImGuiTests.cpp ${DEARIMGUI_FILES})
 
 add_executable(0-ModelRenderer example/0-ModelRenderer.cpp)
 add_executable(1-HelloWindow example/1-HelloWindow.cpp)
@@ -234,6 +258,7 @@ add_executable(27-PointShadow example/27-PointShadow.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
+target_link_libraries(02-ImGuiTests glad glfw OpenGLTools assimp)
 
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)
