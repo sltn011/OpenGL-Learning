@@ -42,6 +42,33 @@ namespace OGL {
         m_model.drawInstanced(shader, amount);
     }
 
+    void Object::drawShape(
+        Shader &shader
+    ) const {
+        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
+
+        glm::mat4 model = glm::identity<glm::mat4>();
+        model = glm::translate(model, m_postiton);
+        model = glm::rotate(model, glm::radians(m_rotationAngle), glm::normalize(m_rotationAxis));
+        model = glm::scale(model, scaleVec);
+        shader.setUniformMatrix4("model", model);
+        m_model.drawShape(shader);
+    }
+
+    void Object::drawShapeInstanced(
+        Shader &shader, 
+        size_t amount
+    ) const {
+        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
+
+        glm::mat4 model = glm::identity<glm::mat4>();
+        model = glm::translate(model, m_postiton);
+        model = glm::rotate(model, m_rotationAngle, glm::normalize(m_rotationAxis));
+        model = glm::scale(model, scaleVec);
+        shader.setUniformMatrix4("model", model);
+        m_model.drawShapeInstanced(shader, amount);
+    }
+
     void Object::setVertexAttribInstancedModelMat4( 
         int attribLocation
     ) {

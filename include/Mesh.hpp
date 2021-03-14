@@ -72,6 +72,15 @@ namespace OGL {
             size_t amount
         ) const;
 
+        void drawShape(
+            Shader &shader
+        ) const;
+
+        void drawShapeInstanced(
+            Shader &shader,
+            size_t amount
+        ) const;
+
         void setVertexAttribInstancedModelMat4( 
             int attribLocation
         );

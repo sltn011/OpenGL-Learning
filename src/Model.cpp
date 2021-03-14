@@ -205,6 +205,23 @@ namespace OGL {
         }
     }
 
+    void Model::drawShape(
+        Shader &shader
+    ) const {
+        for (size_t i = 0; i < m_meshes.size(); ++i) {
+            m_meshes[i].drawShape(shader);
+        }
+    }
+
+    void Model::drawShapeInstanced(
+        Shader &shader, 
+        size_t amount
+    ) const {
+        for (size_t i = 0; i < m_meshes.size(); ++i) {
+            m_meshes[i].drawShapeInstanced(shader, amount);
+        }
+    }
+
     void Model::setVertexAttribInstancedModelMat4( 
         int attribLocation
     ) {

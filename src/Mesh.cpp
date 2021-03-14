@@ -152,6 +152,23 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
+    void Mesh::drawShape(
+        Shader &shader
+    ) const {
+        glBindVertexArray(m_VAO);
+        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    }
+
+    void Mesh::drawShapeInstanced(
+        Shader &shader, 
+        size_t amount
+    ) const {
+        glBindVertexArray(m_VAO);
+        glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, amount);
+        glBindVertexArray(0);
+    }
+
     void Mesh::setVertexAttribInstancedModelMat4( 
         int attribLocation
     ) {
