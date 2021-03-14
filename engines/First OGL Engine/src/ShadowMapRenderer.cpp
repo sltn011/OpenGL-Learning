@@ -25,13 +25,13 @@ namespace OGL::E1 {
         m_shader.setUniformMatrix4("lightProjView", map.lightProjView());
 
         for (auto &obj : scene.getNormalObjs()) {
-            obj.draw(m_shader);
+            obj.drawShape(m_shader);
         }
         for (auto &obj : scene.getTransparentObjs()) {
-            obj.draw(m_shader);
+            obj.drawShape(m_shader);
         }
         for (auto &pObjCubemap : scene.getMirrorObjs()) {
-            pObjCubemap.first.draw(m_shader);
+            pObjCubemap.first.drawShape(m_shader);
         }
 
         map.unbindFramebuffer();
