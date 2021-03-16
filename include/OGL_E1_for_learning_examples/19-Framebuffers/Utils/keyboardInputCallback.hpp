@@ -2,6 +2,7 @@
 #define OGL_E1KEYBOARDCALLBACK_H
 
 extern int postprocessMode;
+extern int pixelizationCoeff;
 
 namespace OGL::E1 {
 
@@ -13,7 +14,13 @@ namespace OGL::E1 {
         int mods
     ) {
         if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-            postprocessMode = (postprocessMode + 1) % 12;
+            postprocessMode = (postprocessMode + 1) % 13;
+        }
+        if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+            pixelizationCoeff--;
+        }
+        if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+            pixelizationCoeff++;
         }
     }
 
