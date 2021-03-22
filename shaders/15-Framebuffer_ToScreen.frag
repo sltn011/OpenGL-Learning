@@ -8,6 +8,8 @@ uniform sampler2D fboTexture;
 
 uniform int postprocessMode;
 
+uniform int pixelizationCoeff;
+
 const float offset = 1.0 / 540.0;
 
 const vec2 offsets[9] = vec2[](
@@ -128,6 +130,16 @@ void main() {
 		);
 		fragColor = vec4(applyKernel(kernelRightSobels), 1.0);
 		break;
+
+	case 12: // Pixelization
+		vec2 texSize = textureSize(fboTexture, 0);
+		float uSamples = texSize.x / pixelizationCoeff;
+		float vSamples = texSize.y / pixelizationCoeff;
+		float newU = floor(vertexTex.x * uSamples) / uSamples;
+		float newV = floor(vertexTex.y * vSamples) / vSamples;
+		fragColor = texture(fboTexture, vec2(newU, newV));
+		break;
+
 
 	default:
 		fragColor = orig;

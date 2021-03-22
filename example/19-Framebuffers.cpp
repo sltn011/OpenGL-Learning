@@ -6,6 +6,7 @@
 #include <map>
 
 int postprocessMode = 0;
+int pixelizationCoeff = 1;
 
 class Test : public OGL::E1::Engine1Base {
 public:
@@ -161,6 +162,7 @@ public:
 
         m_shaders[1].use();
         m_shaders[1].setUniformInt("postprocessMode", postprocessMode);
+        m_shaders[1].setUniformInt("pixelizationCoeff", pixelizationCoeff);
 
         glDisable(GL_DEPTH_TEST);
         m_fbo->drawQuad(GL_COLOR_ATTACHMENT0);
