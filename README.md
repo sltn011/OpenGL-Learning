@@ -15,3 +15,12 @@ STB_Image: https://github.com/nothings/stb/blob/master/stb_image.h
 Assimp: https://github.com/assimp/assimp  
 
 To compile examples set paths to required libraries in CMakeLists.txt and use CMake to generate compile files  
+  
+# TODO LIST:  
+Rotation of objects with quaternions  
+GUI for editing and debugging scene  
+Saving and loading scenes to/from files  
+Normal mapping, parallax mapping  
+HDR, Bloom, SSAO  
+Deferred Shading  
+PBR  
