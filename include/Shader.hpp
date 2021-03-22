@@ -112,6 +112,11 @@ namespace OGL {
             glm::vec3 const &vec
         );
 
+        bool setUniformVec4(
+            std::string const &name,
+            glm::vec4 const &vec
+        );
+
         bool uniformBlockBinding( 
             std::string const &blockName, 
             size_t bindingPointIndex

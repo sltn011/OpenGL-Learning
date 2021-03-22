@@ -231,6 +231,21 @@ namespace OGL {
         return true;
     }
 
+    bool Shader::setUniformVec4(
+        std::string const &name,
+        glm::vec4 const &vec
+    ) {
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
+            return false;
+        }
+        glUniform4fv(loc, 1, &vec[0]);
+        return true;
+    }
+
     bool Shader::uniformBlockBinding( 
         std::string const &blockName, 
         size_t bindingPointIndex

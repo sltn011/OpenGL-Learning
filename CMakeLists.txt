@@ -162,6 +162,7 @@ add_library(OpenGLTools STATIC
         src/Shader.cpp
         src/Exception.cpp
         src/BasicCamera.cpp
+        src/CameraStatic.cpp
         src/CameraFree.cpp
         src/CameraFirstPerson.cpp
         src/CameraCubemap.cpp
