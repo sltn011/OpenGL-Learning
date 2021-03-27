@@ -2,6 +2,8 @@
 #define OGL_OBJECT_H
 
 #include "Model.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
 
 namespace OGL {
 
@@ -13,6 +15,13 @@ namespace OGL {
             float scale = 1.0f, 
             float rotationAngle = 0.0f, 
             glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f }
+        );
+
+        Object(
+            Model &model,
+            glm::vec3 position,
+            float scale,
+            glm::quat quat
         );
 
         void draw( 
@@ -43,8 +52,7 @@ namespace OGL {
      public:
         glm::vec3 m_postiton;
         float     m_scale;
-        glm::vec3 m_rotationAxis;
-        float     m_rotationAngle;
+        glm::quat m_quat;
 
     };
 

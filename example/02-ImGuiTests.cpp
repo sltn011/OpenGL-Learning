@@ -6,12 +6,17 @@
 #include "Object.hpp"
 #include "DirectionalLight.hpp"
 
+#include "VertexArrayObject.hpp"
+#include "VertexBufferObject.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include "glm/gtc/quaternion.hpp"
 
 constexpr int screenWidth = 1920;
 constexpr int screenHeight = 1080;
@@ -29,7 +34,7 @@ void windowResizeCallback(
 void processInput(
     GLFWwindow *window
 ) {
-    if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
@@ -87,19 +92,18 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glClearColor(0.5f, 0.5f, 0.7f, 1.0f);
+    glClearColor(0.6f, 0.6f, 0.7f, 1.0f);
 
     OGL::Shader shader("shaders/02-imguiTest.vert", "shaders/02-imguiTest.frag");
 
-    OGL::Model model{ "models/Gun/gun.obj" };
+    OGL::Model model{ "models/Axises/axises.obj" };
 
     glm::vec3 objectPosition = glm::vec3{ 0.0f };
-    OGL::Object object{ model, objectPosition, 0.3f };
+    OGL::Object object{ model, objectPosition };
 
-    glm::vec3 objectColor{ 0.5f, 0.15f, 0.4f };
+    glm::vec3 objectColor{ 0.0f, 1.0f, 0.0f };
 
-    glm::vec3 camPos{ 1.0f, 1.5f, 4.0f };
+    glm::vec3 camPos = glm::vec3{ 0.0f, 2.0f, 4.0f } + objectPosition;
     glm::vec3 camForward = glm::normalize(objectPosition - camPos);
 
     OGL::DirectionalLight light{ {-0.3f, -0.5f, -0.2f} };
@@ -123,24 +127,29 @@ int main() {
 
     float prevTime = 0.0f;
 
+    glm::vec3 rotVec(0.0f, 1.0f, 0.0f);
+    float rotAngle = 0.0f;
+
+
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
         clearScreen();
 
         float currentTime = float(glfwGetTime());
-        object.m_rotationAngle += glm::abs((currentTime - prevTime) * 10);
+        //object.m_rotationAngle += glm::abs((currentTime - prevTime) * 10);
         prevTime = currentTime;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        shader.use();
         shader.setUniformVec3("objectColor", objectColor);
-
         object.drawShape(shader);
 
         ImGui::Begin("GUI window");
+        ImGui::InputFloat3("Position", &(object.m_postiton.x));
         ImGui::ColorPicker3("Object Color", &(objectColor.x));
         ImGui::End();
 
