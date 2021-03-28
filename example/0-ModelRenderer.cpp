@@ -169,9 +169,9 @@ int main(
     OGL::Model myModel("models/Backpack/backpack.obj");
 
     OGL::Object myObject(myModel);
-    myObject.m_postiton = glm::vec3{ 0.0f, 0.0f, -2.0f };
-    myObject.m_scale = 1.2f;
-    myObject.m_quat = glm::angleAxis(-45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    myObject.setPosition(glm::vec3{ 0.0f, 0.0f, -2.0f });
+    myObject.setScale(1.2f);
+    myObject.setRotation(-45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

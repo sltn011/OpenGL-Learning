@@ -243,7 +243,7 @@ public:
         // Sort transparent objects by distance to player using map
         std::map<float, OGL::E1::smartObjPtr const&> map;
         for (auto const &obj : m_objects[2]) {
-            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->m_postiton);
+            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->getPosition());
             map.emplace(dist, obj);
         }
 

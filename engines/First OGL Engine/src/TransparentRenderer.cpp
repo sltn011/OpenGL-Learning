@@ -59,7 +59,7 @@ namespace OGL::E1 {
 
         std::map<float, Object const&> objectsMap;
         for (auto const &obj : scene.getTransparentObjs()) {
-            float dist = glm::distance(camPos, obj.m_postiton);
+            float dist = glm::distance(camPos, obj.getPosition());
             objectsMap.emplace(dist, obj);
         }
 

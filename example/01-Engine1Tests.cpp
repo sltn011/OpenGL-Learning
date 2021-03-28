@@ -195,7 +195,7 @@ public:
                     *m_scene,
                     cubemapSize,
                     GL_TEXTURE0 + cubemapTextureID,
-                    p.first.m_postiton,
+                    p.first.getPosition(),
                     m_normalRenderer.get(),
                     m_skyboxRenderer.get(),
                     m_transpRenderer.get(),

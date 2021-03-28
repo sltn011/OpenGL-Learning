@@ -24,6 +24,22 @@ namespace OGL {
             glm::quat quat
         );
 
+        Object(
+            Model &model,
+            glm::vec3 position,
+            float scale,
+            float xAngle,
+            float yAngle,
+            float zAngle
+        );
+
+        Object(
+            Model &model,
+            glm::vec3 position,
+            float scale,
+            glm::vec3 eulerAngles
+        );
+
         void draw( 
             Shader &shader
         ) const;
@@ -46,13 +62,55 @@ namespace OGL {
             int attribLocation
         );
 
+        glm::vec3 getPosition(
+        ) const;
+
+        void setPosition(
+            glm::vec3 position
+        );
+
+        float getScale(
+        ) const;
+
+        void setScale (
+            float scale
+        );
+
+        glm::quat getRotation(
+        ) const;
+
+        void setRotation(
+            glm::quat rotationQuat
+        );
+
+        void setRotation(
+            float rotationAngle,
+            glm::vec3 rotationAxis
+        );
+
+        void setRotation(
+            float xAngle,
+            float yAngle,
+            float zAngle
+        );
+
+        void setRotation(
+            glm::vec3 eulerAngles
+        );
+
+        glm::mat4 getModelMatrix(
+        ) const;
+
+
      protected:
         Model &m_model;
-
-     public:
-        glm::vec3 m_postiton;
+        glm::vec3 m_position;
         float     m_scale;
         glm::quat m_quat;
+        glm::mat4 m_modelMatrix;
+
+        void recalculateModelMatrix(
+        );
 
     };
 

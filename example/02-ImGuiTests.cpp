@@ -149,8 +149,30 @@ int main() {
         object.drawShape(shader);
 
         ImGui::Begin("GUI window");
-        ImGui::InputFloat3("Position", &(object.m_postiton.x));
         ImGui::ColorPicker3("Object Color", &(objectColor.x));
+        if (ImGui::Button("Reset")) {
+            object.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+            object.setScale(1.0f);
+            object.setRotation(glm::angleAxis(0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+        }
+        if (ImGui::Button("Position test")) {
+            object.setPosition(object.getPosition() + glm::vec3(0.1f, 0.0f, 0.0f));
+        }
+        if (ImGui::Button("Scale test")) {
+            object.setScale(object.getScale() * 0.95f);
+        }
+        if (ImGui::Button("Rotation test 1")) {
+            object.setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3{ 0.0f, 1.0f, 0.0f }));
+        }
+        if (ImGui::Button("Rotation test 2")) {
+            object.setRotation(90.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+        }
+        if (ImGui::Button("Rotation test 3")) {
+            object.setRotation(0.0f, 90.0f, 0.0f);
+        }
+        if (ImGui::Button("Rotation test 4")) {
+            object.setRotation(glm::vec3{ 0.0f, 90.0f, 0.0f });
+        }
         ImGui::End();
 
         ImGui::Render();

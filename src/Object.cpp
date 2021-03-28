@@ -9,9 +9,9 @@ namespace OGL {
         float rotationAngle,
         glm::vec3 rotationAxis
     ) : m_model{model},
-        m_postiton{position}, 
-        m_scale{scale},
-        m_quat{glm::angleAxis(glm::radians(rotationAngle), glm::normalize(rotationAxis))} {
+        m_position{position},
+        m_scale{scale} {
+        setRotation(rotationAngle, rotationAxis);
     }
 
     Object::Object(
@@ -20,21 +20,40 @@ namespace OGL {
         float scale, 
         glm::quat quat
     ) : m_model{model},
-        m_postiton{position},
+        m_position{position},
         m_scale{scale},
         m_quat{quat} {
+        recalculateModelMatrix();
+    }
+
+    Object::Object(
+        Model &model, 
+        glm::vec3 position, 
+        float scale, 
+        float xAngle,
+        float yAngle,
+        float zAngle
+    ) : m_model{model},
+        m_position{position},
+        m_scale{scale} {
+        setRotation(xAngle, yAngle, zAngle);
+    }
+
+    Object::Object(
+        Model &model,
+        glm::vec3 position,
+        float scale,
+        glm::vec3 eulerAngles
+    ) : m_model{model},
+        m_position{position},
+        m_scale{scale} {
+        setRotation(eulerAngles);
     }
 
     void Object::draw( 
         Shader &shader
     ) const {
-        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
-
-        glm::mat4 model = glm::identity<glm::mat4>();
-        glm::mat4 translation = glm::translate(model, m_postiton);
-        glm::mat4 rotation    = glm::toMat4(glm::normalize(m_quat));
-        glm::mat4 scale       = glm::scale(model, scaleVec);
-        shader.setUniformMatrix4("model", translation * rotation * scale);
+        shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.draw(shader);
     }
 
@@ -42,26 +61,14 @@ namespace OGL {
         Shader &shader, 
         size_t amount
     ) const {
-        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
-
-        glm::mat4 model = glm::identity<glm::mat4>();
-        glm::mat4 translation = glm::translate(model, m_postiton);
-        glm::mat4 rotation    = glm::toMat4(glm::normalize(m_quat));
-        glm::mat4 scale       = glm::scale(model, scaleVec);
-        shader.setUniformMatrix4("model", translation * rotation * scale);
+        shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.drawInstanced(shader, amount);
     }
 
     void Object::drawShape(
         Shader &shader
     ) const {
-        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
-
-        glm::mat4 model = glm::identity<glm::mat4>();
-        glm::mat4 translation = glm::translate(model, m_postiton);
-        glm::mat4 rotation    = glm::toMat4(glm::normalize(m_quat));
-        glm::mat4 scale       = glm::scale(model, scaleVec);
-        shader.setUniformMatrix4("model", translation * rotation * scale);
+        shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.drawShape(shader);
     }
 
@@ -69,13 +76,7 @@ namespace OGL {
         Shader &shader, 
         size_t amount
     ) const {
-        glm::vec3 scaleVec = { m_scale, m_scale, m_scale };
-
-        glm::mat4 model = glm::identity<glm::mat4>();
-        glm::mat4 translation = glm::translate(model, m_postiton);
-        glm::mat4 rotation    = glm::toMat4(glm::normalize(m_quat));
-        glm::mat4 scale       = glm::scale(model, scaleVec);
-        shader.setUniformMatrix4("model", translation * rotation * scale);
+        shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.drawShapeInstanced(shader, amount);
     }
 
@@ -83,6 +84,82 @@ namespace OGL {
         int attribLocation
     ) {
         m_model.setVertexAttribInstancedModelMat4(attribLocation);
+    }
+
+    glm::vec3 Object::getPosition(
+    ) const {
+        return m_position;
+    }
+
+    void Object::setPosition(
+        glm::vec3 position
+    ) {
+        m_position = position;
+        recalculateModelMatrix();
+    }
+
+    float Object::getScale(
+    ) const {
+        return m_scale;
+    }
+
+    void Object::setScale(
+        float scale
+    ) {
+        m_scale = scale;
+        recalculateModelMatrix();
+    }
+
+    glm::quat Object::getRotation(
+    ) const {
+        return m_quat;
+    }
+
+    void Object::setRotation(
+        glm::quat rotationQuat
+    ) {
+        m_quat = glm::normalize(rotationQuat);
+        recalculateModelMatrix();
+    }
+
+    void Object::setRotation(
+        float rotationAngle, 
+        glm::vec3 rotationAxis
+    ) {
+        m_quat = glm::normalize(glm::angleAxis(glm::radians(rotationAngle), glm::normalize(rotationAxis)));
+        recalculateModelMatrix();
+    }
+
+    void Object::setRotation(
+        float xAngle, 
+        float yAngle, 
+        float zAngle
+    ) {
+        glm::vec3 anglesVec{ xAngle, yAngle, zAngle };
+        setRotation(anglesVec);
+    }
+
+    void Object::setRotation(
+        glm::vec3 eulerAngles
+    ) {
+        glm::vec3 radiansVec = glm::radians(eulerAngles);
+        m_quat = glm::normalize(glm::quat(radiansVec));
+        recalculateModelMatrix();
+    }
+
+    glm::mat4 Object::getModelMatrix(
+    ) const {
+        return m_modelMatrix;
+    }
+
+    void Object::recalculateModelMatrix(
+    ) {
+        glm::mat4 model = glm::identity<glm::mat4>();
+        glm::mat4 translation = glm::translate(model, m_position);
+        glm::mat4 rotation = glm::toMat4(glm::normalize(m_quat));
+        glm::mat4 scale = glm::scale(model, glm::vec3{ m_scale, m_scale, m_scale });
+
+        m_modelMatrix = translation * rotation * scale;
     }
 
 }// OGL
