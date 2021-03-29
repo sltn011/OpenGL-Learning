@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 
 #include "GLFWInitRAII.hpp"
-#include "CameraStatic.hpp"
+#include "CameraFree.hpp"
 #include "Object.hpp"
 #include "DirectionalLight.hpp"
 
@@ -18,10 +18,26 @@
 
 #include "glm/gtc/quaternion.hpp"
 
+#include <memory>
+
 constexpr int screenWidth = 1920;
 constexpr int screenHeight = 1080;
 constexpr int numSamples = 4;
 constexpr auto glslVersion = "#version 330";
+
+bool openGUI = false;
+
+std::unique_ptr<OGL::CameraFree> cameraPtr;
+
+namespace System {
+    float deltaTime = 0.0f;
+    float lastFrameTime = 0.0f;
+
+    float lastMouseXPos = screenWidth / 2;
+    float lastMouseYPos = screenHeight / 2;
+
+    float mouseSensitivity = 0.15f;
+}
 
 void windowResizeCallback(
     GLFWwindow *window,
@@ -37,6 +53,27 @@ void processInput(
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+
+    if (!openGUI) {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime);
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime);
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime);
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime);
+        }
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime);
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            cameraPtr->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime);
+        }
+    }
 }
 
 void keyCallback(
@@ -46,6 +83,24 @@ void keyCallback(
     int action,
     int mods
 ) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        openGUI ^= true;
+    }
+}
+
+void mouseCallback(
+    GLFWwindow *window,
+    double xpos,
+    double ypos
+) {
+    if (!openGUI) {
+        float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
+        float yOffset = System::lastMouseYPos - static_cast<float>(ypos);
+        System::lastMouseXPos = static_cast<float>(xpos);
+        System::lastMouseYPos = static_cast<float>(ypos);
+
+        cameraPtr->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
+    }
 }
 
 void clearScreen(
@@ -71,6 +126,8 @@ int main() {
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 
     glfwSetKeyCallback(window, keyCallback);
+
+    glfwSetCursorPosCallback(window, mouseCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         throw OGL::Exception("Error loading GLAD!");
@@ -108,19 +165,22 @@ int main() {
 
     OGL::DirectionalLight light{ {-0.3f, -0.5f, -0.2f} };
 
-    OGL::CameraStatic camera{
+    cameraPtr = std::make_unique<OGL::CameraFree>(
         camPos,
         camForward,
-        {0.0f, 1.0f, 0.0f},
+        glm::vec3{0.0f, 1.0f, 0.0f},
+        1.0f,
+        0.0f,
+        0.0f,
         45.0f,
         float(screenWidth) / float(screenHeight),
         0.01f,
         100.0f
-    };
+     );
 
-    shader.use(); shader.showWarnings(true);
-    shader.setUniformMatrix4("view", camera.getViewMatrix());
-    shader.setUniformMatrix4("projection", camera.getProjectionMatrix());
+    shader.use();
+    shader.setUniformMatrix4("view", cameraPtr->getViewMatrix());
+    shader.setUniformMatrix4("projection", cameraPtr->getProjectionMatrix());
     shader.setUniformVec3("material.colorAmbient", glm::vec3(0.2f));
     shader.setUniformVec3("material.colorDiffuse", glm::vec3(0.5f));
     light.loadInShader(shader);
@@ -134,49 +194,60 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
+        float currentFrameTime = (float)glfwGetTime();
+        System::deltaTime = currentFrameTime - System::lastFrameTime;
+        System::lastFrameTime = currentFrameTime;
+
         clearScreen();
 
-        float currentTime = float(glfwGetTime());
-        //object.m_rotationAngle += glm::abs((currentTime - prevTime) * 10);
-        prevTime = currentTime;
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        if (openGUI) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(window, System::lastMouseXPos, System::lastMouseYPos);
+        }
 
         shader.use();
+        shader.setUniformMatrix4("view", cameraPtr->getViewMatrix());
+        shader.setUniformMatrix4("projection", cameraPtr->getProjectionMatrix());
         shader.setUniformVec3("objectColor", objectColor);
         object.drawShape(shader);
 
-        ImGui::Begin("GUI window");
-        ImGui::ColorPicker3("Object Color", &(objectColor.x));
-        if (ImGui::Button("Reset")) {
-            object.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-            object.setScale(1.0f);
-            object.setRotation(glm::angleAxis(0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f }));
-        }
-        if (ImGui::Button("Position test")) {
-            object.setPosition(object.getPosition() + glm::vec3(0.1f, 0.0f, 0.0f));
-        }
-        if (ImGui::Button("Scale test")) {
-            object.setScale(object.getScale() * 0.95f);
-        }
-        if (ImGui::Button("Rotation test 1")) {
-            object.setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3{ 0.0f, 1.0f, 0.0f }));
-        }
-        if (ImGui::Button("Rotation test 2")) {
-            object.setRotation(90.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
-        }
-        if (ImGui::Button("Rotation test 3")) {
-            object.setRotation(0.0f, 90.0f, 0.0f);
-        }
-        if (ImGui::Button("Rotation test 4")) {
-            object.setRotation(glm::vec3{ 0.0f, 90.0f, 0.0f });
-        }
-        ImGui::End();
+        if (openGUI) {
+            ImGui::Begin("GUI window");
+            ImGui::ColorPicker3("Object Color", &(objectColor.x));
+            if (ImGui::Button("Reset")) {
+                object.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+                object.setScale(1.0f);
+                object.setRotation(glm::angleAxis(0.0f, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+            }
+            if (ImGui::Button("Position test")) {
+                object.setPosition(object.getPosition() + glm::vec3(0.1f, 0.0f, 0.0f));
+            }
+            if (ImGui::Button("Scale test")) {
+                object.setScale(object.getScale() * 0.95f);
+            }
+            if (ImGui::Button("Rotation test 1")) {
+                object.setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3{ 0.0f, 1.0f, 0.0f }));
+            }
+            if (ImGui::Button("Rotation test 2")) {
+                object.setRotation(90.0f, glm::vec3{ 0.0f, 1.0f, 0.0f });
+            }
+            if (ImGui::Button("Rotation test 3")) {
+                object.setRotation(0.0f, 90.0f, 0.0f);
+            }
+            if (ImGui::Button("Rotation test 4")) {
+                object.setRotation(glm::vec3{ 0.0f, 90.0f, 0.0f });
+            }
+            ImGui::End();
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
