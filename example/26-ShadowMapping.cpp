@@ -36,8 +36,6 @@ class Test : public OGL::E1::Engine1Base {
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
-            -90.0f,
-            0.0f,
             45.0f,
             static_cast<float>(m_screenWidth) / static_cast<float>(m_screenHeight),
             0.01f,

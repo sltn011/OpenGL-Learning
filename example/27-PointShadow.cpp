@@ -33,8 +33,6 @@ public:
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
-            180.0f,
-            0.0f,
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
             0.01f,
@@ -43,7 +41,7 @@ public:
 
         m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
 
-        OGL::Shader normalShader("shaders/23-normalObjWithShadows.vert", "shaders/23-normalObjWithShadows.frag"); normalShader.showWarnings(true);
+        OGL::Shader normalShader("shaders/23-normalObjWithShadows.vert", "shaders/23-normalObjWithShadows.frag");
         OGL::Shader pointLightShadowsShader("shaders/23-normalObjDepthCubemap.vert", "shaders/23-normalObjDepthCubemap.geom", "shaders/23-normalObjDepthCubemap.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
 

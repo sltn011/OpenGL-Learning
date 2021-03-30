@@ -12,8 +12,6 @@ namespace OGL {
             glm::vec3 forwardVec, 
             glm::vec3 worldUpVec, 
             float moveSpeed, 
-            float yawAngle, 
-            float pitchAngle,
             float fov,
             float aspect, 
             float near, 

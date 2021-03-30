@@ -15,8 +15,6 @@ namespace OGL {
         forwardVec,
         worldUpVec,
         0.0f,
-        0.0f,
-        0.0f,
         fov,
         aspect,
         near,
