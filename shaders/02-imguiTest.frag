@@ -18,7 +18,7 @@ struct DirectionalLight {
 
 
 uniform Material material;
-uniform DirectionalLight directionalLight;
+uniform DirectionalLight directionalLight[1];
 uniform vec3 objectColor;
 
 
@@ -39,8 +39,8 @@ void main() {
 
 	vec3 res = vec3(0.0, 0.0, 0.0);
 
-	res += ambientComponent(material, directionalLight.color);
-	res += diffuseComponent(material, directionalLight, norm);
+	res += ambientComponent(material, directionalLight[0].color);
+	res += diffuseComponent(material, directionalLight[0], norm);
 
 	vec3 coloredFrag = pow(objectColor * res, vec3(1.0 / gamma));
 

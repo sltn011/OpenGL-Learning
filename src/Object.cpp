@@ -7,10 +7,12 @@ namespace OGL {
         glm::vec3 position,
         float scale,
         float rotationAngle,
-        glm::vec3 rotationAxis
+        glm::vec3 rotationAxis,
+        size_t objectID
     ) : m_model{model},
         m_position{position},
-        m_scale{scale} {
+        m_scale{scale},
+        m_id{objectID} {
         setRotation(rotationAngle, rotationAxis);
     }
 
@@ -18,11 +20,13 @@ namespace OGL {
         Model &model, 
         glm::vec3 position,
         float scale, 
-        glm::quat quat
+        glm::quat quat,
+        size_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
-        m_quat{quat} {
+        m_quat{quat},
+        m_id{objectID} {
         recalculateModelMatrix();
     }
 
@@ -32,10 +36,12 @@ namespace OGL {
         float scale, 
         float xAngle,
         float yAngle,
-        float zAngle
+        float zAngle,
+        size_t objectID
     ) : m_model{model},
         m_position{position},
-        m_scale{scale} {
+        m_scale{scale},
+        m_id{objectID} {
         setRotation(xAngle, yAngle, zAngle);
     }
 
@@ -43,10 +49,12 @@ namespace OGL {
         Model &model,
         glm::vec3 position,
         float scale,
-        glm::vec3 eulerAngles
+        glm::vec3 eulerAngles,
+        size_t objectID
     ) : m_model{model},
         m_position{position},
-        m_scale{scale} {
+        m_scale{scale},
+        m_id{objectID} {
         setRotation(eulerAngles);
     }
 
@@ -150,6 +158,16 @@ namespace OGL {
     glm::mat4 Object::getModelMatrix(
     ) const {
         return m_modelMatrix;
+    }
+
+    size_t Object::getID(
+    ) const {
+        return m_id;
+    }
+
+    std::string Object::getName(
+    ) const {
+        return m_model.getName() + std::to_string(m_id);
     }
 
     void Object::recalculateModelMatrix(

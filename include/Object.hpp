@@ -14,14 +14,16 @@ namespace OGL {
             glm::vec3 position = { 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
             float rotationAngle = 0.0f, 
-            glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f }
+            glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f },
+            size_t objectID = 0
         );
 
         Object(
             Model &model,
             glm::vec3 position,
             float scale,
-            glm::quat quat
+            glm::quat quat,
+            size_t objectID = 0
         );
 
         Object(
@@ -30,14 +32,16 @@ namespace OGL {
             float scale,
             float xAngle,
             float yAngle,
-            float zAngle
+            float zAngle,
+            size_t objectID = 0
         );
 
         Object(
             Model &model,
             glm::vec3 position,
             float scale,
-            glm::vec3 eulerAngles
+            glm::vec3 eulerAngles,
+            size_t objectID = 0
         );
 
         void draw( 
@@ -101,6 +105,12 @@ namespace OGL {
         glm::mat4 getModelMatrix(
         ) const;
 
+        size_t getID(
+        ) const;
+
+        std::string getName(
+        ) const;
+
 
      protected:
         Model &m_model;
@@ -108,6 +118,7 @@ namespace OGL {
         float     m_scale;
         glm::quat m_quat;
         glm::mat4 m_modelMatrix;
+        size_t    m_id;
 
         void recalculateModelMatrix(
         );

@@ -259,7 +259,7 @@ add_executable(27-PointShadow example/27-PointShadow.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
-target_link_libraries(02-ImGuiTests glad glfw OpenGLTools assimp)
+target_link_libraries(02-ImGuiTests glad glfw OGL_E1_LIB assimp)
 
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)

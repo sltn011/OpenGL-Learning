@@ -18,6 +18,8 @@ namespace OGL {
     class Model {
         std::vector<Mesh>         m_meshes;
         std::string               m_directory;
+        std::string               m_name;
+        std::string               m_format;
         std::vector<ModelTexture> m_loadedTextures;
 
         void loadModel( 
@@ -77,6 +79,18 @@ namespace OGL {
         void setVertexAttribInstancedModelMat4( 
             int attribLocation
         );
+
+        std::string getDirectory(
+        ) const;
+
+        std::string getName(
+        ) const;
+
+        std::string getFormat(
+        ) const;
+
+        std::string getFullPath(
+        ) const;
 
     };
 

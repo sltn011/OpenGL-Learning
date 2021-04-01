@@ -40,7 +40,7 @@ namespace OGL::E1 {
         Engine1Base( 
             int          screenWidth, 
             int          screenHeight, 
-            std::string  title = "Engine1_v.0.2.7.1", 
+            std::string  title = "Engine1_v.0.2.7.2", 
             bool         isWindowed = true,
             int          numSamples = 8
         ) {
@@ -136,6 +136,7 @@ namespace OGL::E1 {
             size_t modelId
         ) {
             m_modelsTable[modelId] = Model(path);
+            m_objectsMaxIDs[modelId] = 0;
         }
 
         Object &addNormalObject( 
@@ -151,7 +152,63 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     rotationAngle,
-                    rotationAxis
+                    rotationAxis,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addNormalObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::quat quat
+        ) {
+            return m_scene->addNormalObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    quat,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addNormalObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            float xAngle,
+            float yAngle,
+            float zAngle
+        ) {
+            return m_scene->addNormalObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    xAngle,
+                    yAngle,
+                    zAngle,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addNormalObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::vec3 eulerAngles
+        ) {
+            return m_scene->addNormalObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    eulerAngles,
+                    m_objectsMaxIDs[modelID]++
                 }
             );
         }
@@ -170,7 +227,63 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     rotationAngle,
-                    rotationAxis
+                    rotationAxis,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addTransparentObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::quat quat
+        ) {
+            return m_scene->addTransparentObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    quat,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addTransparentObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            float xAngle,
+            float yAngle,
+            float zAngle
+        ) {
+            return m_scene->addTransparentObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    xAngle,
+                    yAngle,
+                    zAngle,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        Object &addTransparentObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::vec3 eulerAngles
+        ) {
+            return m_scene->addTransparentObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    eulerAngles,
+                    m_objectsMaxIDs[modelID]++
                 }
             );
         }
@@ -188,7 +301,63 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     rotationAngle,
-                    rotationAxis
+                    rotationAxis,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        std::pair<Object, smartCubemap> &addMirrorObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::quat quat
+        ) {
+            return m_scene->addMirrorObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    quat,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        std::pair<Object, smartCubemap> &addMirrorObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            float xAngle,
+            float yAngle,
+            float zAngle
+        ) {
+            return m_scene->addMirrorObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    xAngle,
+                    yAngle,
+                    zAngle,
+                    m_objectsMaxIDs[modelID]++
+                }
+            );
+        }
+
+        std::pair<Object, smartCubemap> &addMirrorObject(
+            size_t modelID,
+            glm::vec3 pos,
+            float scale,
+            glm::vec3 eulerAngles
+        ) {
+            return m_scene->addMirrorObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    eulerAngles,
+                    m_objectsMaxIDs[modelID]++
                 }
             );
         }
@@ -207,7 +376,69 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     rotationAngle,
-                    rotationAxis
+                    rotationAxis,
+                    m_objectsMaxIDs[modelID]++
+                },
+                numInstances
+            );
+        }
+
+        std::pair<Object, size_t> &addInstancedObject(
+            size_t modelID,
+            size_t numInstances,
+            glm::vec3 pos,
+            float scale,
+            glm::quat quat
+        ) {
+            return m_scene->addInstancedObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    quat,
+                    m_objectsMaxIDs[modelID]++
+                },
+                numInstances
+            );
+        }
+
+        std::pair<Object, size_t> &addInstancedObject(
+            size_t modelID,
+            size_t numInstances,
+            glm::vec3 pos,
+            float scale,
+            float xAngle,
+            float yAngle,
+            float zAngle
+        ) {
+            return m_scene->addInstancedObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    xAngle,
+                    yAngle,
+                    zAngle,
+                    m_objectsMaxIDs[modelID]++
+                },
+                numInstances
+            );
+        }
+
+        std::pair<Object, size_t> &addInstancedObject(
+            size_t modelID,
+            size_t numInstances,
+            glm::vec3 pos,
+            float scale,
+            glm::vec3 eulerAngles
+        ) {
+            return m_scene->addInstancedObj(
+                Object{
+                    m_modelsTable[modelID],
+                    pos,
+                    scale,
+                    eulerAngles,
+                    m_objectsMaxIDs[modelID]++
                 },
                 numInstances
             );
@@ -298,10 +529,6 @@ namespace OGL::E1 {
         virtual void processInputPerFrame( 
             float speedMult = 1.0f
         ) {
-            if (glfwGetKey(m_window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
-                glfwSetWindowShouldClose(m_window, true);
-            }
-
             if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
                 m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime * speedMult);
             }
@@ -343,7 +570,9 @@ namespace OGL::E1 {
             int action,
             int mods
         ) {
-
+            if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS) {
+                glfwSetWindowShouldClose(m_window, true);
+            }
         }
 
         virtual void cursorRepositionCallback(
@@ -371,6 +600,7 @@ namespace OGL::E1 {
         smartLightSourcesDebugRendererPtr m_lightSourcesDebugRenderer;
                         
         modelsTable       m_modelsTable;
+        objectsIDs        m_objectsMaxIDs;
 
         bool              m_gameShouldRun;
 

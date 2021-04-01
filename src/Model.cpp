@@ -13,7 +13,18 @@ namespace OGL {
             throw Exception("Error importing model!:\n" + std::string{importer.GetErrorString()});
         }
 
-        m_directory = path.substr(0, path.find_last_of('/'));
+        size_t pathFileDivisor = path.find_last_of('/');
+        size_t pathFormatDivisor = path.find_last_of('.');
+
+        if (pathFileDivisor == std::string::npos) {
+            pathFileDivisor = -1;
+        }
+        else {
+            m_directory = path.substr(0, pathFileDivisor);
+        }
+        
+        m_name = path.substr(pathFileDivisor + 1, pathFormatDivisor - pathFileDivisor - 1);
+        m_format = path.substr(pathFormatDivisor + 1, path.size() - pathFormatDivisor);
 
         processNode(scene->mRootNode, scene);
     }
@@ -228,6 +239,26 @@ namespace OGL {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].setVertexAttribInstancedModelMat4(attribLocation);
         }
+    }
+
+    std::string Model::getDirectory(
+    ) const {
+        return m_directory;
+    }
+
+    std::string Model::getName(
+    ) const {
+        return m_name;
+    }
+
+    std::string Model::getFormat(
+    ) const {
+        return m_format;
+    }
+
+    std::string Model::getFullPath(
+    ) const {
+        return (m_directory.empty() ? "" : getDirectory() + "/") + getName() + "." + getFormat();
     }
 
 } // OGL

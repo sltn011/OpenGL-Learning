@@ -35,14 +35,14 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
 
 
          OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraStatic>(
-             glm::vec3{ 0.0f, 3.15f, 5.0f },
-             glm::vec3{ 0.0f, -3.15f, -5.0f },
+             glm::vec3{ 0.0f, 0.0f, 5.0f },
+             glm::vec3{ 0.0f, 0.0f, -5.0f },
              glm::vec3{ 0.0f, 1.0f, 0.0f },
              45.0f,
              static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
              0.01f,
              100.0f
-             );
+         );
 
          m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
 
@@ -86,13 +86,14 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          glm::vec3 objEulerAngles = glm::degrees(glm::eulerAngles(obj.getRotation()));
 
          ImGui::Begin("GUI Window");
+         ImGui::Text(obj.getName().c_str());
          if (ImGui::InputFloat3("Position", &(objPos.x))) {
              obj.setPosition(objPos);
          }
          if (ImGui::InputFloat("Scale", &(objScale))) {
              obj.setScale(objScale);
          }
-         if (ImGui::InputFloat3("Rotation", &(objEulerAngles.x))) {
+         if (ImGui::InputFloat3("Rotation", &(objEulerAngles.x), "%.5f")) {
              obj.setRotation(objEulerAngles);
          }
          ImGui::End();
@@ -111,6 +112,17 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          ImGui_ImplGlfw_Shutdown();
          ImGui::DestroyContext();
          return true;
+     }
+
+     void keyCallback(
+         int key,
+         int scancode,
+         int action,
+         int mods
+     ) {
+         if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+             glfwSetWindowShouldClose(m_window, true);
+         }
      }
 };
 
