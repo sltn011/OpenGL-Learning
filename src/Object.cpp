@@ -174,7 +174,7 @@ namespace OGL {
     ) {
         glm::mat4 model = glm::identity<glm::mat4>();
         glm::mat4 translation = glm::translate(model, m_position);
-        glm::mat4 rotation = glm::toMat4(glm::normalize(m_quat));
+        glm::mat4 rotation = glm::toMat4(m_quat);
         glm::mat4 scale = glm::scale(model, glm::vec3{ m_scale, m_scale, m_scale });
 
         m_modelMatrix = translation * rotation * scale;

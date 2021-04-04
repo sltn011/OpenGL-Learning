@@ -16,7 +16,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          height,
          name
      } {
-
      }
 
      bool userCreate(
@@ -85,18 +84,40 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          float     objScale = obj.getScale();
          glm::vec3 objEulerAngles = glm::degrees(glm::eulerAngles(obj.getRotation()));
 
+
+
          ImGui::Begin("GUI Window");
          ImGui::Text(obj.getName().c_str());
-         if (ImGui::InputFloat3("Position", &(objPos.x))) {
+         ImGui::NewLine();
+         ImGui::Text("Position");
+         if (ImGui::InputFloat("X##Post", &(objPos.x))) {
              obj.setPosition(objPos);
          }
-         if (ImGui::InputFloat("Scale", &(objScale))) {
+         if (ImGui::InputFloat("Y##Post", &(objPos.y))) {
+             obj.setPosition(objPos);
+         }
+         if (ImGui::InputFloat("Z##Post", &(objPos.z))) {
+             obj.setPosition(objPos);
+         }
+         ImGui::NewLine();
+         ImGui::Text("Scale");
+         if (ImGui::InputFloat("##Scale", &(objScale))) {
              obj.setScale(objScale);
          }
-         if (ImGui::InputFloat3("Rotation", &(objEulerAngles.x), "%.5f")) {
+         ImGui::NewLine();
+         ImGui::Text("Rotation");
+         if (ImGui::InputFloat("X##Rotation", &(objEulerAngles.x))) {
+             obj.setRotation(objEulerAngles);
+         }
+         if (ImGui::InputFloat("Y##Rotation", &(objEulerAngles.y))) {
+             obj.setRotation(objEulerAngles);
+         }
+         if (ImGui::InputFloat("Z##Rotation", &(objEulerAngles.z))) {
              obj.setRotation(objEulerAngles);
          }
          ImGui::End();
+
+
 
          ImGui::Render();
          ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -128,7 +149,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
 
 int main() {
     stbi_set_flip_vertically_on_load(true);
-
+    
     EngineImGuiTest engine(1920, 1080, "ImGui Tests");
     engine.start();
 
