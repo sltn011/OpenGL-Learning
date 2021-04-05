@@ -181,7 +181,8 @@ namespace OGL::E1 {
             float scale,
             float xAngle,
             float yAngle,
-            float zAngle
+            float zAngle,
+            RotationOrder rotOrd
         ) {
             return m_scene->addNormalObj(
                 Object{
@@ -191,6 +192,7 @@ namespace OGL::E1 {
                     xAngle,
                     yAngle,
                     zAngle,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -200,7 +202,8 @@ namespace OGL::E1 {
             size_t modelID,
             glm::vec3 pos,
             float scale,
-            glm::vec3 eulerAngles
+            glm::vec3 eulerAngles,
+            RotationOrder rotOrd
         ) {
             return m_scene->addNormalObj(
                 Object{
@@ -208,6 +211,7 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     eulerAngles,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -256,7 +260,8 @@ namespace OGL::E1 {
             float scale,
             float xAngle,
             float yAngle,
-            float zAngle
+            float zAngle,
+            RotationOrder rotOrd
         ) {
             return m_scene->addTransparentObj(
                 Object{
@@ -266,6 +271,7 @@ namespace OGL::E1 {
                     xAngle,
                     yAngle,
                     zAngle,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -275,7 +281,8 @@ namespace OGL::E1 {
             size_t modelID,
             glm::vec3 pos,
             float scale,
-            glm::vec3 eulerAngles
+            glm::vec3 eulerAngles,
+            RotationOrder rotOrd
         ) {
             return m_scene->addTransparentObj(
                 Object{
@@ -283,6 +290,7 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     eulerAngles,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -330,7 +338,8 @@ namespace OGL::E1 {
             float scale,
             float xAngle,
             float yAngle,
-            float zAngle
+            float zAngle,
+            RotationOrder rotOrd
         ) {
             return m_scene->addMirrorObj(
                 Object{
@@ -340,6 +349,7 @@ namespace OGL::E1 {
                     xAngle,
                     yAngle,
                     zAngle,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -349,7 +359,8 @@ namespace OGL::E1 {
             size_t modelID,
             glm::vec3 pos,
             float scale,
-            glm::vec3 eulerAngles
+            glm::vec3 eulerAngles,
+            RotationOrder rotOrd
         ) {
             return m_scene->addMirrorObj(
                 Object{
@@ -357,6 +368,7 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     eulerAngles,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 }
             );
@@ -409,7 +421,8 @@ namespace OGL::E1 {
             float scale,
             float xAngle,
             float yAngle,
-            float zAngle
+            float zAngle,
+            RotationOrder rotOrd
         ) {
             return m_scene->addInstancedObj(
                 Object{
@@ -419,6 +432,7 @@ namespace OGL::E1 {
                     xAngle,
                     yAngle,
                     zAngle,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 },
                 numInstances
@@ -430,7 +444,8 @@ namespace OGL::E1 {
             size_t numInstances,
             glm::vec3 pos,
             float scale,
-            glm::vec3 eulerAngles
+            glm::vec3 eulerAngles,
+            RotationOrder rotOrd
         ) {
             return m_scene->addInstancedObj(
                 Object{
@@ -438,6 +453,7 @@ namespace OGL::E1 {
                     pos,
                     scale,
                     eulerAngles,
+                    rotOrd,
                     m_objectsMaxIDs[modelID]++
                 },
                 numInstances

@@ -18,6 +18,21 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
      } {
      }
 
+     glm::vec3          m_objPos = glm::vec3{ 0.0f, 0.0f, 0.0f };
+     float              m_objScale = 1.0f;
+     int                m_rotationOrderIndex = 0;
+     glm::vec3          m_objEulerAngles = glm::vec3{ 0.0f, 0.0f, 0.0f };
+
+     char const *m_rotationOrderLabels[6] = { "XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX" };
+     OGL::RotationOrder const m_rotationOrders[6]{
+         OGL::RotationOrder::XYZ,
+         OGL::RotationOrder::XZY,
+         OGL::RotationOrder::YXZ,
+         OGL::RotationOrder::YZX,
+         OGL::RotationOrder::ZXY,
+         OGL::RotationOrder::ZYX,
+     };
+
      bool userCreate(
      ) override {
 
@@ -56,7 +71,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          addModel("models/Axises/axises.obj", 0);
 
          glm::vec3 axisesPos{ 0.0f, 0.0f, 0.0f };
-         addNormalObject(0, axisesPos);
+         addNormalObject(0, axisesPos, 1.0f);
 
          addDirLight({ -0.3f, -0.5f, -0.2f });
 
@@ -80,9 +95,9 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          ImGui::NewFrame();
 
          OGL::Object &obj = m_scene->getNormalObjs()[0];
-         glm::vec3 objPos = obj.getPosition();
-         float     objScale = obj.getScale();
-         glm::vec3 objEulerAngles = glm::degrees(glm::eulerAngles(obj.getRotation()));
+         m_objPos = obj.getPosition();
+         m_objScale = obj.getScale();
+         m_objEulerAngles = obj.getRotationAngles(m_rotationOrders[m_rotationOrderIndex]);
 
 
 
@@ -90,30 +105,43 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          ImGui::Text(obj.getName().c_str());
          ImGui::NewLine();
          ImGui::Text("Position");
-         if (ImGui::InputFloat("X##Post", &(objPos.x))) {
-             obj.setPosition(objPos);
+         if (ImGui::InputFloat("X##Post", &(m_objPos.x))) {
+             obj.setPosition(m_objPos);
          }
-         if (ImGui::InputFloat("Y##Post", &(objPos.y))) {
-             obj.setPosition(objPos);
+         if (ImGui::InputFloat("Y##Post", &(m_objPos.y))) {
+             obj.setPosition(m_objPos);
          }
-         if (ImGui::InputFloat("Z##Post", &(objPos.z))) {
-             obj.setPosition(objPos);
+         if (ImGui::InputFloat("Z##Post", &(m_objPos.z))) {
+             obj.setPosition(m_objPos);
          }
          ImGui::NewLine();
          ImGui::Text("Scale");
-         if (ImGui::InputFloat("##Scale", &(objScale))) {
-             obj.setScale(objScale);
+         if (ImGui::InputFloat("##Scale", &(m_objScale))) {
+             obj.setScale(m_objScale);
          }
          ImGui::NewLine();
          ImGui::Text("Rotation");
-         if (ImGui::InputFloat("X##Rotation", &(objEulerAngles.x))) {
-             obj.setRotation(objEulerAngles);
+         if (ImGui::InputFloat("X##Rotation", &(m_objEulerAngles.x))) {
+             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
          }
-         if (ImGui::InputFloat("Y##Rotation", &(objEulerAngles.y))) {
-             obj.setRotation(objEulerAngles);
+         if (ImGui::InputFloat("Y##Rotation", &(m_objEulerAngles.y))) {
+             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
          }
-         if (ImGui::InputFloat("Z##Rotation", &(objEulerAngles.z))) {
-             obj.setRotation(objEulerAngles);
+         if (ImGui::InputFloat("Z##Rotation", &(m_objEulerAngles.z))) {
+             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
+         }
+         ImGui::Text("Rotation order");
+         if (ImGui::BeginCombo("##Rotation order", m_rotationOrderLabels[m_rotationOrderIndex])) {
+             for (size_t i = 0; i < IM_ARRAYSIZE(m_rotationOrders); ++i) {
+                 bool const isSelected = (i == m_rotationOrderIndex);
+                 if (ImGui::Selectable(m_rotationOrderLabels[i], isSelected)) {
+                     m_rotationOrderIndex = i;
+                 }
+                 if (isSelected) {
+                     ImGui::SetItemDefaultFocus();
+                 }
+             }
+             ImGui::EndCombo();
          }
          ImGui::End();
 
@@ -152,6 +180,24 @@ int main() {
     
     EngineImGuiTest engine(1920, 1080, "ImGui Tests");
     engine.start();
+
+    /*
+    glm::vec3 angles = glm::radians(glm::vec3{ 30.0f, 100.0f, 50.0f });
+    glm::quat x = glm::normalize(glm::angleAxis(angles.x, glm::vec3{ 1.0f, 0.0f, 0.0f }));
+    glm::quat y = glm::normalize(glm::angleAxis(angles.y, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+    glm::quat z = glm::normalize(glm::angleAxis(angles.z, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+    glm::quat q(x * y * z);
+    glm::mat4 m = glm::toMat4(q);
+    
+    glm::vec3 v1;
+    glm::extractEulerAngleXYZ(m, v1.x, v1.y, v1.z);
+    
+    glm::vec3 v2;
+    glm::extractEulerAngleZXY(m, v2.z, v2.x, v2.y);
+    
+    glm::vec3 dv1 = glm::degrees(v1);
+    glm::vec3 dv2 = glm::degrees(v2);
+    */
 
     return 0;
 }
