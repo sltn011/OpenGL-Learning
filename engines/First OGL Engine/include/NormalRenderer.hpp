@@ -1,7 +1,7 @@
 #ifndef OGL_E1_NORMALRENDERER_H
 #define OGL_E1_NORMALRENDERER_H
 
-#include "First OGL Engine/Utils/EngineTypes.hpp"
+#include "Utils/EngineTypes.hpp"
 #include "Object.hpp"
 #include "Shader.hpp"
 #include "Scene.hpp"

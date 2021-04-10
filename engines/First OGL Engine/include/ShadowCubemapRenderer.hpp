@@ -1,7 +1,7 @@
 #ifndef OGL_E1_SHADOWCUBEMAPRENDERER_H
 #define OGL_E1_SHADOWCUBEMAPRENDERER_H
 
-#include "First OGL Engine/Utils/EngineTypes.hpp"
+#include "Utils/EngineTypes.hpp"
 #include "Shader.hpp"
 #include "Scene.hpp"
 #include "ShadowCubemap.hpp"

@@ -200,10 +200,11 @@ target_link_libraries(OpenGLTools)
 ######################################################################################################
 # ENGINE FILES
 # Engines folder
-include_directories(engines)
+include_directories("engines/First OGL Engine/include")
 
 # Engine library
 add_library(OGL_E1_LIB STATIC
+	"engines/First OGL Engine/src/OGL_E1.cpp"
         "engines/First OGL Engine/src/Scene.cpp"
         "engines/First OGL Engine/src/NormalRenderer.cpp"
         "engines/First OGL Engine/src/TransparentRenderer.cpp"

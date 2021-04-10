@@ -4,7 +4,7 @@
 #include "Skybox.hpp"
 #include "CameraCubemap.hpp"
 #include "FrameBufferObject.hpp"
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1.hpp"
 
 const int skyboxTextureID = 15;
 const int shadowCubemapFirstID = 16;

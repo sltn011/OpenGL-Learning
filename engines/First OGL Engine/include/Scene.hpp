@@ -1,7 +1,7 @@
 #ifndef OGL_E1_SCENE_H
 #define OGL_E1_SCENE_H
 
-#include "First OGL Engine/Utils/EngineTypes.hpp"
+#include "Utils/EngineTypes.hpp"
 #include "Cubemap.hpp"
 #include "Skybox.hpp"
 #include "ShadowMap.hpp"

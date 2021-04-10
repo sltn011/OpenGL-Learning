@@ -1,4 +1,4 @@
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1.hpp"
 #include "CameraStatic.hpp"
 
 #include "imgui.h"

@@ -1,4 +1,4 @@
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1.hpp"
 
 const int shadowMapDirLightFirstTextureID = 10;
 const int shadowCubemapFirstTextureID = shadowMapDirLightFirstTextureID + 4;
