@@ -25,9 +25,8 @@ namespace OGL {
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
-        m_quat{quat},
         m_id{objectID} {
-        recalculateModelMatrix();
+        setRotation(quat);
     }
 
     Object::Object(
@@ -37,13 +36,12 @@ namespace OGL {
         float xAngle,
         float yAngle,
         float zAngle,
-        RotationOrder rotOrd,
         size_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
         m_id{objectID} {
-        setRotation(xAngle, yAngle, zAngle, rotOrd);
+        setRotation(xAngle, yAngle, zAngle);
     }
 
     Object::Object(
@@ -51,13 +49,12 @@ namespace OGL {
         glm::vec3 position,
         float scale,
         glm::vec3 eulerAngles,
-        RotationOrder rotOrd,
         size_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
         m_id{objectID} {
-        setRotation(eulerAngles, rotOrd);
+        setRotation(eulerAngles);
     }
 
     void Object::draw( 
@@ -120,67 +117,35 @@ namespace OGL {
         recalculateModelMatrix();
     }
 
-    glm::quat Object::getRotation(
-    ) const {
-        return m_quat;
-    }
-
     void Object::setRotation(
         glm::quat rotationQuat
     ) {
-        m_quat = glm::normalize(rotationQuat);
-        recalculateModelMatrix();
+        glm::vec3 radians;
+        glm::extractEulerAngleZXY(glm::toMat4(glm::normalize(rotationQuat)), radians.z, radians.x, radians.y);
+        setRotation(glm::degrees(radians));
     }
 
     void Object::setRotation(
         float rotationAngle, 
         glm::vec3 rotationAxis
     ) {
-        m_quat = glm::normalize(glm::angleAxis(glm::radians(rotationAngle), glm::normalize(rotationAxis)));
-        recalculateModelMatrix();
+        glm::quat rot = glm::normalize(glm::angleAxis(glm::radians(rotationAngle), glm::normalize(rotationAxis)));
+        setRotation(rot);
     }
 
     void Object::setRotation(
         float xAngle, 
         float yAngle, 
-        float zAngle,
-        RotationOrder rotOrder
+        float zAngle
     ) {
         glm::vec3 anglesVec{ xAngle, yAngle, zAngle };
-        setRotation(anglesVec, rotOrder);
+        setRotation(anglesVec);
     }
 
     void Object::setRotation(
-        glm::vec3 eulerAngles,
-        RotationOrder rotOrder
+        glm::vec3 eulerAngles
     ) {
-        glm::vec3 radiansVec = glm::radians(eulerAngles);
-        glm::quat xRot = glm::normalize(glm::angleAxis(radiansVec.x, glm::vec3{ 1.0f, 0.0f, 0.0f }));
-        glm::quat yRot = glm::normalize(glm::angleAxis(radiansVec.y, glm::vec3{ 0.0f, 1.0f, 0.0f }));
-        glm::quat zRot = glm::normalize(glm::angleAxis(radiansVec.z, glm::vec3{ 0.0f, 0.0f, 1.0f }));
-        switch (rotOrder) {
-        case OGL::RotationOrder::XYZ:
-            m_quat = glm::normalize(zRot * yRot * xRot);
-            break;
-        case OGL::RotationOrder::XZY:
-            m_quat = glm::normalize(yRot * zRot * xRot);
-            break;
-        case OGL::RotationOrder::YXZ:
-            m_quat = glm::normalize(zRot * xRot * yRot);
-            break;
-        case OGL::RotationOrder::YZX:
-            m_quat = glm::normalize(xRot * zRot * yRot);
-            break;
-        case OGL::RotationOrder::ZXY:
-            m_quat = glm::normalize(yRot * xRot * zRot);
-            break;
-        case OGL::RotationOrder::ZYX:
-            m_quat = glm::normalize(xRot * yRot * zRot);
-            break;
-        default:
-            m_quat = glm::normalize(zRot * xRot * yRot);
-            break;
-        }
+        m_rotAngles = eulerAngles;
         recalculateModelMatrix();
     }
 
@@ -191,7 +156,12 @@ namespace OGL {
 
     glm::mat4 Object::getRotationMatrix(
     ) const {
-        return glm::toMat4(m_quat);
+        glm::vec3 radiansVec = glm::radians(m_rotAngles);
+        glm::quat xRot = glm::normalize(glm::angleAxis(radiansVec.x, glm::vec3{ 1.0f, 0.0f, 0.0f }));
+        glm::quat yRot = glm::normalize(glm::angleAxis(radiansVec.y, glm::vec3{ 0.0f, 1.0f, 0.0f }));
+        glm::quat zRot = glm::normalize(glm::angleAxis(radiansVec.z, glm::vec3{ 0.0f, 0.0f, 1.0f }));
+        glm::quat rot = glm::normalize(zRot * xRot * yRot);
+        return glm::toMat4(rot);
     }
 
     glm::mat4 Object::getScaleMatrix(
@@ -205,34 +175,8 @@ namespace OGL {
     }
 
     glm::vec3 Object::getRotationAngles(
-        RotationOrder rotOrder
     ) const {
-        glm::mat4 rotMatr = getRotationMatrix();
-        glm::vec3 radians;
-        switch (rotOrder) {
-        case OGL::RotationOrder::XYZ:
-            glm::extractEulerAngleZYX(rotMatr, radians.z, radians.y, radians.x);
-            break;
-        case OGL::RotationOrder::XZY:
-            glm::extractEulerAngleYZX(rotMatr, radians.y, radians.z, radians.x);
-            break;
-        case OGL::RotationOrder::YXZ:
-            glm::extractEulerAngleZXY(rotMatr, radians.z, radians.x, radians.y);
-            break;
-        case OGL::RotationOrder::YZX:
-            glm::extractEulerAngleXZY(rotMatr, radians.x, radians.z, radians.y);
-            break;
-        case OGL::RotationOrder::ZXY:
-            glm::extractEulerAngleYXZ(rotMatr, radians.y, radians.x, radians.z);
-            break;
-        case OGL::RotationOrder::ZYX:
-            glm::extractEulerAngleXYZ(rotMatr, radians.x, radians.y, radians.z);
-            break;
-        default:
-            glm::extractEulerAngleZXY(rotMatr, radians.z, radians.x, radians.y);
-            break;
-        }
-        return glm::degrees(radians);
+        return m_rotAngles;
     }
 
     size_t Object::getID(

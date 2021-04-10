@@ -20,18 +20,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
 
      glm::vec3          m_objPos = glm::vec3{ 0.0f, 0.0f, 0.0f };
      float              m_objScale = 1.0f;
-     int                m_rotationOrderIndex = 0;
      glm::vec3          m_objEulerAngles = glm::vec3{ 0.0f, 0.0f, 0.0f };
-
-     char const *m_rotationOrderLabels[6] = { "XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX" };
-     OGL::RotationOrder const m_rotationOrders[6]{
-         OGL::RotationOrder::XYZ,
-         OGL::RotationOrder::XZY,
-         OGL::RotationOrder::YXZ,
-         OGL::RotationOrder::YZX,
-         OGL::RotationOrder::ZXY,
-         OGL::RotationOrder::ZYX,
-     };
 
      bool userCreate(
      ) override {
@@ -97,7 +86,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          OGL::Object &obj = m_scene->getNormalObjs()[0];
          m_objPos = obj.getPosition();
          m_objScale = obj.getScale();
-         m_objEulerAngles = obj.getRotationAngles(m_rotationOrders[m_rotationOrderIndex]);
+         m_objEulerAngles = obj.getRotationAngles();
 
 
 
@@ -120,28 +109,15 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              obj.setScale(m_objScale);
          }
          ImGui::NewLine();
-         ImGui::Text("Rotation");
-         if (ImGui::InputFloat("X##Rotation", &(m_objEulerAngles.x))) {
-             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
-         }
+         ImGui::Text("Rotation (Order YXZ)");
          if (ImGui::InputFloat("Y##Rotation", &(m_objEulerAngles.y))) {
-             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
+             obj.setRotation(m_objEulerAngles);
+         }
+         if (ImGui::InputFloat("X##Rotation", &(m_objEulerAngles.x))) {
+             obj.setRotation(m_objEulerAngles);
          }
          if (ImGui::InputFloat("Z##Rotation", &(m_objEulerAngles.z))) {
-             obj.setRotation(m_objEulerAngles, m_rotationOrders[m_rotationOrderIndex]);
-         }
-         ImGui::Text("Rotation order");
-         if (ImGui::BeginCombo("##Rotation order", m_rotationOrderLabels[m_rotationOrderIndex])) {
-             for (size_t i = 0; i < IM_ARRAYSIZE(m_rotationOrders); ++i) {
-                 bool const isSelected = (i == m_rotationOrderIndex);
-                 if (ImGui::Selectable(m_rotationOrderLabels[i], isSelected)) {
-                     m_rotationOrderIndex = i;
-                 }
-                 if (isSelected) {
-                     ImGui::SetItemDefaultFocus();
-                 }
-             }
-             ImGui::EndCombo();
+             obj.setRotation(m_objEulerAngles);
          }
          ImGui::End();
 

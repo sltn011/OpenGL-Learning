@@ -2,7 +2,6 @@
 #define OGL_OBJECT_H
 
 #include "Model.hpp"
-#include "RotationOrder.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/euler_angles.hpp"
@@ -35,7 +34,6 @@ namespace OGL {
             float xAngle,
             float yAngle,
             float zAngle,
-            RotationOrder rotOrd,
             size_t objectID = 0
         );
 
@@ -44,7 +42,6 @@ namespace OGL {
             glm::vec3 position,
             float scale,
             glm::vec3 eulerAngles,
-            RotationOrder rotOrd,
             size_t objectID = 0
         );
 
@@ -84,9 +81,6 @@ namespace OGL {
             float scale
         );
 
-        glm::quat getRotation(
-        ) const;
-
         void setRotation(
             glm::quat rotationQuat
         );
@@ -99,13 +93,11 @@ namespace OGL {
         void setRotation(
             float xAngle,
             float yAngle,
-            float zAngle,
-            RotationOrder rotOrder
+            float zAngle
         );
 
         void setRotation(
-            glm::vec3 eulerAngles,
-            RotationOrder rotOrder
+            glm::vec3 eulerAngles
         );
 
         glm::mat4 getTranslationMatrix(
@@ -121,7 +113,6 @@ namespace OGL {
         ) const;
 
         glm::vec3 getRotationAngles(
-            RotationOrder rotOrder
         ) const;
 
         size_t getID(
@@ -135,7 +126,7 @@ namespace OGL {
         Model &m_model;
         glm::vec3 m_position;
         float     m_scale;
-        glm::quat m_quat;
+        glm::vec3 m_rotAngles;
         glm::mat4 m_modelMatrix;
         size_t    m_id;
 
