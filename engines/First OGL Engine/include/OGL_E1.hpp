@@ -21,6 +21,7 @@
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
 #include "Utils/factory.hpp"
+#include "System.hpp"
 
 #include "stb_image.h"
 
@@ -270,7 +271,10 @@ namespace OGL::E1 {
         modelsTable       m_modelsTable;
         objectsIDs        m_objectsMaxIDs;
 
+        System            m_system;
+
         bool              m_gameShouldRun;
+        bool              m_showGUI;
 
         GLFWwindowsizefun m_windowResizeFunc;
         GLFWkeyfun        m_keyCallbackFunc;

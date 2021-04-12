@@ -1,7 +1,5 @@
 #include "OGL_E1.hpp"
 
-#include "Utils/System.hpp"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -27,8 +25,8 @@ namespace OGL::E1 {
         }
         m_window = window;
 
-        System::lastMouseXPos = screenWidth / 2.0f;
-        System::lastMouseYPos = screenHeight / 2.0f;
+        m_system.lastMouseXPos = screenWidth / 2.0f;
+        m_system.lastMouseYPos = screenHeight / 2.0f;
 
         m_title = title;
 
@@ -77,16 +75,20 @@ namespace OGL::E1 {
             m_gameShouldRun = false;
             return;
         }
-        System::lastFrameTime = (float)glfwGetTime();
+        m_system.lastFrameTime = (float)glfwGetTime();
         while (m_gameShouldRun) {
             float currentFrameTime = (float)glfwGetTime();
-            System::deltaTime = currentFrameTime - System::lastFrameTime;
-            System::lastFrameTime = currentFrameTime;
+            m_system.deltaTime = currentFrameTime - m_system.lastFrameTime;
+            m_system.lastFrameTime = currentFrameTime;
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            if (!userFrameUpdate(System::deltaTime)) {
+            if (!userFrameUpdate(m_system.deltaTime)) {
                 m_gameShouldRun = false;
+            }
+
+            if (m_showGUI) {
+                // render GUI
             }
 
             if (glfwWindowShouldClose(m_window)) {
@@ -490,32 +492,36 @@ namespace OGL::E1 {
     void Engine1Base::processInputPerFrame(
         float speedMult
     ) {
+        if (m_showGUI) {
+            return;
+        }
+
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Forward, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Forward, m_system.deltaTime * speedMult);
         }
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Backward, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Backward, m_system.deltaTime * speedMult);
         }
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Left, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Left, m_system.deltaTime * speedMult);
         }
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Right, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Right, m_system.deltaTime * speedMult);
         }
         if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Up, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Up, m_system.deltaTime * speedMult);
         }
         if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Down, System::deltaTime * speedMult);
+            m_scene->getCamera()->processMoveInput(OGL::CameraMovementDirection::Down, m_system.deltaTime * speedMult);
         }
 
         double xMousePos, yMousePos;
         glfwGetCursorPos(m_window, &xMousePos, &yMousePos);
-        float xOffset = static_cast<float>(xMousePos) - System::lastMouseXPos;
-        float yOffset = System::lastMouseYPos - static_cast<float>(yMousePos);
-        System::lastMouseXPos = static_cast<float>(xMousePos);
-        System::lastMouseYPos = static_cast<float>(yMousePos);
-        m_scene->getCamera()->processRotateInput(xOffset, yOffset, System::mouseSensitivity, true);
+        float xOffset = static_cast<float>(xMousePos) - m_system.lastMouseXPos;
+        float yOffset = m_system.lastMouseYPos - static_cast<float>(yMousePos);
+        m_system.lastMouseXPos = static_cast<float>(xMousePos);
+        m_system.lastMouseYPos = static_cast<float>(yMousePos);
+        m_scene->getCamera()->processRotateInput(xOffset, yOffset, m_system.mouseSensitivity, true);
     }
 
     void Engine1Base::windowResizeCallback(
@@ -533,6 +539,16 @@ namespace OGL::E1 {
     ) {
         if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(m_window, true);
+        }
+        if (key == GLFW_KEY_RIGHT_CONTROL && action == GLFW_PRESS) {
+            m_showGUI ^= true;
+            if (m_showGUI) {
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            else {
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
+            }
         }
     }
 

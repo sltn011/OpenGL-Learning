@@ -3,7 +3,7 @@
 
 namespace OGL::E1 {
 
-    namespace System {
+    struct System {
         float deltaTime = 0.0f;
         float lastFrameTime = 0.0f;
 
@@ -12,7 +12,7 @@ namespace OGL::E1 {
 
         float mouseSensitivity = 0.15f;
 
-    } // System
+    };
 
 } // OGL::E1
 
