@@ -18,6 +18,9 @@
 #include "ShadowCubemapRenderer.hpp"
 #include "LightSourcesDebugRenderer.hpp"
 
+#include "GUI/GUIRenderer.hpp"
+#include "GUI/ObjectTransformWindow.hpp"
+
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
 #include "Utils/factory.hpp"
@@ -267,6 +270,8 @@ namespace OGL::E1 {
         smartShadowMapRendererPtr         m_shadowMapRenderer;
         smartShadowCubemapRendererPtr     m_shadowCubemapRenderer;
         smartLightSourcesDebugRendererPtr m_lightSourcesDebugRenderer;
+
+        GUI::smartGUIRenderer             m_guiRenderer;
                         
         modelsTable       m_modelsTable;
         objectsIDs        m_objectsMaxIDs;

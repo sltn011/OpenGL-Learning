@@ -25,11 +25,6 @@ namespace OGL::E1 {
         }
         m_window = window;
 
-        m_system.lastMouseXPos = screenWidth / 2.0f;
-        m_system.lastMouseYPos = screenHeight / 2.0f;
-
-        m_title = title;
-
         glfwMakeContextCurrent(m_window);
         glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -54,13 +49,18 @@ namespace OGL::E1 {
             throw OGL::Exception("Error loading GLAD!");
         }
 
+        m_system.lastMouseXPos = screenWidth / 2.0f;
+        m_system.lastMouseYPos = screenHeight / 2.0f;
+
+        m_title = title;
+        m_showGUI = false;
+
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendEquation(GL_FUNC_ADD);
-
     }
 
     Engine1Base::~Engine1Base(
@@ -87,8 +87,8 @@ namespace OGL::E1 {
                 m_gameShouldRun = false;
             }
 
-            if (m_showGUI) {
-                // render GUI
+            if (m_showGUI && m_guiRenderer) {
+                m_guiRenderer->render();
             }
 
             if (glfwWindowShouldClose(m_window)) {

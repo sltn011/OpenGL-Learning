@@ -104,6 +104,13 @@ namespace OGL {
         enum Events;
         using eventsQueue = std::queue<Events>;
 
+        namespace GUI {
+            
+            class GUIRenderer;
+            using smartGUIRenderer = std::unique_ptr<GUIRenderer>;
+
+        } // GUI
+
     } // E1
     
 } // OGL

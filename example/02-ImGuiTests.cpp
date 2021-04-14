@@ -27,15 +27,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          int screenWidth, screenHeight;
          glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
-
-         IMGUI_CHECKVERSION();
-         ImGui::CreateContext();
-         ImGuiIO &io = ImGui::GetIO();
-         ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-         ImGui_ImplOpenGL3_Init("#version 330");
-         ImGui::StyleColorsDark();
-
-
          OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
              glm::vec3{ 0.0f, 0.0f, 5.0f },
              glm::vec3{ 0.0f, 0.0f, -5.0f },
@@ -60,7 +51,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          addModel("models/Axises/axises.obj", 0);
 
          glm::vec3 axisesPos{ 0.0f, 0.0f, 0.0f };
-         addNormalObject(0, axisesPos, 1.0f);
+         OGL::Object &debuggableObject = addNormalObject(0, axisesPos, 1.0f);
 
          addDirLight({ -0.3f, -0.5f, -0.2f });
 
@@ -68,6 +59,21 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
 
          m_normalRenderer->getShader().use();
          m_normalRenderer->getShader().setUniformVec3("objectColor", { 0.5f, 0.8f, 0.2f });
+
+         m_guiRenderer = OGL::E1::factory<OGL::E1::GUI::GUIRenderer>(
+             m_window,
+             "#version 330"
+         );
+
+         m_guiRenderer->addWindow(
+             OGL::E1::factory<OGL::E1::GUI::ObjectTransformWindow>(),
+             OGL::E1::GUI::WindowsType::ObjectTransform
+         );
+
+         // Looks meh
+         auto &objTransformWindow = m_guiRenderer->getWindows()[OGL::E1::GUI::WindowsType::ObjectTransform];
+         dynamic_cast<OGL::E1::GUI::ObjectTransformWindow*>(objTransformWindow.get())->setObject(&debuggableObject);
+         dynamic_cast<OGL::E1::GUI::ObjectTransformWindow*>(objTransformWindow.get())->m_enabled = true;
 
          return true;
      }
@@ -83,59 +89,12 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          m_objEulerAngles = obj.getRotationAngles();
 
          m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
-
-
-         if (m_showGUI) {
-             ImGui_ImplOpenGL3_NewFrame();
-             ImGui_ImplGlfw_NewFrame();
-             ImGui::NewFrame();
-
-             ImGui::Begin("GUI Window");
-             ImGui::Text(obj.getName().c_str());
-             ImGui::NewLine();
-             ImGui::Text("Position");
-             if (ImGui::InputFloat("X##Post", &(m_objPos.x))) {
-                 obj.setPosition(m_objPos);
-             }
-             if (ImGui::InputFloat("Y##Post", &(m_objPos.y))) {
-                 obj.setPosition(m_objPos);
-             }
-             if (ImGui::InputFloat("Z##Post", &(m_objPos.z))) {
-                 obj.setPosition(m_objPos);
-             }
-             ImGui::NewLine();
-             ImGui::Text("Scale");
-             if (ImGui::InputFloat("##Scale", &(m_objScale))) {
-                 obj.setScale(m_objScale);
-             }
-             ImGui::NewLine();
-             ImGui::Text("Rotation (Order YXZ)");
-             if (ImGui::InputFloat("Y##Rotation", &(m_objEulerAngles.y))) {
-                 obj.setRotation(m_objEulerAngles);
-             }
-             if (ImGui::InputFloat("X##Rotation", &(m_objEulerAngles.x))) {
-                 obj.setRotation(m_objEulerAngles);
-             }
-             if (ImGui::InputFloat("Z##Rotation", &(m_objEulerAngles.z))) {
-                 obj.setRotation(m_objEulerAngles);
-             }
-             ImGui::End();
-
-
-
-             ImGui::Render();
-             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-         }
          
-
          return true;
      }
 
      bool userDestroy(
      ) override {
-         ImGui_ImplOpenGL3_Shutdown();
-         ImGui_ImplGlfw_Shutdown();
-         ImGui::DestroyContext();
          return true;
      }
 
