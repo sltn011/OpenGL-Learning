@@ -1,9 +1,5 @@
 #include "OGL_E1.hpp"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 class EngineImGuiTest : public OGL::E1::Engine1Base {
  public:
      EngineImGuiTest(
@@ -16,10 +12,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          name
      } {
      }
-
-     glm::vec3          m_objPos = glm::vec3{ 0.0f, 0.0f, 0.0f };
-     float              m_objScale = 1.0f;
-     glm::vec3          m_objEulerAngles = glm::vec3{ 0.0f, 0.0f, 0.0f };
 
      bool userCreate(
      ) override {
@@ -44,14 +36,23 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              "shaders/02-imguiTest.vert",
              "shaders/02-imguiTest.frag"
          );
-
          m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+
+         OGL::Shader coloredShapesShader(
+             "shaders/01-coloredShapes.vert",
+             "shaders/01-coloredShapes.frag"
+         );
+         m_coloredShapesRenderer = OGL::E1::factory<OGL::E1::ColoredShapesRenderer>(std::move(coloredShapesShader));
 
          // Models
          addModel("models/Axises/axises.obj", 0);
 
-         glm::vec3 axisesPos{ 0.0f, 0.0f, 0.0f };
-         OGL::Object &debuggableObject = addNormalObject(0, axisesPos, 1.0f);
+         addNormalObject(0, glm::vec3{ 0.0f, 0.0f, 0.0f });
+         addNormalObject(0, glm::vec3{ 1.0f, 0.0f, 1.0f });
+         addNormalObject(0, glm::vec3{ -1.0f, 0.0f, -1.0f });
+         addNormalObject(0, glm::vec3{ -1.0f, 1.0f, 1.0f });
+         addNormalObject(0, glm::vec3{ -1.0f, -1.0f, 1.0f });
+         addNormalObject(0, glm::vec3{ 1.0f, 1.0f, -1.0f });
 
          addDirLight({ -0.3f, -0.5f, -0.2f });
 
@@ -70,11 +71,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              OGL::E1::GUI::WindowsType::ObjectTransform
          );
 
-         // Looks meh
-         auto &objTransformWindow = m_guiRenderer->getWindows()[OGL::E1::GUI::WindowsType::ObjectTransform];
-         dynamic_cast<OGL::E1::GUI::ObjectTransformWindow*>(objTransformWindow.get())->setObject(&debuggableObject);
-         dynamic_cast<OGL::E1::GUI::ObjectTransformWindow*>(objTransformWindow.get())->m_enabled = true;
-
          return true;
      }
 
@@ -82,11 +78,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          float elapsedTime
      ) override {
          processInputPerFrame();
-
-         OGL::Object &obj = m_scene->getNormalObjs()[0];
-         m_objPos = obj.getPosition();
-         m_objScale = obj.getScale();
-         m_objEulerAngles = obj.getRotationAngles();
 
          m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
          
@@ -122,7 +113,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
 
 int main() {
     stbi_set_flip_vertically_on_load(true);
-    
     EngineImGuiTest engine(1920, 1080, "ImGui Tests");
     engine.start();
 

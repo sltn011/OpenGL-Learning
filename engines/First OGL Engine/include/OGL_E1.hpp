@@ -17,9 +17,11 @@
 #include "ShadowMapRenderer.hpp"
 #include "ShadowCubemapRenderer.hpp"
 #include "LightSourcesDebugRenderer.hpp"
+#include "ColoredShapesRenderer.hpp"
 
 #include "GUI/GUIRenderer.hpp"
 #include "GUI/ObjectTransformWindow.hpp"
+#include "GUI/CursorPicker.hpp"
 
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
@@ -249,6 +251,12 @@ namespace OGL::E1 {
             int mods
         );
 
+        virtual void mouseButtonCallback(
+            int button,
+            int action,
+            int mods
+        );
+
         virtual void cursorRepositionCallback(
             double xpos,
             double ypos
@@ -270,6 +278,7 @@ namespace OGL::E1 {
         smartShadowMapRendererPtr         m_shadowMapRenderer;
         smartShadowCubemapRendererPtr     m_shadowCubemapRenderer;
         smartLightSourcesDebugRendererPtr m_lightSourcesDebugRenderer;
+        smartColoredShapesRendererPtr     m_coloredShapesRenderer;
 
         GUI::smartGUIRenderer             m_guiRenderer;
                         
@@ -281,9 +290,10 @@ namespace OGL::E1 {
         bool              m_gameShouldRun;
         bool              m_showGUI;
 
-        GLFWwindowsizefun m_windowResizeFunc;
-        GLFWkeyfun        m_keyCallbackFunc;
-        GLFWcursorposfun  m_cursorReposFunc;
+        GLFWwindowsizefun  m_windowResizeFunc;
+        GLFWkeyfun         m_keyCallbackFunc;
+        GLFWmousebuttonfun m_mouseButtonCallbackFunc;
+        GLFWcursorposfun   m_cursorReposFunc;
 
      public:
     };

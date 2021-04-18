@@ -1,3 +1,4 @@
+#include "..\include\OGL_E1.hpp"
 #include "OGL_E1.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -39,6 +40,11 @@ namespace OGL::E1 {
             static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->keyCallback(key, scancode, action, mods);
         };
         glfwSetKeyCallback(m_window, m_keyCallbackFunc);
+
+        m_mouseButtonCallbackFunc = [](GLFWwindow *window, int button, int action, int mods) {
+            static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->mouseButtonCallback(button, action, mods);
+        };
+        glfwSetMouseButtonCallback(m_window, m_mouseButtonCallbackFunc);
 
         m_cursorReposFunc = [](GLFWwindow *window, double xpos, double ypos) {
             static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->cursorRepositionCallback(xpos, ypos);
@@ -548,6 +554,33 @@ namespace OGL::E1 {
             else {
                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
+            }
+        }
+    }
+
+    void Engine1Base::mouseButtonCallback(
+        int button, 
+        int action, 
+        int mods
+    ) {
+        if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+            if (m_showGUI && m_coloredShapesRenderer) {
+                int screenWidth, screenHeight;
+                glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+
+                auto [fbo, map] = m_coloredShapesRenderer->render(*m_scene, m_scene->getCamera().get(), screenWidth, screenHeight);
+                Object *selectedObj = GUI::CursorPicker{}.getSelected(fbo, map, m_window);
+
+                if (selectedObj && m_guiRenderer) {
+                    auto &windowsMap = m_guiRenderer->getWindows();
+
+                    auto &maybeWindow = windowsMap.find(GUI::WindowsType::ObjectTransform);
+                    if (maybeWindow != windowsMap.end()) {
+                        GUI::ObjectTransformWindow* transformWindow = dynamic_cast<GUI::ObjectTransformWindow*>(maybeWindow->second.get());
+                        transformWindow->setObject(selectedObj);
+                        transformWindow->m_enabled = true;
+                    }
+                }
             }
         }
     }

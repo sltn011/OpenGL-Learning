@@ -203,8 +203,8 @@ target_link_libraries(OpenGLTools)
 include_directories("engines/First OGL Engine/include")
 
 # Engine library
-add_library(OGL_E1_LIB STATIC
-	"engines/First OGL Engine/src/OGL_E1.cpp"
+add_library(OGL_E1 STATIC
+	    "engines/First OGL Engine/src/OGL_E1.cpp"
         "engines/First OGL Engine/src/Scene.cpp"
         "engines/First OGL Engine/src/NormalRenderer.cpp"
         "engines/First OGL Engine/src/TransparentRenderer.cpp"
@@ -215,14 +215,21 @@ add_library(OGL_E1_LIB STATIC
         "engines/First OGL Engine/src/ShadowMapRenderer.cpp"
         "engines/First OGL Engine/src/ShadowCubemapRenderer.cpp"
         "engines/First OGL Engine/src/LightSourcesDebugRenderer.cpp"
+        "engines/First OGL Engine/src/ColoredShapesRenderer.cpp"
+)
+
+add_library(OGL_E1_GUI STATIC
         "engines/First OGL Engine/src/GUI/GUIRenderer.cpp"
         "engines/First OGL Engine/src/GUI/BasicWindow.cpp"
         "engines/First OGL Engine/src/GUI/ObjectTransformWindow.cpp"
+        "engines/First OGL Engine/src/GUI/CursorPicker.cpp"
 )
 
-target_include_directories(OGL_E1_LIB PUBLIC "engines/First OGL Engine/include")
+target_include_directories(OGL_E1 PUBLIC "engines/First OGL Engine/include")
+target_include_directories(OGL_E1_GUI PUBLIC "engines/First OGL Engine/include")
 
-target_link_libraries(OGL_E1_LIB OpenGLTools)
+target_link_libraries(OGL_E1 OpenGLTools)
+target_link_libraries(OGL_E1_GUI OpenGLTools)
 ######################################################################################################
 
 
@@ -262,8 +269,8 @@ add_executable(26-ShadowMapping example/26-ShadowMapping.cpp)
 add_executable(27-PointShadow example/27-PointShadow.cpp)
 
 # Linking libraries for executable
-target_link_libraries(01-Engine1Tests glad glfw OGL_E1_LIB assimp)
-target_link_libraries(02-ImGuiTests glad glfw OGL_E1_LIB assimp)
+target_link_libraries(01-Engine1Tests glad glfw OGL_E1 assimp)
+target_link_libraries(02-ImGuiTests glad glfw OGL_E1 OGL_E1_GUI assimp)
 
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
 target_link_libraries(1-HelloWindow glad glfw)
@@ -289,9 +296,9 @@ target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
 target_link_libraries(21-AdvancedGLSL glad glfw OpenGLTools)
 target_link_libraries(22-GeometryShader glad glfw OpenGLTools)
 target_link_libraries(23-Instancing glad glfw OpenGLTools assimp)
-target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1_LIB)
-target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1_LIB)
-target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1_LIB)
-target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1_LIB)
+target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1)
+target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1)
+target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1)
+target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1)
 ######################################################################################################
 

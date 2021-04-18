@@ -19,7 +19,7 @@ namespace OGL::E1 {
         );
 
         ShadowMapRenderer(
-            NormalRenderer const &rhs
+            ShadowMapRenderer const &rhs
         ) = delete;
 
         ShadowMapRenderer(
