@@ -490,6 +490,19 @@ namespace OGL::E1 {
         glClearColor(r, g, b, a);
     }
 
+    void Engine1Base::setGameOrDebugMode(
+        bool isDebugMode
+    ) {
+        m_showGUI = isDebugMode;
+        if (m_showGUI) {
+            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        else {
+            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
+        }
+    }
+
     bool Engine1Base::userDestroy(
     ) {
         return true;
@@ -543,18 +556,11 @@ namespace OGL::E1 {
         int action,
         int mods
     ) {
-        if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS) {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             glfwSetWindowShouldClose(m_window, true);
         }
         if (key == GLFW_KEY_RIGHT_CONTROL && action == GLFW_PRESS) {
-            m_showGUI ^= true;
-            if (m_showGUI) {
-                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            else {
-                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
-            }
+            setGameOrDebugMode(!m_showGUI);
         }
     }
 
@@ -565,22 +571,7 @@ namespace OGL::E1 {
     ) {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
             if (m_showGUI && m_coloredShapesRenderer) {
-                int screenWidth, screenHeight;
-                glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
-
-                auto [fbo, map] = m_coloredShapesRenderer->render(*m_scene, m_scene->getCamera().get(), screenWidth, screenHeight);
-                Object *selectedObj = GUI::CursorPicker{}.getSelected(fbo, map, m_window);
-
-                if (selectedObj && m_guiRenderer) {
-                    auto &windowsMap = m_guiRenderer->getWindows();
-
-                    auto &maybeWindow = windowsMap.find(GUI::WindowsType::ObjectTransform);
-                    if (maybeWindow != windowsMap.end()) {
-                        GUI::ObjectTransformWindow* transformWindow = dynamic_cast<GUI::ObjectTransformWindow*>(maybeWindow->second.get());
-                        transformWindow->setObject(selectedObj);
-                        transformWindow->m_enabled = true;
-                    }
-                }
+                objectCursorPickerHandler();
             }
         }
     }
@@ -590,6 +581,27 @@ namespace OGL::E1 {
         double ypos
     ) {
 
+    }
+
+    void Engine1Base::objectCursorPickerHandler(
+    ) {
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+
+        auto[fbo, map] = m_coloredShapesRenderer->render(*m_scene, m_scene->getCamera().get(), screenWidth, screenHeight);
+        Object *selectedObj = GUI::CursorPicker{}.getSelected(fbo, map, m_window);
+
+        if (m_guiRenderer) {
+            auto &windowsMap = m_guiRenderer->getWindows();
+
+            auto &maybeWindow = windowsMap.find(GUI::WindowsType::ObjectTransform);
+            if (maybeWindow != windowsMap.end()) {
+                if (maybeWindow->second->m_enabled) {
+                    GUI::ObjectTransformWindow* transformWindow = dynamic_cast<GUI::ObjectTransformWindow*>(maybeWindow->second.get());
+                    transformWindow->setObject(selectedObj);
+                }
+            }
+        }
     }
 
 } // OGL::E1

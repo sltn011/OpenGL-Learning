@@ -10,6 +10,10 @@ namespace OGL::E1::GUI {
         BasicWindow(
         );
 
+        BasicWindow(
+            bool isEnabled
+        );
+
         virtual ~BasicWindow(
         );
 

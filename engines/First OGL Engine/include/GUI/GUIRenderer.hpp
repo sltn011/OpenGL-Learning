@@ -4,14 +4,15 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "GLFW/glfw3.h"
 
-#include "GUI/BasicWindow.hpp"
-#include "GUI/WindowsTypes.hpp"
+#include "GUI/MainWindow.hpp"
+#include "GUI/ObjectTransformWindow.hpp"
 
 #include <string>
 #include <unordered_map>
 #include <memory>
+
+#include "GLFW/glfw3.h"
 
 namespace OGL::E1::GUI {
 
@@ -45,14 +46,30 @@ namespace OGL::E1::GUI {
          );
 
          void addWindow(
-             std::unique_ptr<BasicWindow> window,
-             WindowsType windowType
+             WindowsType windowType,
+             std::unique_ptr<BasicWindow> window
          );
 
          void render(
          );
 
-     private:
+     protected:
+         void renderMainWindow(
+         );
+
+         void renderSubWindows(
+         );
+
+         void handleUserActivity(
+         );
+
+         std::unique_ptr<BasicWindow> createWindow(
+             WindowsType windowType,
+             bool isEnabled
+         ) const;
+
+     protected:
+         MainWindow m_mainWindow;
          std::unordered_map<WindowsType, std::unique_ptr<BasicWindow>> m_windows;
 
     };

@@ -20,7 +20,6 @@
 #include "ColoredShapesRenderer.hpp"
 
 #include "GUI/GUIRenderer.hpp"
-#include "GUI/ObjectTransformWindow.hpp"
 #include "GUI/CursorPicker.hpp"
 
 #include "Utils/EngineTypes.hpp"
@@ -224,6 +223,10 @@ namespace OGL::E1 {
             float a = 1.0f
         );
 
+        void setGameOrDebugMode(
+            bool isDebugMode
+        );
+
      protected:
         virtual bool userCreate(
         ) = 0;
@@ -260,6 +263,9 @@ namespace OGL::E1 {
         virtual void cursorRepositionCallback(
             double xpos,
             double ypos
+        );
+
+        void objectCursorPickerHandler(
         );
 
      protected:

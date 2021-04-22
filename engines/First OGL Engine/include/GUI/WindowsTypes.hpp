@@ -4,6 +4,8 @@
 namespace OGL::E1::GUI {
 
     enum class WindowsType {
+        NONE,
+        MainWindow,
         ObjectTransform
     };
 

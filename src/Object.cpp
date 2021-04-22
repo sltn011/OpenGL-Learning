@@ -117,6 +117,11 @@ namespace OGL {
         recalculateModelMatrix();
     }
 
+    glm::vec3 Object::getRotationAngles(
+    ) const {
+        return m_rotAngles;
+    }
+
     void Object::setRotation(
         glm::quat rotationQuat
     ) {
@@ -172,11 +177,6 @@ namespace OGL {
     glm::mat4 Object::getModelMatrix(
     ) const {
         return m_modelMatrix;
-    }
-
-    glm::vec3 Object::getRotationAngles(
-    ) const {
-        return m_rotAngles;
     }
 
     size_t Object::getID(

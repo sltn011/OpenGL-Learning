@@ -66,11 +66,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              "#version 330"
          );
 
-         m_guiRenderer->addWindow(
-             OGL::E1::factory<OGL::E1::GUI::ObjectTransformWindow>(),
-             OGL::E1::GUI::WindowsType::ObjectTransform
-         );
-
          return true;
      }
 
@@ -87,27 +82,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
      bool userDestroy(
      ) override {
          return true;
-     }
-
-     void keyCallback(
-         int key,
-         int scancode,
-         int action,
-         int mods
-     ) {
-         if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-             glfwSetWindowShouldClose(m_window, true);
-         }
-         if (key == GLFW_KEY_RIGHT_CONTROL && action == GLFW_PRESS) {
-             m_showGUI = !m_showGUI;
-             if (m_showGUI) {
-                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-             }
-             else {
-                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                 glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
-             }
-         }
      }
 };
 

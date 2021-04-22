@@ -81,6 +81,9 @@ namespace OGL {
             float scale
         );
 
+        glm::vec3 getRotationAngles(
+        ) const;
+
         void setRotation(
             glm::quat rotationQuat
         );
@@ -110,9 +113,6 @@ namespace OGL {
         ) const;
 
         glm::mat4 getModelMatrix(
-        ) const;
-
-        glm::vec3 getRotationAngles(
         ) const;
 
         size_t getID(

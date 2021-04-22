@@ -9,6 +9,7 @@ namespace OGL::E1::GUI {
     class ObjectTransformWindow : public BasicWindow {
      public:
          ObjectTransformWindow(
+             bool isEnabled = false
          );
 
          void render(
@@ -20,6 +21,9 @@ namespace OGL::E1::GUI {
 
      private:
          Object *m_obj;
+
+         void renderEmpty(
+         ) const;
     };
 
 } // OGL::E1::GUI

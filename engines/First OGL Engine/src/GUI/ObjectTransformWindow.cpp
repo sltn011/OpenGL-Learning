@@ -3,13 +3,16 @@
 namespace OGL::E1::GUI {
 
     ObjectTransformWindow::ObjectTransformWindow(
-    ) : m_obj{ nullptr } {
+        bool isEnabled
+    ) : BasicWindow{isEnabled},
+        m_obj {nullptr} {
 
     }
 
     void ObjectTransformWindow::render(
     ) {
         if (!m_obj) {
+            renderEmpty();
             return;
         }
 
@@ -17,7 +20,7 @@ namespace OGL::E1::GUI {
         float objScale = m_obj->getScale();
         glm::vec3 objEulerAngles = m_obj->getRotationAngles();
 
-        ImGui::Begin("GUI Window");
+        ImGui::Begin("Object Transform");
         ImGui::Text(m_obj->getName().c_str());
         ImGui::NewLine();
         ImGui::Text("Position");
@@ -53,6 +56,13 @@ namespace OGL::E1::GUI {
         Object *obj
     ) {
         m_obj = obj;
+    }
+
+    void ObjectTransformWindow::renderEmpty(
+    ) const {
+        ImGui::Begin("Object Transform");
+        ImGui::Text("No object currently selected");
+        ImGui::End();
     }
 
 } // OGL::E1::GUI

@@ -221,6 +221,7 @@ add_library(OGL_E1 STATIC
 add_library(OGL_E1_GUI STATIC
         "engines/First OGL Engine/src/GUI/GUIRenderer.cpp"
         "engines/First OGL Engine/src/GUI/BasicWindow.cpp"
+        "engines/First OGL Engine/src/GUI/MainWindow.cpp"
         "engines/First OGL Engine/src/GUI/ObjectTransformWindow.cpp"
         "engines/First OGL Engine/src/GUI/CursorPicker.cpp"
 )
