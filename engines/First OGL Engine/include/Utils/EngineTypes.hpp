@@ -90,12 +90,12 @@ namespace OGL {
         using smartPointLPtr = std::unique_ptr<PointLight>;
         using smartSpotLPtr  = std::unique_ptr<SpotLight>;
 
-        using modelsTable      = std::unordered_map<size_t, Model>;
-        using objectsIDs       = std::unordered_map<size_t, size_t>;
+        using modelsTable      = std::unordered_map<uint32_t, Model>;
+        using objectsIDs       = std::unordered_map<uint32_t, uint32_t>;
         using objectsVec       = std::vector<Object>;
         using mirrorObjsVec    = std::vector<std::pair<Object, smartCubemap>>;
-        using instancedObjsVec = std::vector<std::pair<Object, size_t>>;
-        using gameObjects      = std::unordered_map<size_t, objectsVec>;
+        using instancedObjsVec = std::vector<std::pair<Object, uint32_t>>;
+        using gameObjects      = std::unordered_map<uint32_t, objectsVec>;
 
         using dirLights   = std::vector<std::pair<DirectionalLight, smartShadowMap>>;
         using pointLights = std::vector<std::pair<PointLight, smartShadowCubemap>>;

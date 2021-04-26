@@ -5,7 +5,6 @@ namespace OGL {
     BasicCamera::BasicCamera( 
         glm::vec3 positionVec,
         glm::vec3 forwardVec,
-        glm::vec3 worldUpVec,
         float moveSpeed,
         float fov,
         float aspect,
@@ -13,7 +12,7 @@ namespace OGL {
         float far
     ) : m_position{ positionVec }, 
         m_forward{ forwardVec }, 
-        m_worldUp{ worldUpVec },
+        m_worldUp{ 0.0f, 1.0f, 0.0f },
         m_speed{ moveSpeed },  
         m_fov{ fov }, 
         m_aspect{ aspect }, 
@@ -46,6 +45,11 @@ namespace OGL {
     glm::vec3 BasicCamera::getForward(
     ) const {
         return m_forward;
+    }
+
+    glm::vec3 BasicCamera::getWorldUp(
+    ) const {
+        return m_worldUp;
     }
 
     glm::vec3 BasicCamera::getUp(

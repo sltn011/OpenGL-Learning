@@ -11,7 +11,6 @@ namespace OGL {
     ) : BasicCamera {
         sceneCenter - dirLight.m_direction,
         sceneCenter,
-        {0.0f, 1.0f, 0.0f},
         0.0f,
         0.0f,
         1.0f,
@@ -28,7 +27,6 @@ namespace OGL {
     ) : BasicCamera {
         spotLight.m_position,
         spotLight.m_direction,
-        {0.0f, 1.0f, 0.0f},
         0.0f,
         90.0f,
         1.0f,

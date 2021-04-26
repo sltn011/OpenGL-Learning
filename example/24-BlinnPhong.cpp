@@ -30,7 +30,6 @@ class Test : public OGL::E1::Engine1Base {
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ 0.0f, 0.15f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),

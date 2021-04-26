@@ -6,7 +6,7 @@ namespace OGL {
         PointLight light, 
         float near, 
         float far
-    ) : CameraCubemap{
+    ) : CameraCubemap {
         light.m_position,
         near,
         far } {

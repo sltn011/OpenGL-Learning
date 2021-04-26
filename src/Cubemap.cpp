@@ -26,7 +26,8 @@ namespace OGL {
     Cubemap::Cubemap( 
         std::string const &folderPath, 
         GLenum cubemapTextureUnit
-    ) : m_textureUnit{cubemapTextureUnit} {
+    ) : m_textureUnit{ cubemapTextureUnit },
+        m_folderPath{ folderPath } {
         std::string const fileNames[6] = {
             "right.jpg",
             "left.jpg",
@@ -82,6 +83,11 @@ namespace OGL {
     GLenum Cubemap::unit(
     ) const {
         return m_textureUnit;
+    }
+
+    std::string Cubemap::folderPath(
+    ) const {
+        return m_folderPath;
     }
 
 } // OGL

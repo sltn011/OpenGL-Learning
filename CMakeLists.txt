@@ -28,6 +28,9 @@ set(ASSIMP_BUILT "${ASSIMP_SOURCE}/build" CACHE PATH "Path to directory with Ass
 
 # Path to directory with Dear ImGui Source
 set(DEARIMGUI_SOURCE "D:/OpenGL/Libs/Dear_ImGui" CACHE PATH "Path to directory with Dear ImGui source")
+
+# Path to directory with JSON library headers
+set(JSON_INCLUDE "D:/OpenGL/Libs/JSON" CACHE PATH "Path to directory with JSON header")
 ######################################################################################################
 
 
@@ -152,6 +155,7 @@ include_directories("${ASSIMP_SOURCE}/include")
 include_directories("${ASSIMP_BUILT}/include")
 include_directories(${DEARIMGUI_SOURCE})
 include_directories("${DEARIMGUI_SOURCE}/backends")
+include_directories(${JSON_INCLUDE})
 ######################################################################################################
 
 
@@ -216,6 +220,7 @@ add_library(OGL_E1 STATIC
         "engines/First OGL Engine/src/ShadowCubemapRenderer.cpp"
         "engines/First OGL Engine/src/LightSourcesDebugRenderer.cpp"
         "engines/First OGL Engine/src/ColoredShapesRenderer.cpp"
+        "engines/First OGL Engine/src/LevelSaver.cpp"
 )
 
 add_library(OGL_E1_GUI STATIC
@@ -237,7 +242,7 @@ target_link_libraries(OGL_E1_GUI OpenGLTools)
 
 ######################################################################################################
 # Executable location
-add_executable(01-Engine1Tests example/01-Engine1Tests.cpp)
+add_executable(01-Engine1Tests example/01-Engine1Tests.cpp ${DEARIMGUI_FILES})
 add_executable(02-ImGuiTests example/02-ImGuiTests.cpp ${DEARIMGUI_FILES})
 
 add_executable(0-ModelRenderer example/0-ModelRenderer.cpp)
@@ -264,13 +269,13 @@ add_executable(20-Cubemaps example/20-Cubemaps.cpp)
 add_executable(21-AdvancedGLSL example/21-AdvancedGLSL.cpp)
 add_executable(22-GeometryShader example/22-GeometryShader.cpp)
 add_executable(23-Instancing example/23-Instancing.cpp)
-add_executable(24-BlinnPhong example/24-BlinnPhong.cpp)
-add_executable(25-GammaCorrection example/25-GammaCorrection.cpp)
-add_executable(26-ShadowMapping example/26-ShadowMapping.cpp)
-add_executable(27-PointShadow example/27-PointShadow.cpp)
+add_executable(24-BlinnPhong example/24-BlinnPhong.cpp ${DEARIMGUI_FILES})
+add_executable(25-GammaCorrection example/25-GammaCorrection.cpp ${DEARIMGUI_FILES})
+add_executable(26-ShadowMapping example/26-ShadowMapping.cpp ${DEARIMGUI_FILES})
+add_executable(27-PointShadow example/27-PointShadow.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
-target_link_libraries(01-Engine1Tests glad glfw OGL_E1 assimp)
+target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI assimp)
 target_link_libraries(02-ImGuiTests glad glfw OGL_E1 OGL_E1_GUI assimp)
 
 target_link_libraries(0-ModelRenderer glad glfw OpenGLTools assimp)
@@ -297,9 +302,9 @@ target_link_libraries(20-Cubemaps glad glfw OpenGLTools assimp)
 target_link_libraries(21-AdvancedGLSL glad glfw OpenGLTools)
 target_link_libraries(22-GeometryShader glad glfw OpenGLTools)
 target_link_libraries(23-Instancing glad glfw OpenGLTools assimp)
-target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1)
-target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1)
-target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1)
-target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1)
+target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
+target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
+target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
+target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
 ######################################################################################################
 

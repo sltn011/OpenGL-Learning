@@ -10,7 +10,6 @@ namespace OGL {
         CameraFirstPerson( 
             glm::vec3 positionVec, 
             glm::vec3 forwardVec, 
-            glm::vec3 worldUpVec, 
             float moveSpeed, 
             float fov,
             float aspect, 

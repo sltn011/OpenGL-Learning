@@ -19,6 +19,8 @@
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
 
+#include "LevelSaver.hpp"
+
 #include "GUI/GUIRenderer.hpp"
 #include "GUI/CursorPicker.hpp"
 
@@ -55,12 +57,12 @@ namespace OGL::E1 {
          );
 
          void addModel(
-             char const *path,
-             size_t modelId
+             std::string const &path,
+             uint32_t modelId
          );
 
         Object &addNormalObject( 
-            size_t modelID, 
+            uint32_t modelID, 
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
             float rotationAngle = 0.0f,
@@ -68,14 +70,14 @@ namespace OGL::E1 {
         );
 
         Object &addNormalObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
         Object &addNormalObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             float xAngle,
@@ -84,14 +86,14 @@ namespace OGL::E1 {
         );
 
         Object &addNormalObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::vec3 eulerAngles
         );
 
         Object &addTransparentObject( 
-            size_t modelID, 
+            uint32_t modelID, 
             glm::vec3 pos = 
             glm::vec3{ 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
@@ -100,14 +102,14 @@ namespace OGL::E1 {
         );
 
         Object &addTransparentObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
         Object &addTransparentObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             float xAngle,
@@ -116,14 +118,14 @@ namespace OGL::E1 {
         );
 
         Object &addTransparentObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::vec3 eulerAngles
         );
 
         std::pair<Object, smartCubemap> &addMirrorObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
             float rotationAngle = 0.0f,
@@ -131,14 +133,14 @@ namespace OGL::E1 {
         );
 
         std::pair<Object, smartCubemap> &addMirrorObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
         std::pair<Object, smartCubemap> &addMirrorObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             float xAngle,
@@ -147,32 +149,32 @@ namespace OGL::E1 {
         );
 
         std::pair<Object, smartCubemap> &addMirrorObject(
-            size_t modelID,
+            uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::vec3 eulerAngles
         );
 
-        std::pair<Object, size_t> &addInstancedObject(
-            size_t modelID,
-            size_t numInstances,
+        std::pair<Object, uint32_t> &addInstancedObject(
+            uint32_t modelID,
+            uint32_t numInstances,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
             float rotationAngle = 0.0f,
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         );
 
-        std::pair<Object, size_t> &addInstancedObject(
-            size_t modelID,
-            size_t numInstances,
+        std::pair<Object, uint32_t> &addInstancedObject(
+            uint32_t modelID,
+            uint32_t numInstances,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
-        std::pair<Object, size_t> &addInstancedObject(
-            size_t modelID,
-            size_t numInstances,
+        std::pair<Object, uint32_t> &addInstancedObject(
+            uint32_t modelID,
+            uint32_t numInstances,
             glm::vec3 pos,
             float scale,
             float xAngle,
@@ -180,9 +182,9 @@ namespace OGL::E1 {
             float zAngle
         );
 
-        std::pair<Object, size_t> &addInstancedObject(
-            size_t modelID,
-            size_t numInstances,
+        std::pair<Object, uint32_t> &addInstancedObject(
+            uint32_t modelID,
+            uint32_t numInstances,
             glm::vec3 pos,
             float scale,
             glm::vec3 eulerAngles

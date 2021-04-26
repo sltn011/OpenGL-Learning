@@ -5,7 +5,6 @@ namespace OGL {
     CameraStatic::CameraStatic(
         glm::vec3 positionVec, 
         glm::vec3 forwardVec,
-        glm::vec3 worldUpVec,
         float fov,
         float aspect,
         float near,
@@ -13,7 +12,6 @@ namespace OGL {
     ) : BasicCamera {
         positionVec,
         forwardVec,
-        worldUpVec,
         0.0f,
         fov,
         aspect,

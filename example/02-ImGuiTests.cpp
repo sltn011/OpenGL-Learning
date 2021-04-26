@@ -22,7 +22,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
              glm::vec3{ 0.0f, 0.0f, 5.0f },
              glm::vec3{ 0.0f, 0.0f, -5.0f },
-             glm::vec3{ 0.0f, 1.0f, 0.0f },
              1.0f,
              45.0f,
              static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
@@ -65,6 +64,9 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              m_window,
              "#version 330"
          );
+
+         OGL::E1::LevelSaver saver;
+         saver.save("example/02-level.json", m_modelsTable, *m_scene);
 
          return true;
      }

@@ -8,7 +8,7 @@ namespace OGL {
         float scale,
         float rotationAngle,
         glm::vec3 rotationAxis,
-        size_t objectID
+        uint32_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
@@ -21,7 +21,7 @@ namespace OGL {
         glm::vec3 position,
         float scale, 
         glm::quat quat,
-        size_t objectID
+        uint32_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
@@ -36,7 +36,7 @@ namespace OGL {
         float xAngle,
         float yAngle,
         float zAngle,
-        size_t objectID
+        uint32_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
@@ -49,7 +49,7 @@ namespace OGL {
         glm::vec3 position,
         float scale,
         glm::vec3 eulerAngles,
-        size_t objectID
+        uint32_t objectID
     ) : m_model{model},
         m_position{position},
         m_scale{scale},
@@ -66,7 +66,7 @@ namespace OGL {
 
     void Object::drawInstanced( 
         Shader &shader, 
-        size_t amount
+        uint32_t amount
     ) const {
         shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.drawInstanced(shader, amount);
@@ -81,7 +81,7 @@ namespace OGL {
 
     void Object::drawShapeInstanced(
         Shader &shader, 
-        size_t amount
+        uint32_t amount
     ) const {
         shader.setUniformMatrix4("model", m_modelMatrix);
         m_model.drawShapeInstanced(shader, amount);
@@ -179,7 +179,7 @@ namespace OGL {
         return m_modelMatrix;
     }
 
-    size_t Object::getID(
+    uint32_t Object::getID(
     ) const {
         return m_id;
     }
@@ -187,6 +187,11 @@ namespace OGL {
     std::string Object::getName(
     ) const {
         return m_model.getName() + std::to_string(m_id);
+    }
+
+    std::string Object::getModelPath(
+    ) const {
+        return m_model.getFullPath();
     }
 
     void Object::recalculateModelMatrix(

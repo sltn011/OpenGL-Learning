@@ -10,8 +10,9 @@ namespace OGL {
 
     class Cubemap {
      protected:
-        Texture m_texture;
-        GLenum  m_textureUnit;
+        Texture     m_texture;
+        GLenum      m_textureUnit;
+        std::string m_folderPath;
 
      public:
 
@@ -51,6 +52,9 @@ namespace OGL {
         ) const;
 
         GLenum unit(
+        ) const;
+
+        std::string folderPath(
         ) const;
 
     };

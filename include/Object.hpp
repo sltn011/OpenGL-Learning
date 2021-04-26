@@ -16,7 +16,7 @@ namespace OGL {
             float scale = 1.0f, 
             float rotationAngle = 0.0f, 
             glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f },
-            size_t objectID = 0
+            uint32_t objectID = 0
         );
 
         Object(
@@ -24,7 +24,7 @@ namespace OGL {
             glm::vec3 position,
             float scale,
             glm::quat quat,
-            size_t objectID = 0
+            uint32_t objectID = 0
         );
 
         Object(
@@ -34,7 +34,7 @@ namespace OGL {
             float xAngle,
             float yAngle,
             float zAngle,
-            size_t objectID = 0
+            uint32_t objectID = 0
         );
 
         Object(
@@ -42,7 +42,7 @@ namespace OGL {
             glm::vec3 position,
             float scale,
             glm::vec3 eulerAngles,
-            size_t objectID = 0
+            uint32_t objectID = 0
         );
 
         void draw( 
@@ -51,7 +51,7 @@ namespace OGL {
 
         void drawInstanced( 
             Shader &shader, 
-            size_t amount
+            uint32_t amount
         ) const;
 
         void drawShape(
@@ -60,7 +60,7 @@ namespace OGL {
 
         void drawShapeInstanced(
             Shader &shader,
-            size_t amount
+            uint32_t amount
         ) const;
 
         void setVertexAttribInstancedModelMat4( 
@@ -115,12 +115,14 @@ namespace OGL {
         glm::mat4 getModelMatrix(
         ) const;
 
-        size_t getID(
+        uint32_t getID(
         ) const;
 
         std::string getName(
         ) const;
 
+        std::string getModelPath(
+        ) const;
 
      protected:
         Model &m_model;
@@ -128,7 +130,7 @@ namespace OGL {
         float     m_scale;
         glm::vec3 m_rotAngles;
         glm::mat4 m_modelMatrix;
-        size_t    m_id;
+        uint32_t  m_id;
 
         void recalculateModelMatrix(
         );

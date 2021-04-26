@@ -64,6 +64,7 @@ namespace OGL::E1 {
 
             int colorCode = rgbColorToInt(colorR, colorG, colorB);
             colorObjMap.emplace(colorCode, &obj);
+            obj.drawShape(m_shader);
 
             nextColor(colorR, colorG, colorB);
         }
@@ -76,6 +77,7 @@ namespace OGL::E1 {
 
             int colorCode = rgbColorToInt(colorR, colorG, colorB);
             colorObjMap.emplace(colorCode, &obj);
+            obj.drawShape(m_shader);
 
             nextColor(colorR, colorG, colorB);
         }

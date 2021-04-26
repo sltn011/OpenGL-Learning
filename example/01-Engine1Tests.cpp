@@ -39,7 +39,6 @@ public:
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ 0.0f, 0.15f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
@@ -90,6 +89,11 @@ public:
             "shaders/01-playgroundLightSourcesRenderer.frag"
         );
 
+        OGL::Shader coloredShapesShader(
+            "shaders/01-coloredShapes.vert",
+            "shaders/01-coloredShapes.frag"
+        );
+
         m_normalRenderer            = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
         m_transpRenderer            = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
         m_skyboxRenderer            = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
@@ -99,6 +103,7 @@ public:
         m_shadowMapRenderer         = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
         m_shadowCubemapRenderer     = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
         m_lightSourcesDebugRenderer = OGL::E1::factory<OGL::E1::LightSourcesDebugRenderer>(std::move(lightSourcesRenderer), 0.005f);
+        m_coloredShapesRenderer     = OGL::E1::factory<OGL::E1::ColoredShapesRenderer>(std::move(coloredShapesShader));
 
         // Objects
         addModel("models/Playground/playground.obj", 0);
@@ -202,6 +207,14 @@ public:
             );
         }
         glViewport(0, 0, screenWidth, screenHeight);
+
+        m_guiRenderer = OGL::E1::factory<OGL::E1::GUI::GUIRenderer>(
+            m_window,
+            "#version 330"
+        );
+
+        OGL::E1::LevelSaver saver;
+        saver.save("example/01-level.json", m_modelsTable, *m_scene);
 
         return true;
     }

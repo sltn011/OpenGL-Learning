@@ -9,9 +9,14 @@
 namespace OGL {
 
     class Skybox : public Cubemap {
+     protected:
+        VertexArrayObject m_vao;
+        VertexBufferObject m_vbo;
+        ElementBufferObject m_ebo;
+
      public:
         Skybox( 
-            std::string const folderPath,
+            std::string const &folderPath,
             GLenum cubemapTextureUnit
         );
 
@@ -20,11 +25,7 @@ namespace OGL {
 
         static void unbind(
         );
-
-     protected:
-        VertexArrayObject m_vao;
-        VertexBufferObject m_vbo;
-        ElementBufferObject m_ebo;
+        
     };
 
 } // OGL

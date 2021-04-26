@@ -24,19 +24,18 @@ namespace OGL {
         glm::vec3 m_worldUp;
         float m_yaw;    // Y rotation
         float m_pitch;  // X rotation
-        float m_speed;
 
      public:
         float m_fov;
         float m_aspect;
         float m_near;
         float m_far;
+        float m_speed;
 
      public:
         BasicCamera(
             glm::vec3 positionVec,
             glm::vec3 forwardVec,
-            glm::vec3 worldUpVec,
             float moveSpeed,
             float fov,
             float aspect,
@@ -57,6 +56,9 @@ namespace OGL {
         ) const;
 
         glm::vec3 getForward(
+        ) const;
+
+        glm::vec3 getWorldUp(
         ) const;
 
         glm::vec3 getUp(
