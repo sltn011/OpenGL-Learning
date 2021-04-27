@@ -19,17 +19,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          int screenWidth, screenHeight;
          glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
-         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
-             glm::vec3{ 0.0f, 0.0f, 5.0f },
-             glm::vec3{ 0.0f, 0.0f, -5.0f },
-             1.0f,
-             45.0f,
-             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
-             0.01f,
-             100.0f
-         );
-
-         m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+         loadLevel("levels/02-level.json");
 
          OGL::Shader normalShader(
              "shaders/02-imguiTest.vert",
@@ -43,18 +33,6 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          );
          m_coloredShapesRenderer = OGL::E1::factory<OGL::E1::ColoredShapesRenderer>(std::move(coloredShapesShader));
 
-         // Models
-         addModel("models/Axises/axises.obj", 0);
-
-         addNormalObject(0, glm::vec3{ 0.0f, 0.0f, 0.0f });
-         addNormalObject(0, glm::vec3{ 1.0f, 0.0f, 1.0f });
-         addNormalObject(0, glm::vec3{ -1.0f, 0.0f, -1.0f });
-         addNormalObject(0, glm::vec3{ -1.0f, 1.0f, 1.0f });
-         addNormalObject(0, glm::vec3{ -1.0f, -1.0f, 1.0f });
-         addNormalObject(0, glm::vec3{ 1.0f, 1.0f, -1.0f });
-
-         addDirLight({ -0.3f, -0.5f, -0.2f });
-
          glClearColor(0.6f, 0.6f, 0.7f, 1.0f);
 
          m_normalRenderer->getShader().use();
@@ -65,8 +43,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              "#version 330"
          );
 
-         OGL::E1::LevelSaver saver;
-         saver.save("example/02-level.json", m_modelsTable, *m_scene);
+         saveLevel("levels/02-level.json");
 
          return true;
      }

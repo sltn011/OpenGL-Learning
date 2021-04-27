@@ -221,6 +221,7 @@ add_library(OGL_E1 STATIC
         "engines/First OGL Engine/src/LightSourcesDebugRenderer.cpp"
         "engines/First OGL Engine/src/ColoredShapesRenderer.cpp"
         "engines/First OGL Engine/src/LevelSaver.cpp"
+        "engines/First OGL Engine/src/LevelLoader.cpp"
 )
 
 add_library(OGL_E1_GUI STATIC

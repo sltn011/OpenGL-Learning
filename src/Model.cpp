@@ -193,7 +193,7 @@ namespace OGL {
     }
 
     Model::Model( 
-        char const *path, 
+        std::string const &path,
         int flags
     ) {
         loadModel(path, flags);

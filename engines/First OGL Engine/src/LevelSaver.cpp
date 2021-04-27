@@ -61,8 +61,8 @@ namespace OGL::E1 {
         json["Direction"]  = { fwd.x, fwd.y, fwd.z };
         json["Move Speed"] = speed;
         json["FoV"]        = fov;
-        json["Clip near"]  = clipNear;
-        json["Clip far"]   = clipFar;
+        json["Clip Near"]  = clipNear;
+        json["Clip Far"]   = clipFar;
 
         return json;
     }

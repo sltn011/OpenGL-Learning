@@ -54,7 +54,7 @@ namespace OGL {
         ) = default;
 
         Model( 
-            char const *path, 
+            std::string const &path, 
             int flags = aiProcess_Triangulate | aiProcess_FlipUVs
         );
 

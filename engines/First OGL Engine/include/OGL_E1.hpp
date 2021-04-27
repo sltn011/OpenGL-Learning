@@ -20,6 +20,7 @@
 #include "ColoredShapesRenderer.hpp"
 
 #include "LevelSaver.hpp"
+#include "LevelLoader.hpp"
 
 #include "GUI/GUIRenderer.hpp"
 #include "GUI/CursorPicker.hpp"
@@ -228,6 +229,14 @@ namespace OGL::E1 {
         void setGameOrDebugMode(
             bool isDebugMode
         );
+
+        void loadLevel(
+            std::string const &filePath
+        );
+
+        void saveLevel(
+            std::string const &filePath
+        ) const;
 
      protected:
         virtual bool userCreate(

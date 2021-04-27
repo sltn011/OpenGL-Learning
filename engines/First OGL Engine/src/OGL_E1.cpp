@@ -112,7 +112,7 @@ namespace OGL::E1 {
         std::string const &path,
         uint32_t modelId
     ) {
-        m_modelsTable[modelId] = Model(path.c_str());
+        m_modelsTable[modelId] = Model(path);
         m_objectsMaxIDs[modelId] = 0;
     }
 
@@ -500,6 +500,33 @@ namespace OGL::E1 {
             glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             glfwSetCursorPos(m_window, m_system.lastMouseXPos, m_system.lastMouseYPos);
         }
+    }
+
+    void Engine1Base::loadLevel(
+        std::string const &filePath
+    ) {
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+
+        OGL::E1::LevelLoader loader;
+        loader.load(
+            screenWidth,
+            screenHeight,
+            filePath,
+            m_modelsTable,
+            m_scene
+        );
+    }
+
+    void Engine1Base::saveLevel(
+        std::string const &filePath
+    ) const {
+        OGL::E1::LevelSaver saver;
+        saver.save(
+            filePath,
+            m_modelsTable,
+            *m_scene
+        );
     }
 
     bool Engine1Base::userDestroy(
