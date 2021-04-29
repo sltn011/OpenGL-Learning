@@ -37,13 +37,13 @@ class Test : public OGL::E1::Engine1Base {
             1000.0f
         );
 
-        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+        m_scene.emplace(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/20-BlinnPhong.vert", "shaders/20-BlinnPhong.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_normalRenderer.emplace(std::move(normalShader));
+        m_skyboxRenderer.emplace(std::move(skyboxShader));
 
         // Objects
         addModel("models/WoodPlanksPlane/woodPlanksPlane.obj", 0);
@@ -66,7 +66,7 @@ class Test : public OGL::E1::Engine1Base {
         addPointLight({ 0.0f, 0.15f, 0.0f }, {1.5f, 1.5f, 1.5f });
 
         stbi_set_flip_vertically_on_load(false);
-        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
+        m_scene->replaceSkybox(OGL::Skybox("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
 
         glDisable(GL_CULL_FACE);
@@ -101,6 +101,9 @@ class Test : public OGL::E1::Engine1Base {
     ) override {
         if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
             m_isBlinnPhong ^= true;
+        }
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetWindowShouldClose(m_window, true);
         }
     }
 };

@@ -20,6 +20,22 @@ namespace OGL {
             GLenum cubemapTextureUnit
         );
 
+        Skybox(
+            Skybox const &rhs
+        ) = delete;
+
+        Skybox(
+            Skybox &&rhs
+        ) = default;
+
+        Skybox &operator=(
+            Skybox const &rhs
+        ) = delete;
+
+        Skybox &operator=(
+            Skybox &&rhs
+        ) = default;
+
         void bind(
         ) const override;
 

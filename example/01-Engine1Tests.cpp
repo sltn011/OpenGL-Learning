@@ -77,16 +77,17 @@ public:
             "shaders/01-coloredShapes.frag"
         );
 
-        m_normalRenderer            = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_transpRenderer            = OGL::E1::factory<OGL::E1::TransparentRenderer>(std::move(transpShader));
-        m_skyboxRenderer            = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
-        m_mirrorRenderer            = OGL::E1::factory<OGL::E1::MirrorRenderer>(std::move(mirrorShader));
-        m_cubemapRenderer           = OGL::E1::factory<OGL::E1::CubemapRenderer>();
-        m_instancesRenderer         = OGL::E1::factory<OGL::E1::InstancesRenderer>(std::move(instancesShader));
-        m_shadowMapRenderer         = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
-        m_shadowCubemapRenderer     = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(shadowCubemapRenderer));
-        m_lightSourcesDebugRenderer = OGL::E1::factory<OGL::E1::LightSourcesDebugRenderer>(std::move(lightSourcesRenderer), 0.005f);
-        m_coloredShapesRenderer     = OGL::E1::factory<OGL::E1::ColoredShapesRenderer>(std::move(coloredShapesShader));
+        m_normalRenderer           .emplace(std::move(normalShader));
+        m_transpRenderer           .emplace(std::move(transpShader));
+        m_skyboxRenderer           .emplace(std::move(skyboxShader));
+        m_mirrorRenderer           .emplace(std::move(mirrorShader));
+        m_cubemapRenderer          .emplace();
+        m_instancesRenderer        .emplace(std::move(instancesShader));
+        m_shadowMapRenderer        .emplace(std::move(shadowMapRender));
+        m_shadowCubemapRenderer    .emplace(std::move(shadowCubemapRenderer));
+        m_lightSourcesDebugRenderer.emplace(std::move(lightSourcesRenderer), 0.005f);
+        m_coloredShapesRenderer    .emplace(std::move(coloredShapesShader));
+        m_guiRenderer              .emplace(m_window, "#version 330" );
 
 
         loadLevel("levels/01-level.json");
@@ -96,8 +97,11 @@ public:
         for (size_t i = 0; i < m_scene->getDirLights().size(); ++i) {
             auto &[dirLight, shadowMap] = m_scene->getDirLights()[i];
             OGL::CameraShadowMap cam{ dirLight, m_scene->getNormalObjs().front().getPosition(), 2.5f, 0.1f, 6.0f };
-            shadowMap = OGL::E1::factory<OGL::ShadowMap>(
-                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapDirLightFirstTextureID + i, shadowMapSize)
+            shadowMap = m_shadowMapRenderer->render(
+                m_scene.value(),
+                cam,
+                GL_TEXTURE0 + shadowMapDirLightFirstTextureID + i,
+                shadowMapSize
             );
         }
 
@@ -105,8 +109,11 @@ public:
         for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
             auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
             OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
-            shadowCubemap = std::make_unique<OGL::ShadowCubemap>(
-                m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstTextureID + i, shadowCubemapSize)
+            shadowCubemap = m_shadowCubemapRenderer->render(
+                m_scene.value(),
+                cam,
+                GL_TEXTURE0 + shadowCubemapFirstTextureID + i,
+                shadowCubemapSize
             );
         }
 
@@ -114,32 +121,27 @@ public:
         for (size_t i = 0; i < m_scene->getSpotLights().size(); ++i) {
             auto &[spotLight, shadowMap] = m_scene->getSpotLights()[i];
             OGL::CameraShadowMap cam{ spotLight, 0.1f, 6.0f };
-            shadowMap = OGL::E1::factory<OGL::ShadowMap>(
-                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapSpotLightFirstTextureID + i, shadowMapSize)
+            shadowMap = m_shadowMapRenderer->render(m_scene.value(),
+                cam,
+                GL_TEXTURE0 + shadowMapSpotLightFirstTextureID + i,
+                shadowMapSize
             );
         }
 
         glViewport(0, 0, cubemapSize, cubemapSize);
         for (auto &p : m_scene->getMirrorObjs()) {
-            p.second = OGL::E1::factory<OGL::Cubemap>(
-                m_cubemapRenderer->render(
-                    *m_scene,
-                    cubemapSize,
-                    GL_TEXTURE0 + cubemapTextureID,
-                    p.first.getPosition(),
-                    m_normalRenderer.get(),
-                    m_skyboxRenderer.get(),
-                    m_transpRenderer.get(),
-                    m_instancesRenderer.get()
-                )
+            p.second = m_cubemapRenderer->render(
+                *m_scene,
+                cubemapSize,
+                GL_TEXTURE0 + cubemapTextureID,
+                p.first.getPosition(),
+                m_normalRenderer,
+                m_skyboxRenderer,
+                m_transpRenderer,
+                m_instancesRenderer
             );
         }
         glViewport(0, 0, screenWidth, screenHeight);
-
-        m_guiRenderer = OGL::E1::factory<OGL::E1::GUI::GUIRenderer>(
-            m_window,
-            "#version 330"
-        );
 
         return true;
     }
@@ -149,17 +151,17 @@ public:
     ) override {
         processInputPerFrame();
 
-        m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_normalRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
-        m_mirrorRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_mirrorRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
-        m_instancesRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_instancesRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
-        m_lightSourcesDebugRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_lightSourcesDebugRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
-        m_skyboxRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_skyboxRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
-        m_transpRenderer->render(*m_scene, m_scene->getCamera().get());
+        m_transpRenderer->render(m_scene.value(), m_scene->getCamera().get());
 
         return true;
     }

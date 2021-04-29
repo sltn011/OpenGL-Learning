@@ -30,8 +30,8 @@ namespace OGL::E1 {
         lights["Spot"]        = lightsToJSON(scene.getSpotLights());
         level["Lights"]       = lights;
 
-        Skybox const *skybox = scene.getSkybox().get();
-        level["Skybox"] = skybox ? skyboxToJSON(*scene.getSkybox()) : nlohmann::json{};
+        maybeSkybox const &skybox = scene.getSkybox();
+        level["Skybox"] = skybox ? skyboxToJSON(skybox.value()) : nlohmann::json{};
 
         file << std::setw(4) << level;
     }

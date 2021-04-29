@@ -125,7 +125,7 @@ namespace OGL::E1 {
             glm::vec3 eulerAngles
         );
 
-        std::pair<Object, smartCubemap> &addMirrorObject(
+        std::pair<Object, maybeCubemap> &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
@@ -133,14 +133,14 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         );
 
-        std::pair<Object, smartCubemap> &addMirrorObject(
+        std::pair<Object, maybeCubemap> &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
-        std::pair<Object, smartCubemap> &addMirrorObject(
+        std::pair<Object, maybeCubemap> &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
@@ -149,7 +149,7 @@ namespace OGL::E1 {
             float zAngle
         );
 
-        std::pair<Object, smartCubemap> &addMirrorObject(
+        std::pair<Object, maybeCubemap> &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
@@ -191,12 +191,12 @@ namespace OGL::E1 {
             glm::vec3 eulerAngles
         );
 
-        std::pair<DirectionalLight, smartShadowMap> &addDirLight(
+        std::pair<DirectionalLight, maybeShadowMap> &addDirLight(
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         );
 
-        std::pair<PointLight, smartShadowCubemap> &addPointLight(
+        std::pair<PointLight, maybeShadowCubemap> &addPointLight(
             glm::vec3 position,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
             float attenuationConst = 1.0f,
@@ -204,7 +204,7 @@ namespace OGL::E1 {
             float attenuationQuadratic = 0.032f
         );
 
-        std::pair<SpotLight, smartShadowMap> &addSpotLight(
+        std::pair<SpotLight, maybeShadowMap> &addSpotLight(
             glm::vec3 position,
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -236,7 +236,7 @@ namespace OGL::E1 {
 
         void saveLevel(
             std::string const &filePath
-        ) const;
+        );
 
      protected:
         virtual bool userCreate(
@@ -285,19 +285,19 @@ namespace OGL::E1 {
         GLFWwindow      *m_window;
         std::string      m_title;
 
-        smartScenePtr                     m_scene;
-        smartNormalRendererPtr            m_normalRenderer;
-        smartTransparentRendererPtr       m_transpRenderer;
-        smartSkyboxRendererPtr            m_skyboxRenderer;
-        smartCubemapRendererPtr           m_cubemapRenderer;
-        smartMirrorRendererPtr            m_mirrorRenderer;
-        smartInstancesRendererPtr         m_instancesRenderer;
-        smartShadowMapRendererPtr         m_shadowMapRenderer;
-        smartShadowCubemapRendererPtr     m_shadowCubemapRenderer;
-        smartLightSourcesDebugRendererPtr m_lightSourcesDebugRenderer;
-        smartColoredShapesRendererPtr     m_coloredShapesRenderer;
+        maybeScene                     m_scene;
+        maybeNormalRenderer            m_normalRenderer;
+        maybeTransparentRenderer       m_transpRenderer;
+        maybeSkyboxRenderer            m_skyboxRenderer;
+        maybeCubemapRenderer           m_cubemapRenderer;
+        maybeMirrorRenderer            m_mirrorRenderer;
+        maybeInstancesRenderer         m_instancesRenderer;
+        maybeShadowMapRenderer         m_shadowMapRenderer;
+        maybeShadowCubemapRenderer     m_shadowCubemapRenderer;
+        maybeLightSourcesDebugRenderer m_lightSourcesDebugRenderer;
+        maybeColoredShapesRenderer     m_coloredShapesRenderer;
 
-        GUI::smartGUIRenderer             m_guiRenderer;
+        GUI::maybeGUIRenderer          m_guiRenderer;
                         
         modelsTable       m_modelsTable;
         objectsIDs        m_objectsMaxIDs;

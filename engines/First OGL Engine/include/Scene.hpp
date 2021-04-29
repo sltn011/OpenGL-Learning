@@ -45,7 +45,7 @@ namespace OGL::E1 {
             Object obj
         );
 
-        std::pair<Object, smartCubemap> &addMirrorObj(
+        std::pair<Object, maybeCubemap> &addMirrorObj(
             Object obj
         );
 
@@ -54,15 +54,15 @@ namespace OGL::E1 {
             size_t numInstances
         );
 
-        std::pair<DirectionalLight, smartShadowMap> &addDirLight( 
+        std::pair<DirectionalLight, maybeShadowMap> &addDirLight(
             DirectionalLight dirLight
         );
 
-        std::pair<PointLight, smartShadowCubemap> &addPointLight(
+        std::pair<PointLight, maybeShadowCubemap> &addPointLight(
             PointLight pointLight
         );
 
-        std::pair<SpotLight, smartShadowMap> &addSpotLight(
+        std::pair<SpotLight, maybeShadowMap> &addSpotLight(
             SpotLight spotLight
         );
         
@@ -88,10 +88,10 @@ namespace OGL::E1 {
         );
 
         void replaceSkybox( 
-            smartSkybox &&skybox
+            Skybox &&skybox
         );
 
-        smartSkybox &getSkybox(
+        maybeSkybox &getSkybox(
         );
 
         smartCamPtr &getCamera(
@@ -109,7 +109,7 @@ namespace OGL::E1 {
         pointLights m_pointLights;
         spotLights m_spotLights;
 
-        smartSkybox m_skybox;
+        maybeSkybox m_skybox;
     };
 
 } // OGL::E1

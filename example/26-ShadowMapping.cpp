@@ -41,15 +41,15 @@ class Test : public OGL::E1::Engine1Base {
             1000.0f
         );
 
-        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+        m_scene.emplace(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/22-normalObjWithShadows.vert", "shaders/22-normalObjWithShadows.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
         OGL::Shader shadowMapRender("shaders/22-normalObjDepthMap.vert", "shaders/22-normalObjDepthMap.frag");
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
-        m_shadowMapRenderer = OGL::E1::factory<OGL::E1::ShadowMapRenderer>(std::move(shadowMapRender));
+        m_normalRenderer.emplace(std::move(normalShader));
+        m_skyboxRenderer.emplace(std::move(skyboxShader));
+        m_shadowMapRenderer.emplace(std::move(shadowMapRender));
 
         // Objects
         addModel("models/WoodPlanksPlane/woodPlanksPlane.obj", 0);
@@ -81,16 +81,14 @@ class Test : public OGL::E1::Engine1Base {
         addDirLight(lightDir3, lightCol3);
 
         stbi_set_flip_vertically_on_load(false);
-        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
+        m_scene->replaceSkybox(OGL::Skybox("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
 
         glViewport(0, 0, shadowMapSize, shadowMapSize);
         int cnt = 0;
         for (auto &p : m_scene->getDirLights()) {
             OGL::CameraShadowMap cam{ p.first, playgroundPosition, 2.0f, 0.1f, 10.0f };
-            p.second = OGL::E1::factory<OGL::ShadowMap>(
-                m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapTextureID + cnt, shadowMapSize)
-            );
+            p.second = m_shadowMapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowMapTextureID + cnt, shadowMapSize);
             ++cnt;
         }
         glViewport(0, 0, m_screenWidth, m_screenHeight);
@@ -112,14 +110,6 @@ class Test : public OGL::E1::Engine1Base {
     bool userDestroy(
     ) override {
         return true;
-    }
-
-    void keyCallback(
-        int key,
-        int scancode,
-        int action,
-        int mods
-    ) override {
     }
 };
 

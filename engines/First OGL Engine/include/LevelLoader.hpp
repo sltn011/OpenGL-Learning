@@ -18,7 +18,7 @@ namespace OGL::E1 {
             int screenHeight,
             std::string const &filePath,
             modelsTable &modelsTable,
-            smartScenePtr &scenePtr
+            maybeScene &scene
         );
 
      protected:
@@ -52,7 +52,7 @@ namespace OGL::E1 {
              modelsTable &modelsTable
          ) const;
 
-         std::pair<Object, smartCubemap> getMirrorObj(
+         std::pair<Object, maybeCubemap> getMirrorObj(
              nlohmann::json const &objJSON,
              modelsTable &modelsTable
          ) const;
@@ -96,7 +96,7 @@ namespace OGL::E1 {
              nlohmann::json const &levelJSON
          ) const;
 
-         smartSkybox getSkybox(
+         maybeSkybox getSkybox(
              nlohmann::json const &levelJSON
          ) const;
          

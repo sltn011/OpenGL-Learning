@@ -12,10 +12,10 @@ namespace OGL::E1 {
         int cubemapSize, 
         GLenum cubemapTextureUnit,
         glm::vec3 mirrorPos, 
-        NormalRenderer *normalRenderer,
-        SkyboxRenderer *skyboxRenderer,
-        TransparentRenderer *transparentRenderer,
-        InstancesRenderer *instancesRenderer
+        maybeNormalRenderer &normalRenderer,
+        maybeSkyboxRenderer &skyboxRenderer,
+        maybeTransparentRenderer &transparentRenderer,
+        maybeInstancesRenderer &instancesRenderer
     ) {
         CameraCubemap cameraCubemap(mirrorPos, 0.1f, 100.0f);
         Cubemap cubemap(cubemapSize, cubemapTextureUnit);
@@ -48,10 +48,10 @@ namespace OGL::E1 {
         Scene &scene,
         CameraCubemap const *cubemapCamera,
         Cubemap &cubemap,
-        NormalRenderer *normalRenderer,
-        SkyboxRenderer *skyboxRenderer,
-        TransparentRenderer *transparentRenderer,
-        InstancesRenderer *instancesRenderer
+        maybeNormalRenderer &normalRenderer,
+        maybeSkyboxRenderer &skyboxRenderer,
+        maybeTransparentRenderer &transparentRenderer,
+        maybeInstancesRenderer &instancesRenderer
     ) {
         if (normalRenderer) {
             normalRenderer->render(scene, cubemapCamera);

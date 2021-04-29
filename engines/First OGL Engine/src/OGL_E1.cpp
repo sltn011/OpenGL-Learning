@@ -123,6 +123,10 @@ namespace OGL::E1 {
         float rotationAngle,
         glm::vec3 rotationAxis
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addNormalObj(
             Object{
                 m_modelsTable[modelID],
@@ -141,6 +145,10 @@ namespace OGL::E1 {
         float scale,
         glm::quat quat
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addNormalObj(
             Object{
                 m_modelsTable[modelID],
@@ -160,6 +168,10 @@ namespace OGL::E1 {
         float yAngle,
         float zAngle
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addNormalObj(
             Object{
                 m_modelsTable[modelID],
@@ -179,6 +191,10 @@ namespace OGL::E1 {
         float scale,
         glm::vec3 eulerAngles
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addNormalObj(
             Object{
                 m_modelsTable[modelID],
@@ -197,6 +213,10 @@ namespace OGL::E1 {
         float rotationAngle,
         glm::vec3 rotationAxis
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addTransparentObj(
             Object{
                 m_modelsTable[modelID],
@@ -215,6 +235,10 @@ namespace OGL::E1 {
         float scale,
         glm::quat quat
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addTransparentObj(
             Object{
                 m_modelsTable[modelID],
@@ -234,6 +258,10 @@ namespace OGL::E1 {
         float yAngle,
         float zAngle
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addTransparentObj(
             Object{
                 m_modelsTable[modelID],
@@ -253,6 +281,10 @@ namespace OGL::E1 {
         float scale,
         glm::vec3 eulerAngles
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addTransparentObj(
             Object{
                 m_modelsTable[modelID],
@@ -264,13 +296,17 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, smartCubemap> &Engine1Base::addMirrorObject(
+    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
         float rotationAngle,
         glm::vec3 rotationAxis
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addMirrorObj(
             Object{
                 m_modelsTable[modelID],
@@ -283,12 +319,16 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, smartCubemap> &Engine1Base::addMirrorObject(
+    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
         glm::quat quat
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addMirrorObj(
             Object{
                 m_modelsTable[modelID],
@@ -300,7 +340,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, smartCubemap> &Engine1Base::addMirrorObject(
+    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
@@ -308,6 +348,10 @@ namespace OGL::E1 {
         float yAngle,
         float zAngle
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addMirrorObj(
             Object{
                 m_modelsTable[modelID],
@@ -321,12 +365,16 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, smartCubemap> &Engine1Base::addMirrorObject(
+    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
         glm::vec3 eulerAngles
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addMirrorObj(
             Object{
                 m_modelsTable[modelID],
@@ -346,6 +394,10 @@ namespace OGL::E1 {
         float rotationAngle,
         glm::vec3 rotationAxis
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addInstancedObj(
             Object{
                 m_modelsTable[modelID],
@@ -366,6 +418,10 @@ namespace OGL::E1 {
         float scale,
         glm::quat quat
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addInstancedObj(
             Object{
                 m_modelsTable[modelID],
@@ -387,6 +443,10 @@ namespace OGL::E1 {
         float yAngle,
         float zAngle
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addInstancedObj(
             Object{
                 m_modelsTable[modelID],
@@ -408,6 +468,10 @@ namespace OGL::E1 {
         float scale,
         glm::vec3 eulerAngles
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addInstancedObj(
             Object{
                 m_modelsTable[modelID],
@@ -420,10 +484,14 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<DirectionalLight, smartShadowMap> &Engine1Base::addDirLight(
+    std::pair<DirectionalLight, maybeShadowMap> &Engine1Base::addDirLight(
         glm::vec3 direction,
         glm::vec3 color
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addDirLight(
             DirectionalLight{
                 direction,
@@ -432,13 +500,17 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<PointLight, smartShadowCubemap> &Engine1Base::addPointLight(
+    std::pair<PointLight, maybeShadowCubemap> &Engine1Base::addPointLight(
         glm::vec3 position,
         glm::vec3 color,
         float attenuationConst,
         float attenuationLinear,
         float attenuationQuadratic
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addPointLight(
             PointLight{
                 position,
@@ -450,7 +522,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<SpotLight, smartShadowMap> &Engine1Base::addSpotLight(
+    std::pair<SpotLight, maybeShadowMap> &Engine1Base::addSpotLight(
         glm::vec3 position,
         glm::vec3 direction,
         glm::vec3 color,
@@ -460,6 +532,10 @@ namespace OGL::E1 {
         float attenuationLinear,
         float attenuationQuadratic
     ) {
+        if (!m_scene) {
+            throw Exception("Scene not created!");
+        }
+
         return m_scene->addSpotLight(
             SpotLight{
                 position,
@@ -520,12 +596,16 @@ namespace OGL::E1 {
 
     void Engine1Base::saveLevel(
         std::string const &filePath
-    ) const {
+    ) {
+        if (!m_scene) {
+            return;
+        }
+
         OGL::E1::LevelSaver saver;
         saver.save(
             filePath,
             m_modelsTable,
-            *m_scene
+            m_scene.value()
         );
     }
 

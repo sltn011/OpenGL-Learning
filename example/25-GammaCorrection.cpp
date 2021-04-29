@@ -38,13 +38,13 @@ public:
             1000.0f
             );
 
-        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+        m_scene.emplace(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/21-gammaCorrectionObj.vert", "shaders/21-gammaCorrectionObj.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_normalRenderer.emplace(std::move(normalShader));
+        m_skyboxRenderer.emplace(std::move(skyboxShader));
 
         // Objects
         addModel("models/WoodPlanksPlane/woodPlanksPlane.obj", 0);
@@ -59,7 +59,7 @@ public:
         addPointLight({ 0.2f, 0.35f, 0.0f }, { 0.6f, 0.6f, 0.6f });
 
         stbi_set_flip_vertically_on_load(false);
-        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
+        m_scene->replaceSkybox(OGL::Skybox("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
 
         glDisable(GL_CULL_FACE);
@@ -97,9 +97,12 @@ public:
             m_doGammaCorrection ^= true;
             std::cout << (m_doGammaCorrection ? "Gamma correction on" : "Gamma correction off") << std::endl;
         }
-        else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
             m_ifTrueDoubleElseLinear ^= true;
             std::cout << (m_ifTrueDoubleElseLinear ? "Double distance attenuation" : "Linear distance attenuation") << std::endl;
+        }
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetWindowShouldClose(m_window, true);
         }
     }
 };

@@ -25,23 +25,20 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
              "shaders/02-imguiTest.vert",
              "shaders/02-imguiTest.frag"
          );
-         m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
+         m_normalRenderer.emplace(std::move(normalShader));
 
          OGL::Shader coloredShapesShader(
              "shaders/01-coloredShapes.vert",
              "shaders/01-coloredShapes.frag"
          );
-         m_coloredShapesRenderer = OGL::E1::factory<OGL::E1::ColoredShapesRenderer>(std::move(coloredShapesShader));
+         m_coloredShapesRenderer.emplace(std::move(coloredShapesShader));
 
          glClearColor(0.6f, 0.6f, 0.7f, 1.0f);
 
          m_normalRenderer->getShader().use();
          m_normalRenderer->getShader().setUniformVec3("objectColor", { 0.5f, 0.8f, 0.2f });
 
-         m_guiRenderer = OGL::E1::factory<OGL::E1::GUI::GUIRenderer>(
-             m_window,
-             "#version 330"
-         );
+         m_guiRenderer.emplace(m_window, "#version 330");
 
          saveLevel("levels/02-level.json");
 

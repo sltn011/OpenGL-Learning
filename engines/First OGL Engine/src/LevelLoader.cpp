@@ -7,7 +7,7 @@ namespace OGL::E1 {
         int screenHeight,
         std::string const &filePath,
         modelsTable &modelsTable,
-        smartScenePtr &scenePtr
+        maybeScene &scene
     ) {
         std::ifstream file(filePath);
 
@@ -17,18 +17,18 @@ namespace OGL::E1 {
         modelsTable = getModelsTable(levelJSON);
         
         float aspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-        scenePtr = factory<Scene>(getCamera(levelJSON, aspect));
+        scene = Scene{ getCamera(levelJSON, aspect) };
 
-        scenePtr->getNormalObjs()      = getNormalObjs(levelJSON, modelsTable);
-        scenePtr->getTransparentObjs() = getTransparentObjs(levelJSON, modelsTable);
-        scenePtr->getMirrorObjs()      = getMirrorObjs(levelJSON, modelsTable);
-        scenePtr->getInstancedObjs()   = getInstancedObjs(levelJSON, modelsTable);
+        scene->getNormalObjs()      = getNormalObjs(levelJSON, modelsTable);
+        scene->getTransparentObjs() = getTransparentObjs(levelJSON, modelsTable);
+        scene->getMirrorObjs()      = getMirrorObjs(levelJSON, modelsTable);
+        scene->getInstancedObjs()   = getInstancedObjs(levelJSON, modelsTable);
 
-        scenePtr->getDirLights()   = getDirLights(levelJSON);
-        scenePtr->getPointLights() = getPointLights(levelJSON);
-        scenePtr->getSpotLights()  = getSpotLights(levelJSON);
+        scene->getDirLights()   = getDirLights(levelJSON);
+        scene->getPointLights() = getPointLights(levelJSON);
+        scene->getSpotLights()  = getSpotLights(levelJSON);
 
-        scenePtr->getSkybox() = getSkybox(levelJSON);
+        scene->getSkybox() = getSkybox(levelJSON);
     }
 
     modelsTable LevelLoader::getModelsTable(
@@ -124,11 +124,11 @@ namespace OGL::E1 {
         return objects;
     }
 
-    std::pair<Object, smartCubemap> LevelLoader::getMirrorObj(
+    std::pair<Object, maybeCubemap> LevelLoader::getMirrorObj(
         nlohmann::json const &objJSON,
         modelsTable &modelsTable
     ) const {
-        return std::make_pair(getNormalObj(objJSON, modelsTable), nullptr);
+        return std::make_pair(getNormalObj(objJSON, modelsTable), std::nullopt);
     }
 
     mirrorObjsVec LevelLoader::getMirrorObjs(
@@ -184,7 +184,7 @@ namespace OGL::E1 {
         dirLights lights;
         lights.reserve(dirLightJSONs.size());
         for (nlohmann::json &lightJSON : dirLightJSONs) {
-            lights.emplace_back(getDirLight(lightJSON), nullptr);
+            lights.emplace_back(getDirLight(lightJSON), std::nullopt);
         }
         return lights;
     }
@@ -210,7 +210,7 @@ namespace OGL::E1 {
         pointLights lights;
         lights.reserve(pointLightJSONs.size());
         for (nlohmann::json &lightJSON : pointLightJSONs) {
-            lights.emplace_back(getPointLight(lightJSON), nullptr);
+            lights.emplace_back(getPointLight(lightJSON), std::nullopt);
         }
         return lights;
     }
@@ -240,25 +240,25 @@ namespace OGL::E1 {
         spotLights lights;
         lights.reserve(spotLightJSONs.size());
         for (nlohmann::json &lightJSON : spotLightJSONs) {
-            lights.emplace_back(getSpotLight(lightJSON), nullptr);
+            lights.emplace_back(getSpotLight(lightJSON), std::nullopt);
         }
         return lights;
     }
 
-    smartSkybox LevelLoader::getSkybox(
+    maybeSkybox LevelLoader::getSkybox(
         nlohmann::json const &levelJSON
     ) const {
         nlohmann::json skyboxJSON;
         try {
             skyboxJSON = levelJSON["Skybox"];
 
-            return factory<Skybox>(
+            return Skybox(
                 skyboxJSON["Folder Path"],
                 skyboxJSON["Texture Unit"] + GL_TEXTURE0
             );
         }
         catch (nlohmann::detail::type_error) {
-            return nullptr;
+            return std::nullopt;
         }
     }
 
