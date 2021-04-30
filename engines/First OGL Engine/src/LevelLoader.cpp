@@ -7,7 +7,7 @@ namespace OGL::E1 {
         int screenHeight,
         std::string const &filePath,
         modelsTable &modelsTable,
-        maybeScene &scene
+        smartScenePtr &scene
     ) {
         std::ifstream file(filePath);
 
@@ -17,7 +17,7 @@ namespace OGL::E1 {
         modelsTable = getModelsTable(levelJSON);
         
         float aspect = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-        scene = Scene{ getCamera(levelJSON, aspect) };
+        scene = std::make_unique<Scene>(getCamera(levelJSON, aspect));
 
         scene->getNormalObjs()      = getNormalObjs(levelJSON, modelsTable);
         scene->getTransparentObjs() = getTransparentObjs(levelJSON, modelsTable);
@@ -58,7 +58,7 @@ namespace OGL::E1 {
             float clipNear = camJSON["Clip Near"];
             float clipFar = camJSON["Clip Far"];
 
-            return factory<CameraFree>(
+            return std::make_unique<CameraFree>(
                 glm::vec3{ pos[0], pos[1], pos[2] },
                 glm::vec3{ fwd[0], fwd[1], fwd[2] },
                 moveSpeed,

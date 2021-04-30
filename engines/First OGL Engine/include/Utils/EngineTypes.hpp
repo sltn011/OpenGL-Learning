@@ -44,7 +44,7 @@ namespace OGL {
     namespace E1 {
 
         class Scene;
-        using maybeScene = std::optional<Scene>;
+        using smartScenePtr                  = std::unique_ptr<Scene>;
 
         class NormalRenderer;
         using maybeNormalRenderer            = std::optional<NormalRenderer>;

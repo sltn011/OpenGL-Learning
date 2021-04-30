@@ -41,7 +41,7 @@ class Test : public OGL::E1::Engine1Base {
             1000.0f
         );
 
-        m_scene.emplace(std::move(gameCamera));
+        m_scene = std::make_unique<OGL::E1::Scene>(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/22-normalObjWithShadows.vert", "shaders/22-normalObjWithShadows.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");

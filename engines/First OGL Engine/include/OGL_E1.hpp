@@ -285,7 +285,7 @@ namespace OGL::E1 {
         GLFWwindow      *m_window;
         std::string      m_title;
 
-        maybeScene                     m_scene;
+        smartScenePtr                  m_scene;
         maybeNormalRenderer            m_normalRenderer;
         maybeTransparentRenderer       m_transpRenderer;
         maybeSkyboxRenderer            m_skyboxRenderer;

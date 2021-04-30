@@ -605,7 +605,7 @@ namespace OGL::E1 {
         saver.save(
             filePath,
             m_modelsTable,
-            m_scene.value()
+            *m_scene
         );
     }
 

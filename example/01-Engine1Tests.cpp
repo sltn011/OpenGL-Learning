@@ -98,7 +98,7 @@ public:
             auto &[dirLight, shadowMap] = m_scene->getDirLights()[i];
             OGL::CameraShadowMap cam{ dirLight, m_scene->getNormalObjs().front().getPosition(), 2.5f, 0.1f, 6.0f };
             shadowMap = m_shadowMapRenderer->render(
-                m_scene.value(),
+                *m_scene,
                 cam,
                 GL_TEXTURE0 + shadowMapDirLightFirstTextureID + i,
                 shadowMapSize
@@ -110,7 +110,7 @@ public:
             auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
             OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
             shadowCubemap = m_shadowCubemapRenderer->render(
-                m_scene.value(),
+                *m_scene,
                 cam,
                 GL_TEXTURE0 + shadowCubemapFirstTextureID + i,
                 shadowCubemapSize
@@ -121,7 +121,8 @@ public:
         for (size_t i = 0; i < m_scene->getSpotLights().size(); ++i) {
             auto &[spotLight, shadowMap] = m_scene->getSpotLights()[i];
             OGL::CameraShadowMap cam{ spotLight, 0.1f, 6.0f };
-            shadowMap = m_shadowMapRenderer->render(m_scene.value(),
+            shadowMap = m_shadowMapRenderer->render(
+                *m_scene,
                 cam,
                 GL_TEXTURE0 + shadowMapSpotLightFirstTextureID + i,
                 shadowMapSize
@@ -151,17 +152,17 @@ public:
     ) override {
         processInputPerFrame();
 
-        m_normalRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_normalRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_mirrorRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_mirrorRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_instancesRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_instancesRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_lightSourcesDebugRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_lightSourcesDebugRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_skyboxRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_skyboxRenderer->render(*m_scene, m_scene->getCamera().get());
 
-        m_transpRenderer->render(m_scene.value(), m_scene->getCamera().get());
+        m_transpRenderer->render(*m_scene, m_scene->getCamera().get());
 
         return true;
     }

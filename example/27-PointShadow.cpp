@@ -38,7 +38,7 @@ public:
             100.0f
         );
 
-        m_scene.emplace(std::move(gameCamera));
+        m_scene = std::make_unique<OGL::E1::Scene>(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/23-normalObjWithShadows.vert", "shaders/23-normalObjWithShadows.frag");
         OGL::Shader pointLightShadowsShader("shaders/23-normalObjDepthCubemap.vert", "shaders/23-normalObjDepthCubemap.geom", "shaders/23-normalObjDepthCubemap.frag");

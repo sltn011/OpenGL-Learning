@@ -7,8 +7,6 @@
 #include <string>
 #include <array>
 
-#include "Utils/factory.hpp"
-
 namespace OGL::E1 {
 
     class LevelLoader {
@@ -18,7 +16,7 @@ namespace OGL::E1 {
             int screenHeight,
             std::string const &filePath,
             modelsTable &modelsTable,
-            maybeScene &scene
+            smartScenePtr &scene
         );
 
      protected:
