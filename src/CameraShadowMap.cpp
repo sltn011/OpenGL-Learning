@@ -32,6 +32,7 @@ namespace OGL {
         1.0f,
         nearPlane,
         farPlane },
+        m_scale{ 1.0f },
         m_hasPerspective{ true } {
     }
 

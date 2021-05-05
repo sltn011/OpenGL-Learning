@@ -19,33 +19,33 @@ namespace OGL::E1 {
         return m_transparentObjects.emplace_back(std::move(obj));
     }
 
-    std::pair<Object, maybeCubemap> &Scene::addMirrorObj(
+    pMirrorCubemap &Scene::addMirrorObj(
         Object obj
     ) {
         std::pair<Object, maybeCubemap> pair{ std::move(obj), std::nullopt };
         return m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
     }
 
-    std::pair<Object, size_t> &Scene::addInstancedObj(
+    pObjInstancesNum &Scene::addInstancedObj(
         Object obj,
-        size_t numInstances
+        uint32_t numInstances
     ) {
         return m_instancedObjects.emplace_back(std::move(obj), numInstances);
     }
 
-    std::pair<DirectionalLight, maybeShadowMap> &Scene::addDirLight(
+    pDirLightShadow &Scene::addDirLight(
         DirectionalLight dirLight
     ) {
        return m_dirLights.emplace_back(dirLight, std::nullopt);
     }
 
-    std::pair<PointLight, maybeShadowCubemap> &Scene::addPointLight(
+    pPointLightShadows &Scene::addPointLight(
         PointLight pointLight
     ) {
         return m_pointLights.emplace_back(pointLight, std::nullopt);
     }
 
-    std::pair<SpotLight, maybeShadowMap> &Scene::addSpotLight(
+    pSpotLightShadows &Scene::addSpotLight(
         SpotLight spotLight
     ) {
        return m_spotLights.emplace_back(spotLight, std::nullopt);

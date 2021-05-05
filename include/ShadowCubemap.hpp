@@ -23,6 +23,22 @@ namespace OGL {
              std::array<glm::mat4, 6> const &lightProjMatrices
          );
 
+         ShadowCubemap(
+             ShadowCubemap const &rhs
+         ) = delete;
+
+         ShadowCubemap(
+             ShadowCubemap &&rhs
+         ) = default;
+
+         ShadowCubemap &operator=(
+             ShadowCubemap const &rhs
+         ) = delete;
+
+         ShadowCubemap &operator=(
+             ShadowCubemap &&rhs
+         ) = default;
+
          void bindFramebuffer(
          ) const;
 

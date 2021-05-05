@@ -1,6 +1,8 @@
 #ifndef OGL_DESCRIPTOR_H
 #define OGL_DESCRIPTOR_H
 
+#include <utility>
+
 namespace OGL {
 
     class Descriptor {
@@ -24,11 +26,11 @@ namespace OGL {
 
         Descriptor( 
             Descriptor &&rhs
-        );
+        ) noexcept;
 
         Descriptor &operator=( 
             Descriptor &&rhs
-        );
+        ) noexcept;
 
         unsigned int value(
         ) const;

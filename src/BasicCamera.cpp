@@ -12,6 +12,8 @@ namespace OGL {
         float far
     ) : m_position{ positionVec }, 
         m_forward{ forwardVec }, 
+        m_right{ 0.0f, 0.0f, 0.0f },
+        m_up{ 0.0f, 0.0f, 0.0f },
         m_worldUp{ 0.0f, 1.0f, 0.0f },
         m_speed{ moveSpeed },  
         m_fov{ fov }, 

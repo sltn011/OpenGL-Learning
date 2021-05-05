@@ -40,7 +40,7 @@ namespace OGL {
     void UniformBufferObject::setBindingPoint(
         size_t pointIndex
     ) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, pointIndex, m_descriptor);
+        glBindBufferBase(GL_UNIFORM_BUFFER, static_cast<GLuint>(pointIndex), m_descriptor);
     }
 
     void UniformBufferObject::setBindingPoint( 
@@ -48,7 +48,7 @@ namespace OGL {
         size_t offset, 
         size_t size
     ) {
-        glBindBufferRange(GL_UNIFORM_BUFFER, pointIndex, m_descriptor, offset, size);
+        glBindBufferRange(GL_UNIFORM_BUFFER, static_cast<GLuint>(pointIndex), m_descriptor, offset, size);
     }
 
 } // OGL

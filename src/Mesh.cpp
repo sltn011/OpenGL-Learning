@@ -43,63 +43,8 @@ namespace OGL {
         glBindVertexArray(0);
     }
 
-    void Mesh::draw(
+    void Mesh::loadToShader(
         OGL::Shader &shader
-    ) const {
-        unsigned int diffuseTexCnt  = 0;
-        unsigned int specularTexCnt = 0;
-        unsigned int normalTexCnt   = 0;
-        unsigned int heightTexCnt   = 0;
-        
-        for (size_t i = 0; i < m_textures.size(); ++i) {
-            glActiveTexture(GL_TEXTURE0 + i);
-
-            std::string name;
-
-            switch (m_textures[i].m_type) {
-            case TextureType::Diffuse:
-                name = "textureDiffuse[" + std::to_string(diffuseTexCnt++) + "]";
-                break;
-
-            case TextureType::Specular:
-                name = "textureSpecular[" + std::to_string(specularTexCnt++) + "]";
-                break;
-
-            case TextureType::Normal:
-                name = "textureNormal[" + std::to_string(normalTexCnt++) + "]";
-                break;
-
-            case TextureType::Height:
-                name = "textureHeight[" + std::to_string(heightTexCnt++) + "]";
-                break;
-
-            default:
-                continue;
-                break;
-            }
-
-            shader.setUniformInt("material." + std::move(name), i);
-            glBindTexture(GL_TEXTURE_2D, m_textures[i].m_id);
-        }
-        glActiveTexture(GL_TEXTURE0);
-
-        shader.setUniformInt("material.numDiffuseTextures", diffuseTexCnt);
-        shader.setUniformInt("material.numSpecularTextures", specularTexCnt);
-        shader.setUniformInt("material.numNormalTextures", normalTexCnt);
-        shader.setUniformInt("material.numHeightTextures", heightTexCnt);
-        shader.setUniformVec3("material.colorAmbient", m_colors.m_ambient);
-        shader.setUniformVec3("material.colorDiffuse", m_colors.m_diffuse);
-        shader.setUniformVec3("material.colorSpecular", m_colors.m_specular);
-        shader.setUniformFloat("material.specularExponent", m_colors.m_specularExponent);
-
-        glBindVertexArray(m_VAO);
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-    }
-
-    void Mesh::drawInstanced( 
-        OGL::Shader &shader, 
-        size_t amount
     ) const {
         unsigned int diffuseTexCnt = 0;
         unsigned int specularTexCnt = 0;
@@ -107,7 +52,7 @@ namespace OGL {
         unsigned int heightTexCnt = 0;
 
         for (size_t i = 0; i < m_textures.size(); ++i) {
-            glActiveTexture(GL_TEXTURE0 + i);
+            glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
 
             std::string name;
 
@@ -133,7 +78,7 @@ namespace OGL {
                 break;
             }
 
-            shader.setUniformInt("material." + std::move(name), i);
+            shader.setUniformInt("material." + std::move(name), static_cast<int>(i));
             glBindTexture(GL_TEXTURE_2D, m_textures[i].m_id);
         }
         glActiveTexture(GL_TEXTURE0);
@@ -146,9 +91,24 @@ namespace OGL {
         shader.setUniformVec3("material.colorDiffuse", m_colors.m_diffuse);
         shader.setUniformVec3("material.colorSpecular", m_colors.m_specular);
         shader.setUniformFloat("material.specularExponent", m_colors.m_specularExponent);
+    }
 
+    void Mesh::draw(
+        OGL::Shader &shader
+    ) const {
+        loadToShader(shader);
         glBindVertexArray(m_VAO);
-        glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, amount);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    }
+
+    void Mesh::drawInstanced( 
+        OGL::Shader &shader, 
+        uint32_t amount
+    ) const {
+        loadToShader(shader);
+        glBindVertexArray(m_VAO);
+        glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0, static_cast<GLsizei>(amount));
         glBindVertexArray(0);
     }
 
@@ -156,16 +116,16 @@ namespace OGL {
         Shader &shader
     ) const {
         glBindVertexArray(m_VAO);
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
 
     void Mesh::drawShapeInstanced(
         Shader &shader, 
-        size_t amount
+        uint32_t amount
     ) const {
         glBindVertexArray(m_VAO);
-        glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0, amount);
+        glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0, static_cast<GLsizei>(amount));
         glBindVertexArray(0);
     }
 

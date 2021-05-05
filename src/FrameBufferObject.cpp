@@ -27,6 +27,16 @@ namespace OGL {
         glDeleteFramebuffers(1, &m_descriptor);
     }
 
+    FrameBufferObject::FrameBufferObject(
+        FrameBufferObject &&rhs
+    ) noexcept : 
+        Descriptor{std::move(rhs)},
+        m_frameQuadVAO{ std::move(rhs.m_frameQuadVAO) },
+        m_frameQuadVBO{ std::move(rhs.m_frameQuadVBO) },
+        m_renderBufferObj{ std::move(rhs.m_renderBufferObj) } {
+        m_colorBufferObjs = std::move(rhs.m_colorBufferObjs);
+    }
+
     void FrameBufferObject::attachColorBuffer(
         GLenum framebufferType,
         GLenum colorAttachment, 
@@ -105,7 +115,7 @@ namespace OGL {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    std::map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(
+    std::unordered_map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(
     ) {
         return m_colorBufferObjs;
     }

@@ -45,24 +45,24 @@ namespace OGL::E1 {
             Object obj
         );
 
-        std::pair<Object, maybeCubemap> &addMirrorObj(
+        pMirrorCubemap &addMirrorObj(
             Object obj
         );
 
-        std::pair<Object, size_t> &addInstancedObj(
+        pObjInstancesNum &addInstancedObj(
             Object obj,
-            size_t numInstances
+            uint32_t numInstances
         );
 
-        std::pair<DirectionalLight, maybeShadowMap> &addDirLight(
+        pDirLightShadow &addDirLight(
             DirectionalLight dirLight
         );
 
-        std::pair<PointLight, maybeShadowCubemap> &addPointLight(
+        pPointLightShadows &addPointLight(
             PointLight pointLight
         );
 
-        std::pair<SpotLight, maybeShadowMap> &addSpotLight(
+        pSpotLightShadows &addSpotLight(
             SpotLight spotLight
         );
         

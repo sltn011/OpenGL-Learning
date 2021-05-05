@@ -120,15 +120,14 @@ namespace OGL {
 
     Shader::Shader( 
         Shader &&rhs
-    ) {
-        m_programmID = rhs.m_programmID;
-        rhs.m_programmID = 0;
-        m_showWarnings = rhs.m_showWarnings;
+    ) noexcept : 
+        m_programmID{ std::exchange(rhs.m_programmID, 0) },
+        m_showWarnings{ rhs.m_showWarnings } {
     }
 
     Shader &Shader::operator=( 
         Shader &&rhs
-    ) {
+    ) noexcept {
         std::swap(m_programmID, rhs.m_programmID);
         std::swap(m_showWarnings, rhs.m_showWarnings);
         return *this;
@@ -257,7 +256,7 @@ namespace OGL {
             }
             return false;
         }
-        glUniformBlockBinding(m_programmID, blockIndex, bindingPointIndex);
+        glUniformBlockBinding(m_programmID, blockIndex, static_cast<GLuint>(bindingPointIndex));
         return true;
     }
 
@@ -283,7 +282,7 @@ namespace OGL {
         unsigned int shaderId
     ) {
         std::string infoLog(512, ' ');
-        glGetShaderInfoLog(shaderId, infoLog.size(), nullptr, infoLog.data());
+        glGetShaderInfoLog(shaderId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 
@@ -299,7 +298,7 @@ namespace OGL {
         unsigned int programmId
     ) {
         std::string infoLog(512, ' ');
-        glGetProgramInfoLog(programmId, infoLog.size(), nullptr, infoLog.data());
+        glGetProgramInfoLog(programmId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 

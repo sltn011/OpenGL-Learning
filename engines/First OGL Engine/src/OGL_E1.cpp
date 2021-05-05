@@ -296,7 +296,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
+    pMirrorCubemap &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
@@ -319,7 +319,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
+    pMirrorCubemap &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
@@ -340,7 +340,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
+    pMirrorCubemap &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
@@ -365,7 +365,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, maybeCubemap> &Engine1Base::addMirrorObject(
+    pMirrorCubemap &Engine1Base::addMirrorObject(
         uint32_t modelID,
         glm::vec3 pos,
         float scale,
@@ -386,7 +386,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, uint32_t> &Engine1Base::addInstancedObject(
+    pObjInstancesNum &Engine1Base::addInstancedObject(
         uint32_t modelID,
         uint32_t numInstances,
         glm::vec3 pos,
@@ -411,7 +411,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, uint32_t> &Engine1Base::addInstancedObject(
+    pObjInstancesNum &Engine1Base::addInstancedObject(
         uint32_t modelID,
         uint32_t numInstances,
         glm::vec3 pos,
@@ -434,7 +434,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, uint32_t> &Engine1Base::addInstancedObject(
+    pObjInstancesNum &Engine1Base::addInstancedObject(
         uint32_t modelID,
         uint32_t numInstances,
         glm::vec3 pos,
@@ -461,7 +461,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<Object, uint32_t> &Engine1Base::addInstancedObject(
+    pObjInstancesNum &Engine1Base::addInstancedObject(
         uint32_t modelID,
         uint32_t numInstances,
         glm::vec3 pos,
@@ -484,7 +484,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<DirectionalLight, maybeShadowMap> &Engine1Base::addDirLight(
+    pDirLightShadow &Engine1Base::addDirLight(
         glm::vec3 direction,
         glm::vec3 color
     ) {
@@ -500,7 +500,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<PointLight, maybeShadowCubemap> &Engine1Base::addPointLight(
+    pPointLightShadows &Engine1Base::addPointLight(
         glm::vec3 position,
         glm::vec3 color,
         float attenuationConst,
@@ -522,7 +522,7 @@ namespace OGL::E1 {
         );
     }
 
-    std::pair<SpotLight, maybeShadowMap> &Engine1Base::addSpotLight(
+    pSpotLightShadows &Engine1Base::addSpotLight(
         glm::vec3 position,
         glm::vec3 direction,
         glm::vec3 color,

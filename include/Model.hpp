@@ -64,7 +64,7 @@ namespace OGL {
 
         void drawInstanced( 
             Shader &shader, 
-            size_t amount
+            uint32_t amount
         ) const;
 
         void drawShape(
@@ -73,7 +73,7 @@ namespace OGL {
 
         void drawShapeInstanced(
             Shader &shader,
-            size_t amount
+            uint32_t amount
         ) const;
 
         void setVertexAttribInstancedModelMat4( 

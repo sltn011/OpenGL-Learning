@@ -6,7 +6,7 @@
 
 namespace OGL {
 
-    enum CameraMovementDirection {
+    enum class CameraMovementDirection {
         Forward,
         Backward,
         Left,

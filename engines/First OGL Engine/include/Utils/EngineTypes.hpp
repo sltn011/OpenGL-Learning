@@ -79,23 +79,30 @@ namespace OGL {
         using maybeShadowMap     = std::optional<ShadowMap>;
         using maybeShadowCubemap = std::optional<ShadowCubemap>;
 
-        using smartCamPtr      = std::unique_ptr<BasicCamera>;
+        using smartCamPtr        = std::unique_ptr<BasicCamera>;
+                                 
+        using pMirrorCubemap     = std::pair<Object, maybeCubemap>;
+        using pObjInstancesNum   = std::pair<Object, uint32_t>;
+                                 
+        using modelsTable        = std::unordered_map<uint32_t, Model>;
+        using objectsIDs         = std::unordered_map<uint32_t, uint32_t>;
+        using objectsVec         = std::vector<Object>;
+        using mirrorObjsVec      = std::vector<pMirrorCubemap>;
+        using instancedObjsVec   = std::vector<pObjInstancesNum>;
+        using gameObjects        = std::unordered_map<uint32_t, objectsVec>;
 
-        using modelsTable      = std::unordered_map<uint32_t, Model>;
-        using objectsIDs       = std::unordered_map<uint32_t, uint32_t>;
-        using objectsVec       = std::vector<Object>;
-        using mirrorObjsVec    = std::vector<std::pair<Object, maybeCubemap>>;
-        using instancedObjsVec = std::vector<std::pair<Object, uint32_t>>;
-        using gameObjects      = std::unordered_map<uint32_t, objectsVec>;
+        using pDirLightShadow    = std::pair<DirectionalLight, maybeShadowMap>;
+        using pPointLightShadows = std::pair<PointLight, maybeShadowCubemap>;
+        using pSpotLightShadows  = std::pair<SpotLight, maybeShadowMap>;
 
-        using dirLights   = std::vector<std::pair<DirectionalLight, maybeShadowMap>>;
-        using pointLights = std::vector<std::pair<PointLight, maybeShadowCubemap>>;
-        using spotLights  = std::vector<std::pair<SpotLight, maybeShadowMap>>;
-
-        using shadersPack = std::vector<Shader>;
-
-        enum Events;
-        using eventsQueue = std::queue<Events>;
+        using dirLights          = std::vector<pDirLightShadow>;
+        using pointLights        = std::vector<pPointLightShadows>;
+        using spotLights         = std::vector<pSpotLightShadows>;
+                                 
+        using shadersPack        = std::vector<Shader>;
+                                 
+        enum Events;             
+        using eventsQueue        = std::queue<Events>;
 
         namespace GUI {
             

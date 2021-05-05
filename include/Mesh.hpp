@@ -54,6 +54,10 @@ namespace OGL {
         void setup(
         );
 
+        void loadToShader(
+            OGL::Shader& shader
+        ) const;
+
      public:
         
         Mesh( 
@@ -69,7 +73,7 @@ namespace OGL {
 
         void drawInstanced( 
             OGL::Shader &shader,
-            size_t amount
+            uint32_t amount
         ) const;
 
         void drawShape(
@@ -78,7 +82,7 @@ namespace OGL {
 
         void drawShapeInstanced(
             Shader &shader,
-            size_t amount
+            uint32_t amount
         ) const;
 
         void setVertexAttribInstancedModelMat4( 

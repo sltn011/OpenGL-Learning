@@ -8,7 +8,7 @@
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
 #include "Shader.hpp"
-#include <map>
+#include <unordered_map>
 
 namespace OGL {
 
@@ -18,7 +18,7 @@ namespace OGL {
         VertexArrayObject m_frameQuadVAO;
         VertexBufferObject m_frameQuadVBO;
 
-        std::map<GLenum, ColorBufferObject> m_colorBufferObjs;
+        std::unordered_map<GLenum, ColorBufferObject> m_colorBufferObjs;
         RenderBufferObject m_renderBufferObj;
 
      protected:
@@ -42,7 +42,7 @@ namespace OGL {
 
         FrameBufferObject(
             FrameBufferObject &&rhs
-        ) = default;
+        ) noexcept;
 
         FrameBufferObject &operator=( 
             FrameBufferObject const &rhs
@@ -103,7 +103,7 @@ namespace OGL {
             GLenum colorAttachment
         );
 
-        std::map<GLenum, ColorBufferObject> &getColorBuffers(
+        std::unordered_map<GLenum, ColorBufferObject> &getColorBuffers(
         );
 
         RenderBufferObject &getRenderBuffer(

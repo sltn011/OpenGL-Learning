@@ -63,7 +63,7 @@ namespace OGL {
 
         Shader( 
             Shader &&rhs
-        );
+        ) noexcept;
 
         Shader &operator=(
             Shader const &rhs
@@ -71,7 +71,7 @@ namespace OGL {
 
         Shader &operator=( 
             Shader &&rhs
-        );
+        ) noexcept;
 
         ~Shader(
         );

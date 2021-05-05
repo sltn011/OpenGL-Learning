@@ -23,8 +23,6 @@ public:
     } {
     }
 
-    OGL::VertexBufferObject m_asteroidsVBO;
-
     bool userCreate(
     ) override {
 

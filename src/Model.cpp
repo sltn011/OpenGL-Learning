@@ -121,7 +121,7 @@ namespace OGL {
         std::vector<ModelTexture> textures;
         for (size_t i = 0; i < material->GetTextureCount(texType); ++i) {
             aiString str;
-            material->GetTexture(texType, i, &str);
+            material->GetTexture(texType, static_cast<unsigned int>(i), &str);
 
             bool alreadyLoaded = false;
             for (size_t i = 0; i < m_loadedTextures.size(); ++i) {
@@ -209,7 +209,7 @@ namespace OGL {
 
     void Model::drawInstanced( 
         Shader &shader,
-        size_t amount
+        uint32_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].drawInstanced(shader, amount);
@@ -226,7 +226,7 @@ namespace OGL {
 
     void Model::drawShapeInstanced(
         Shader &shader, 
-        size_t amount
+        uint32_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].drawShapeInstanced(shader, amount);

@@ -125,7 +125,7 @@ namespace OGL::E1 {
             glm::vec3 eulerAngles
         );
 
-        std::pair<Object, maybeCubemap> &addMirrorObject(
+        pMirrorCubemap &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
             float scale = 1.0f,
@@ -133,14 +133,14 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         );
 
-        std::pair<Object, maybeCubemap> &addMirrorObject(
+        pMirrorCubemap &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::quat quat
         );
 
-        std::pair<Object, maybeCubemap> &addMirrorObject(
+        pMirrorCubemap &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
@@ -149,14 +149,14 @@ namespace OGL::E1 {
             float zAngle
         );
 
-        std::pair<Object, maybeCubemap> &addMirrorObject(
+        pMirrorCubemap &addMirrorObject(
             uint32_t modelID,
             glm::vec3 pos,
             float scale,
             glm::vec3 eulerAngles
         );
 
-        std::pair<Object, uint32_t> &addInstancedObject(
+        pObjInstancesNum &addInstancedObject(
             uint32_t modelID,
             uint32_t numInstances,
             glm::vec3 pos = glm::vec3{ 0.0f, 0.0f, 0.0f },
@@ -165,7 +165,7 @@ namespace OGL::E1 {
             glm::vec3 rotationAxis = glm::vec3{ 0.0f, 1.0f, 0.0f }
         );
 
-        std::pair<Object, uint32_t> &addInstancedObject(
+        pObjInstancesNum &addInstancedObject(
             uint32_t modelID,
             uint32_t numInstances,
             glm::vec3 pos,
@@ -173,7 +173,7 @@ namespace OGL::E1 {
             glm::quat quat
         );
 
-        std::pair<Object, uint32_t> &addInstancedObject(
+        pObjInstancesNum &addInstancedObject(
             uint32_t modelID,
             uint32_t numInstances,
             glm::vec3 pos,
@@ -183,7 +183,7 @@ namespace OGL::E1 {
             float zAngle
         );
 
-        std::pair<Object, uint32_t> &addInstancedObject(
+        pObjInstancesNum &addInstancedObject(
             uint32_t modelID,
             uint32_t numInstances,
             glm::vec3 pos,
@@ -191,12 +191,12 @@ namespace OGL::E1 {
             glm::vec3 eulerAngles
         );
 
-        std::pair<DirectionalLight, maybeShadowMap> &addDirLight(
+        pDirLightShadow &addDirLight(
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)
         );
 
-        std::pair<PointLight, maybeShadowCubemap> &addPointLight(
+        pPointLightShadows &addPointLight(
             glm::vec3 position,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
             float attenuationConst = 1.0f,
@@ -204,7 +204,7 @@ namespace OGL::E1 {
             float attenuationQuadratic = 0.032f
         );
 
-        std::pair<SpotLight, maybeShadowMap> &addSpotLight(
+        pSpotLightShadows &addSpotLight(
             glm::vec3 position,
             glm::vec3 direction,
             glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f),
