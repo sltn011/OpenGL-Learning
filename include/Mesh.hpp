@@ -5,6 +5,9 @@
 #include "glm/glm.hpp"
 
 #include "Shader.hpp"
+#include "VertexArrayObject.hpp"
+#include "VertexBufferObject.hpp"
+#include "ElementBufferObject.hpp"
 
 #include <vector>
 #include <memory>
@@ -20,7 +23,7 @@ namespace OGL {
         glm::vec2 m_tex;
     };
 
-    enum TextureType {
+    enum class TextureType {
         Diffuse,
         Specular,
         Normal,
@@ -41,9 +44,9 @@ namespace OGL {
     };
 
     class Mesh {
-        unsigned int m_VAO;
-        unsigned int m_VBO;
-        unsigned int m_EBO;
+        VertexArrayObject   m_VAO;
+        VertexBufferObject  m_VBO;
+        ElementBufferObject m_EBO;
 
         std::vector<Vertex>       m_vertices;
         std::vector<unsigned int> m_indices;
@@ -66,6 +69,34 @@ namespace OGL {
             std::vector<ModelTexture> textures,
             Colors color
         );
+
+        ~Mesh(
+        );
+
+        Mesh(
+            Mesh const &rhs
+        ) = delete;
+
+        Mesh &operator=(
+            Mesh const &rhs
+        ) = delete;
+
+        /**
+         * @brief Mesh move constructor
+         * @param rhs Moved value
+        */
+        Mesh(
+            Mesh &&rhs
+        ) noexcept;
+
+        /**
+         * @brief Mesh move assignment
+         * @param rhs Moved value
+         * @return Reference to *this
+        */
+        Mesh &operator=(
+            Mesh &&rhs
+        ) noexcept;
 
         void draw( 
             OGL::Shader &shader

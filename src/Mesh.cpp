@@ -14,18 +14,65 @@ namespace OGL {
         setup();
     }
 
+    Mesh::~Mesh(
+    ) {
+        for (size_t i = 0; i < m_textures.size(); ++i) {
+            glDeleteTextures(1, &(m_textures[i].m_id));
+        }
+    }
+
+    Mesh::Mesh(
+        Mesh &&rhs
+    ) noexcept :
+        m_VAO{ std::move(rhs.m_VAO) },
+        m_VBO{ std::move(rhs.m_VBO) },
+        m_EBO{ std::move(rhs.m_EBO) },
+        m_vertices{ std::move(rhs.m_vertices) },
+        m_indices{ std::move(rhs.m_indices) },
+        m_textures{ rhs.m_textures.size() },
+        m_colors{ std::move(rhs.m_colors) } {
+
+        for (size_t i = 0; i < m_textures.size(); ++i) {
+            m_textures[i].m_id = std::exchange(rhs.m_textures[i].m_id, 0);
+            m_textures[i].m_type = rhs.m_textures[i].m_type;
+            m_textures[i].m_path = std::move(rhs.m_textures[i].m_path);
+        }
+
+    }
+
+    Mesh &Mesh::operator=(
+        Mesh &&rhs
+    ) noexcept {
+        m_VAO = std::move(rhs.m_VAO);
+        m_VBO = std::move(rhs.m_VBO);
+        m_EBO = std::move(rhs.m_EBO);
+        m_vertices = std::move(rhs.m_vertices);
+        m_indices  = std::move(rhs.m_indices);
+        m_colors   = std::move(rhs.m_colors);
+
+        for (size_t i = 0; i < m_textures.size(); ++i) {
+            glDeleteTextures(1, &(m_textures[i].m_id));
+        }
+
+        m_textures.resize(rhs.m_textures.size());
+
+        for (size_t i = 0; i < m_textures.size(); ++i) {
+            m_textures[i].m_id = std::exchange(rhs.m_textures[i].m_id, 0);
+            m_textures[i].m_type = rhs.m_textures[i].m_type;
+            m_textures[i].m_path = std::move(rhs.m_textures[i].m_path);
+        }
+
+        return *this;
+    }
+
     void Mesh::setup(
     ) {
-        glGenVertexArrays(1, &m_VAO);
-        glGenBuffers(1, &m_VBO);
-        glGenBuffers(1, &m_EBO);
+        m_VAO.bind();
 
-        glBindVertexArray(m_VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        m_VBO.bind();
         glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(*m_vertices.data()), m_vertices.data(), GL_STATIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+        m_EBO.bind();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(*m_indices.data()), m_indices.data(), GL_STATIC_DRAW);
 
         // Vertex pos
@@ -40,7 +87,7 @@ namespace OGL {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_tex));
         glEnableVertexAttribArray(2);
 
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
     void Mesh::loadToShader(
@@ -97,9 +144,9 @@ namespace OGL {
         OGL::Shader &shader
     ) const {
         loadToShader(shader);
-        glBindVertexArray(m_VAO);
+        m_VAO.bind();
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
     void Mesh::drawInstanced( 
@@ -107,38 +154,38 @@ namespace OGL {
         uint32_t amount
     ) const {
         loadToShader(shader);
-        glBindVertexArray(m_VAO);
+        m_VAO.bind();
         glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0, static_cast<GLsizei>(amount));
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
     void Mesh::drawShape(
         Shader &shader
     ) const {
-        glBindVertexArray(m_VAO);
+        m_VAO.bind();
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
     void Mesh::drawShapeInstanced(
         Shader &shader, 
         uint32_t amount
     ) const {
-        glBindVertexArray(m_VAO);
+        m_VAO.bind();
         glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0, static_cast<GLsizei>(amount));
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
     void Mesh::setVertexAttribInstancedModelMat4( 
         int attribLocation
     ) {
-        glBindVertexArray(m_VAO);
+        m_VAO.bind();
         for (int i = 0; i < 4; ++i) {
             glEnableVertexAttribArray(attribLocation + i);
             glVertexAttribPointer(attribLocation + i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(i * sizeof(glm::vec4)));
             glVertexAttribDivisor(attribLocation + i, 1);
         }
-        glBindVertexArray(0);
+        VertexArrayObject::unbind();
     }
 
 } // OGL
