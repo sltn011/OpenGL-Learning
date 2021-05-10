@@ -36,7 +36,7 @@ namespace OGL {
 
     void ShadowMap::bindTexture() {
         glActiveTexture(m_mapTextureUnit);
-        glBindTexture(GL_TEXTURE_2D, textureValue());
+        glBindTexture(GL_TEXTURE_2D, value());
     }
 
     void ShadowMap::unbindTexture() {
@@ -44,7 +44,7 @@ namespace OGL {
         glActiveTexture(GL_TEXTURE0);
     }
 
-    unsigned int ShadowMap::textureValue(
+    unsigned int ShadowMap::value(
     ) {
         return m_fbo.getColorBuffers()[GL_DEPTH_ATTACHMENT].value();
     }

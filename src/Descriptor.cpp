@@ -19,9 +19,7 @@ namespace OGL {
     Descriptor &Descriptor::operator=( 
         Descriptor &&rhs
     ) noexcept {
-        unsigned int buf = m_descriptor;
-        m_descriptor = rhs.m_descriptor;
-        rhs.m_descriptor = buf;
+        std::swap(m_descriptor, rhs.m_descriptor);
         return *this;
     }
 

@@ -201,7 +201,7 @@ namespace OGL {
 
     bool Shader::setUniformMatrix4( 
         std::string const &name, 
-        glm::mat4 const &matrix, 
+        glm::mat4 const &val, 
         bool doTranspose
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
@@ -211,13 +211,13 @@ namespace OGL {
             }
             return false;
         }
-        glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(matrix));
+        glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(val));
         return true;
     }
 
     bool Shader::setUniformVec3( 
         std::string const &name, 
-        glm::vec3 const &vec
+        glm::vec3 const &val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -226,13 +226,13 @@ namespace OGL {
             }
             return false;
         }
-        glUniform3fv(loc, 1, &vec[0]);
+        glUniform3fv(loc, 1, &(val.x));
         return true;
     }
 
     bool Shader::setUniformVec4(
         std::string const &name,
-        glm::vec4 const &vec
+        glm::vec4 const &val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -241,7 +241,7 @@ namespace OGL {
             }
             return false;
         }
-        glUniform4fv(loc, 1, &vec[0]);
+        glUniform4fv(loc, 1, &(val.x));
         return true;
     }
 

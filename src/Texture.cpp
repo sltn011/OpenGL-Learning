@@ -11,11 +11,10 @@ namespace OGL {
     Texture::Texture( 
         std::string const &folderPath,
         std::string const &fileName, 
-        GLenum textureType, 
-        bool gamma
+        GLenum textureType
     ) {
         glGenTextures(1, &m_descriptor);
-        load(folderPath, fileName, textureType, gamma);
+        load(folderPath, fileName, textureType);
     }
 
     Texture::~Texture(
@@ -37,8 +36,7 @@ namespace OGL {
     void Texture::load( 
         std::string const &folderPath,
         std::string const &fileName,
-        GLenum textureType, 
-        bool gamma
+        GLenum textureType
     ) {
         std::string filePath = folderPath + '/' + fileName;
         

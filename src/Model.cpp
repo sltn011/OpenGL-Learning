@@ -134,7 +134,7 @@ namespace OGL {
 
             if (!alreadyLoaded) {
                 ModelTexture texture;
-                texture.m_id = textureFromFile(str.C_Str(), m_directory);
+                texture.m_id = textureFromFile(m_directory, str.C_Str());
                 texture.m_type = typeName;
                 texture.m_path = str.C_Str();
                 textures.push_back(texture);
@@ -145,9 +145,8 @@ namespace OGL {
     }
 
     int Model::textureFromFile(
-        std::string const &path,
         std::string const &directory,
-        bool gamma
+        std::string const &path
     ) {
         std::string filename = directory + '/' + std::string{ path };
 

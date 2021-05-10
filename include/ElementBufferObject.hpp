@@ -1,3 +1,7 @@
+/**
+* @file ElementBufferObject.hpp
+*/
+
 #ifndef OGL_EBO_H
 #define OGL_EBO_H
 
@@ -6,11 +10,21 @@
 
 namespace OGL {
 
+    /**
+     * @brief Class for OpenGL's ElementBufferObject to store indices data
+    */
     class ElementBufferObject : public Descriptor {
      public:
+
+        /**
+         * @brief ElementBufferObject constructor
+        */
         ElementBufferObject(
         );
 
+        /**
+         * @brief ElementBufferObject destructor
+        */
         ~ElementBufferObject(
         );
 
@@ -30,9 +44,15 @@ namespace OGL {
             ElementBufferObject &&rhs
         ) = default;
 
+        /**
+         * @brief Binds ElementBufferObject
+        */
         void bind(
         ) const;
 
+        /**
+         * @brief Unbinds ElementBufferObject
+        */
         static void unbind(
         );
     };

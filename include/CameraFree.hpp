@@ -1,3 +1,7 @@
+/**
+* @file CameraFree.hpp
+*/
+
 #ifndef OGL_CAMERAFREE_H
 #define OGL_CAMERAFREE_H
 
@@ -5,8 +9,22 @@
 
 namespace OGL {
 
+    /**
+     * @brief Free flying camera class
+    */
     class CameraFree : public BasicCamera {
      public:
+
+         /**
+         * @brief CameraFree constructor
+         * @param positionVec Position in world space
+         * @param forwardVec Unit vector of camera's look direction
+         * @param moveSpeed Movement speed multiplier
+         * @param fov Field of view in degrees
+         * @param aspect Aspect ratio (width/height)
+         * @param near Near clip plane
+         * @param far Far clip plane
+        */
         CameraFree( 
             glm::vec3 positionVec, 
             glm::vec3 forwardVec, 
@@ -17,11 +35,23 @@ namespace OGL {
             float far
         );
 
+        /**
+         * @brief Override of BasicCamera method to handle camera's movement input
+         * @param dir Movement direction
+         * @param deltaTime Time between this frame and previous one in seconds
+        */
         void processMoveInput( 
             CameraMovementDirection dir,
             float deltaTime
         ) override;
 
+        /**
+         * @brief Override of BasicCamera method to handle camera's rotation input
+         * @param xOffset Delta of X rotation(from left to right)
+         * @param yOffset Delta of Y rotation(from bottom to top)
+         * @param sensitivity Rotation delta's multiplier
+         * @param constrainPitch If set - should limit pitch from reaching +-90.0f
+        */
         void processRotateInput( 
             float xOffset,
             float yOffset, 

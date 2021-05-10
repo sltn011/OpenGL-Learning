@@ -1,3 +1,7 @@
+/**
+* @file VertexArrayObject.hpp
+*/
+
 #ifndef OGL_VBO_H
 #define OGL_VBO_H
 
@@ -6,11 +10,20 @@
 
 namespace OGL {
 
+    /**
+     * @brief Class for OpenGL's VertexBufferObject to store vertices data
+    */
     class VertexBufferObject : public Descriptor {
      public:
+        /**
+        * @brief VertexBufferObject constructor
+        */
         VertexBufferObject(
         );
 
+        /**
+         * @brief VertexBufferObject constructor
+        */
         ~VertexBufferObject(
         );
 
@@ -30,9 +43,15 @@ namespace OGL {
             VertexBufferObject &&rhs
         ) = default;
 
+        /**
+         * @brief Binds VertexBufferObject
+        */
         void bind(
         ) const;
 
+        /**
+         * @brief Unbinds VertexBufferObject
+        */
         static void unbind(
         );
     };

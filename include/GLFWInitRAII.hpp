@@ -1,3 +1,7 @@
+/**
+* @file GLFWInitRAII.hpp
+*/
+
 #ifndef OGL_GLFWINITRAII_H
 #define OGL_GLFWINITRAII_H
 
@@ -7,10 +11,20 @@
 
 namespace OGL {
 
+    /**
+     * @brief Class that provides initialization of GLFW context following RAII idiom
+    */
     struct GLFWInitRAII {
+
+        /**
+         * @brief Constructor that initializes GLFW
+        */
         GLFWInitRAII(
         );
 
+        /**
+         * @brief Destructor that deallocates GLFW data
+        */
         ~GLFWInitRAII(
         );
 
