@@ -62,7 +62,7 @@ namespace OGL {
     /**
      * @brief Struct that represents material used in Model's Mesh
     */
-    struct Colors {
+    struct Material {
         glm::vec3 m_ambient;
         glm::vec3 m_diffuse;
         glm::vec3 m_specular;
@@ -92,7 +92,7 @@ namespace OGL {
         std::vector<ModelTexture> m_textures;
 
         /// Mesh material
-        Colors                    m_colors;
+        Material                  m_material;
         
         /**
          * @brief Loads Mesh vertices and indices data into m_VAO, m_VBO, m_EBO
@@ -121,7 +121,7 @@ namespace OGL {
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
             std::vector<ModelTexture> textures,
-            Colors color
+            Material material
         );
 
         /**

@@ -49,8 +49,8 @@ namespace OGL {
     ) {
         std::vector<Vertex>       vertices(mesh->mNumVertices);
         std::vector<unsigned int> indices;
-        std::vector<ModelTexture>      textures;
-        Colors                    colors{};
+        std::vector<ModelTexture> textures;
+        Material                  material{};
 
         for (size_t i = 0; i < mesh->mNumVertices; ++i) {
             vertices[i].m_pos.x = mesh->mVertices[i].x;
@@ -78,39 +78,38 @@ namespace OGL {
         }
 
         if (mesh->mMaterialIndex >= 0) {
-            aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+            aiMaterial *meshMaterialPtr = scene->mMaterials[mesh->mMaterialIndex];
 
-            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(material, aiTextureType_DIFFUSE, TextureType::Diffuse);
+            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_DIFFUSE, TextureType::Diffuse);
             textures.insert(textures.end(), diffuseMap.begin(), diffuseMap.end());
 
-            std::vector<ModelTexture> specularMap = loadMaterialTexture(material, aiTextureType_SPECULAR, TextureType::Specular);
+            std::vector<ModelTexture> specularMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_SPECULAR, TextureType::Specular);
             textures.insert(textures.end(), specularMap.begin(), specularMap.end());
 
-            std::vector<ModelTexture> normalMap = loadMaterialTexture(material, aiTextureType_NORMALS, TextureType::Normal);
+            std::vector<ModelTexture> normalMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_NORMALS, TextureType::Normal);
             textures.insert(textures.end(), normalMap.begin(), normalMap.end());
 
-            std::vector<ModelTexture> heightMap = loadMaterialTexture(material, aiTextureType_HEIGHT, TextureType::Height);
+            std::vector<ModelTexture> heightMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_HEIGHT, TextureType::Height);
             textures.insert(textures.end(), heightMap.begin(), heightMap.end());
 
             aiColor3D amb{};
-            material->Get(AI_MATKEY_COLOR_AMBIENT, amb);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_AMBIENT, amb);
 
             aiColor3D diff{};
-            material->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
 
             aiColor3D spec{};
-            material->Get(AI_MATKEY_COLOR_SPECULAR, spec);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_SPECULAR, spec);
 
             for (int i = 0; i < 3; ++i) {
-                colors.m_ambient[i] = amb[i];
-                colors.m_diffuse[i] = diff[i];
-                colors.m_specular[i] = spec[i];
+                material.m_ambient[i] = amb[i];
+                material.m_diffuse[i] = diff[i];
+                material.m_specular[i] = spec[i];
             }
-
-            material->Get(AI_MATKEY_SHININESS, colors.m_specularExponent);
+            meshMaterialPtr->Get(AI_MATKEY_SHININESS, material.m_specularExponent);
         }
         
-        return Mesh{ vertices, indices, textures, colors };
+        return Mesh{ vertices, indices, textures, material };
     }
 
     std::vector<ModelTexture> Model::loadMaterialTexture( 

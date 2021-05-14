@@ -6,11 +6,11 @@ namespace OGL {
         std::vector<Vertex> vertices,
         std::vector<unsigned int> indices,
         std::vector<ModelTexture> textures,
-        Colors colors
+        Material material
     ) : m_vertices{ std::move(vertices) }, 
         m_indices { std::move(indices)  }, 
         m_textures{ std::move(textures) }, 
-        m_colors{colors} {
+        m_material{ material } {
         setup();
     }
 
@@ -30,7 +30,7 @@ namespace OGL {
         m_vertices{ std::move(rhs.m_vertices) },
         m_indices{ std::move(rhs.m_indices) },
         m_textures{ rhs.m_textures.size() },
-        m_colors{ std::move(rhs.m_colors) } {
+        m_material{ std::move(rhs.m_material) } {
 
         for (size_t i = 0; i < m_textures.size(); ++i) {
             m_textures[i].m_id = std::exchange(rhs.m_textures[i].m_id, 0);
@@ -46,9 +46,9 @@ namespace OGL {
         m_VAO = std::move(rhs.m_VAO);
         m_VBO = std::move(rhs.m_VBO);
         m_EBO = std::move(rhs.m_EBO);
-        m_vertices = std::move(rhs.m_vertices);
-        m_indices  = std::move(rhs.m_indices);
-        m_colors   = std::move(rhs.m_colors);
+        m_vertices   = std::move(rhs.m_vertices);
+        m_indices    = std::move(rhs.m_indices);
+        m_material   = std::move(rhs.m_material);
 
         for (size_t i = 0; i < m_textures.size(); ++i) {
             glDeleteTextures(1, &(m_textures[i].m_id));
@@ -134,10 +134,10 @@ namespace OGL {
         shader.setUniformInt("material.numSpecularTextures", specularTexCnt);
         shader.setUniformInt("material.numNormalTextures", normalTexCnt);
         shader.setUniformInt("material.numHeightTextures", heightTexCnt);
-        shader.setUniformVec3("material.colorAmbient", m_colors.m_ambient);
-        shader.setUniformVec3("material.colorDiffuse", m_colors.m_diffuse);
-        shader.setUniformVec3("material.colorSpecular", m_colors.m_specular);
-        shader.setUniformFloat("material.specularExponent", m_colors.m_specularExponent);
+        shader.setUniformVec3("material.colorAmbient", m_material.m_ambient);
+        shader.setUniformVec3("material.colorDiffuse", m_material.m_diffuse);
+        shader.setUniformVec3("material.colorSpecular", m_material.m_specular);
+        shader.setUniformFloat("material.specularExponent", m_material.m_specularExponent);
     }
 
     void Mesh::draw(
