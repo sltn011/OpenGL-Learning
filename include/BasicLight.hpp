@@ -16,14 +16,14 @@ namespace OGL {
     */
     class BasicLight {
      public:
-        /// RGB Color of emitted light
+        /// RGB Color of emitted light represented as floats 
         glm::vec3 m_color;
 
      public:
 
         /**
          * @brief Basic light constructor
-         * @param color RGB Color of emitted light
+         * @param color RGB Color of emitted light represented as floats 
         */
         BasicLight(
             glm::vec3 color = glm::vec3{ 1.0f, 1.0f, 1.0f }

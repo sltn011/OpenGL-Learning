@@ -691,6 +691,10 @@ namespace OGL::E1 {
 
     void Engine1Base::objectCursorPickerHandler(
     ) {
+        if (!m_coloredShapesRenderer) {
+            return;
+        }
+
         int screenWidth, screenHeight;
         glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
 

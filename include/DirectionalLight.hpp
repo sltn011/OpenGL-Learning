@@ -22,7 +22,7 @@ namespace OGL {
         /**
          * @brief DirectionalLight constructor
          * @param direction Light ray direction unit vector
-         * @param color Light source RGB color
+         * @param color Light source RGB color represented as floats 
         */
         DirectionalLight( 
             glm::vec3 direction, 

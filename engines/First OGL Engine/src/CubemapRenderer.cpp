@@ -11,13 +11,13 @@ namespace OGL::E1 {
         Scene &scene, 
         int cubemapSize, 
         GLenum cubemapTextureUnit,
-        glm::vec3 mirrorPos, 
+        glm::vec3 cubemapPos, 
         maybeNormalRenderer &normalRenderer,
         maybeSkyboxRenderer &skyboxRenderer,
         maybeTransparentRenderer &transparentRenderer,
         maybeInstancesRenderer &instancesRenderer
     ) {
-        CameraCubemap cameraCubemap(mirrorPos, 0.1f, 100.0f);
+        CameraCubemap cameraCubemap(cubemapPos, 0.1f, 100.0f);
         Cubemap cubemap(cubemapSize, cubemapTextureUnit);
         
         FrameBufferObject framebuffer;
@@ -32,7 +32,7 @@ namespace OGL::E1 {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubemap.value(), 0);
             cameraCubemap.setSide(i);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            renderSide(scene, &cameraCubemap, cubemap, normalRenderer, skyboxRenderer, transparentRenderer, instancesRenderer);
+            renderSide(scene, &cameraCubemap, normalRenderer, skyboxRenderer, transparentRenderer, instancesRenderer);
         }
 
         framebuffer.unbind(GL_FRAMEBUFFER);
@@ -47,7 +47,6 @@ namespace OGL::E1 {
     void CubemapRenderer::renderSide(
         Scene &scene,
         CameraCubemap const *cubemapCamera,
-        Cubemap &cubemap,
         maybeNormalRenderer &normalRenderer,
         maybeSkyboxRenderer &skyboxRenderer,
         maybeTransparentRenderer &transparentRenderer,

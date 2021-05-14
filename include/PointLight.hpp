@@ -32,7 +32,7 @@ namespace OGL {
         /**
          * @brief PointLight constructor
          * @param position PointLight position in world space
-         * @param color PointLight color
+         * @param color PointLight RGB color represented as floats 
          * @param attenuationConst Attenuation constant term
          * @param attenuationLinear Attenuation linear term
          * @param attenuationQuadratic Attenuation quadratic term

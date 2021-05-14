@@ -29,7 +29,7 @@ namespace OGL {
          * @brief SpotLight constructor
          * @param position SpotLight position in world space
          * @param direction Direction of light's rays
-         * @param color SpotLight color
+         * @param color SpotLight RGB color represented as floats 
          * @param cutOffAngle Inner cutoff angle in degrees
          * @param cutOffOuterAngle Outer cutoff angle in degrees
          * @param attenuationConst Attenuation constant term
