@@ -1,3 +1,7 @@
+/**
+* @file ObjectTransformWindow.hpp
+*/
+
 #ifndef OGL_E1_GUI_OBJECTTRANSFORMWINDOW
 #define OGL_E1_GUI_OBJECTTRANSFORMWINDOW
 
@@ -6,24 +10,44 @@
 
 namespace OGL::E1::GUI {
 
+    /**
+     * @brief GUI window for changing Object's position, scale and rotation
+    */
     class ObjectTransformWindow : public BasicWindow {
+     private:
+        /// Pointer to selected Object that can be modified, or nullptr if none selected
+        Object *m_obj;
+
      public:
-         ObjectTransformWindow(
-             bool isEnabled = false
-         );
+        /**
+         * @brief ObjectTransformWindow constructor
+         * @param isEnabled isEnabled Flag which indicates if window should be rendered or not
+        */
+        explicit ObjectTransformWindow(
+            bool isEnabled = false
+        );
 
-         void render(
-         ) override;
+        /**
+         * @brief Renders ObjectTransformWindow
+        */
+        void render(
+        ) override;
 
-         void setObject(
-             Object *obj
-         );
+        /**
+         * @brief Sets Object that can be modified using ObjectTransformWindow
+         * @param obj Pointer to selected Object or nullptr if none is selected
+        */
+        void setObject(
+            Object *obj
+        );
 
      private:
-         Object *m_obj;
 
-         void renderEmpty(
-         ) const;
+        /**
+         * @brief Renders ObjectTransformWindow empty when no Object selected 
+        */
+        void renderEmpty(
+        ) const;
     };
 
 } // OGL::E1::GUI

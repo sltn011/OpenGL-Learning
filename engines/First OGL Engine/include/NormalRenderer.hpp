@@ -17,7 +17,7 @@ namespace OGL::E1 {
     */
     class NormalRenderer {
      protected:
-         /// Shader used to render normal Objects
+        /// Shader used to render normal Objects
         Shader m_shader;
 
      public:
@@ -25,7 +25,7 @@ namespace OGL::E1 {
          * @brief NormalRenderer constructor
          * @param shader Shader used to render normal Objects
         */
-        NormalRenderer( 
+        explicit NormalRenderer(
             Shader &&shader
         );
 

@@ -1,3 +1,7 @@
+/**
+* @file GUIRenderer.hpp
+*/
+
 #ifndef OGL_E1_GUI_GUIRENDERER
 #define OGL_E1_GUI_GUIRENDERER
 
@@ -16,62 +20,102 @@
 
 namespace OGL::E1::GUI {
 
+    /**
+     * @brief Class for rendering GUI windows
+    */
     class GUIRenderer {
+     protected:
+        /// GUI's MainWindow
+        MainWindow m_mainWindow;
+
+        /// Hashmap wth Key: GUI window type, Value: Pointer to GUI window
+        std::unordered_map<WindowsTypes, std::unique_ptr<BasicWindow>> m_windows;
+
      public:
-         GUIRenderer(
-             GLFWwindow *window,
-             std::string glslVersion
-         );
+        /**
+         * @brief GUIRenderer constructor
+         * @param window Pointer to game window where GUI will be rendered
+         * @param glslVersion String with format "#version N", where N is a GLSL version
+        */
+        GUIRenderer(
+            GLFWwindow *window,
+            std::string glslVersion
+        );
 
-         ~GUIRenderer(
-         );
+        /**
+         * @brief GUIRenderer destructor
+        */
+        ~GUIRenderer(
+        );
 
-         GUIRenderer(
-             GUIRenderer const &rhs
-         ) = delete;
+        GUIRenderer(
+            GUIRenderer const &rhs
+        ) = delete;
 
-         GUIRenderer(
-             GUIRenderer &&rhs
-         ) = default;
+        GUIRenderer(
+            GUIRenderer &&rhs
+        ) = default;
 
-         GUIRenderer &operator=(
-             GUIRenderer const &rhs
-         ) = delete;
+        GUIRenderer &operator=(
+            GUIRenderer const &rhs
+        ) = delete;
 
-         GUIRenderer &operator=(
-             GUIRenderer &&rhs
-         ) = default;
+        GUIRenderer &operator=(
+            GUIRenderer &&rhs
+        ) = default;
 
-         std::unordered_map<WindowsType, std::unique_ptr<BasicWindow>> &getWindows(
-         );
+        /**
+         * @brief Get Hashmap of GUI windows
+         * @return Hashmap wth Key: GUI window type, Value: Pointer to GUI window
+        */
+        std::unordered_map<WindowsTypes, std::unique_ptr<BasicWindow>> &getWindows(
+        );
 
-         void addWindow(
-             WindowsType windowType,
-             std::unique_ptr<BasicWindow> window
-         );
+        /**
+         * @brief Adds new GUI window
+         * @param windowType Type of new GUI window
+         * @param window Pointer to new GUI window
+        */
+        void addWindow(
+            WindowsTypes windowType,
+            std::unique_ptr<BasicWindow> window
+        );
 
-         void render(
-         );
+        /**
+         * @brief Handles GUI rendering and interaction
+        */
+        void render(
+        );
 
      protected:
-         void renderMainWindow(
-         );
+        /**
+         * @brief Renders GUI's MainWindow
+        */
+        void renderMainWindow(
+        );
 
-         void renderSubWindows(
-         );
+        /**
+         * @brief Renders all created and enabled subwindows
+        */
+        void renderSubWindows(
+        );
 
-         void handleUserActivity(
-         );
+        /**
+         * @brief Checks if MainWindow had any user activity(creating, hiding, showing subwindows) and handles it
+        */
+        void handleUserActivity(
+        );
 
-         std::unique_ptr<BasicWindow> createWindow(
-             WindowsType windowType,
-             bool isEnabled
-         ) const;
-
-     protected:
-         MainWindow m_mainWindow;
-         std::unordered_map<WindowsType, std::unique_ptr<BasicWindow>> m_windows;
-
+        /**
+         * @brief Creates new GUI Window
+         * @param windowType Type of new GUI Window
+         * @param isEnabled Flag which indicates if window should be rendered or not
+         * @return Pointer to new GUI Window
+        */
+        std::unique_ptr<BasicWindow> createWindow(
+            WindowsTypes windowType,
+            bool isEnabled
+        ) const;
     };
 
 } // OGL::E1::GUI

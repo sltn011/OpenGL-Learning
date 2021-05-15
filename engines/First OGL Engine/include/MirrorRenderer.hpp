@@ -25,7 +25,7 @@ namespace OGL::E1 {
          * @brief MirrorRenderer constructor
          * @param shader Shader used to render mirror Objects
         */
-        MirrorRenderer( 
+        explicit MirrorRenderer(
             Shader &&shader
         );
 

@@ -1,5 +1,5 @@
 /**
-* @file VertexArrayObject.hpp
+* @file VertexBufferObject.hpp
 */
 
 #ifndef OGL_VBO_H

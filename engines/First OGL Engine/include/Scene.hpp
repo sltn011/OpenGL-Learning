@@ -56,7 +56,7 @@ namespace OGL::E1 {
          * @brief Scene constructor
          * @param camera Camera used in Scene
         */
-        Scene( 
+        explicit Scene(
             smartCamPtr &&camera
         );
 

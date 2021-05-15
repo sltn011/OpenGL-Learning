@@ -25,7 +25,7 @@ namespace OGL::E1 {
          * @brief SkyboxRenderer constructor
          * @param shader Shader used to render Skybox
         */
-        SkyboxRenderer(
+        explicit SkyboxRenderer(
             Shader &&shader
         );
 

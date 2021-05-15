@@ -3,9 +3,10 @@ namespace OGL::E1::GUI {
 
     MainWindow::MainWindow(
         bool isEnabled
-    ) : BasicWindow{isEnabled},
-        m_windowsDropDownIndex{0},
-        m_changedWindow{WindowsType::NONE} {
+    ) : BasicWindow{ isEnabled }, 
+        m_hadUserActivity{ false },
+        m_changedWindow{ WindowsTypes::NONE },
+        m_windowsDropDownIndex{ 0 } {
 
     }
 
@@ -34,7 +35,7 @@ namespace OGL::E1::GUI {
         if (ImGui::Button("Show/Hide")) {
             switch (m_windowsDropDownIndex) {
             case 0:
-                m_changedWindow = WindowsType::ObjectTransform;
+                m_changedWindow = WindowsTypes::ObjectTransform;
                 m_hadUserActivity = true;
                 break;
 
@@ -47,7 +48,7 @@ namespace OGL::E1::GUI {
 
 
         if (!m_hadUserActivity) {
-            m_changedWindow = WindowsType::NONE;
+            m_changedWindow = WindowsTypes::NONE;
         }
     }
 
@@ -56,7 +57,7 @@ namespace OGL::E1::GUI {
         return m_hadUserActivity;
     }
 
-    WindowsType MainWindow::getChangedWindow(
+    WindowsTypes MainWindow::getChangedWindow(
     ) const {
         return m_changedWindow;
     }

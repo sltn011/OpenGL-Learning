@@ -26,7 +26,7 @@ namespace OGL::E1 {
          * @brief ShadowCubemapRenderer constructor
          * @param shader Shader used to render ShadowCubemaps
         */
-        ShadowCubemapRenderer(
+        explicit ShadowCubemapRenderer(
             Shader &&shader
         );
 

@@ -26,7 +26,7 @@ namespace OGL::E1 {
          * @brief TransparentRenderer constructor
          * @param shader Shader used to render transparent Objects
         */
-        TransparentRenderer( 
+        explicit TransparentRenderer(
             Shader &&shader
         );
 

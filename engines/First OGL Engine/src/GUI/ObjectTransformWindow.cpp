@@ -4,8 +4,8 @@ namespace OGL::E1::GUI {
 
     ObjectTransformWindow::ObjectTransformWindow(
         bool isEnabled
-    ) : BasicWindow{isEnabled},
-        m_obj {nullptr} {
+    ) : BasicWindow{ isEnabled },
+        m_obj { nullptr } {
 
     }
 

@@ -26,7 +26,7 @@ namespace OGL::E1 {
          * @brief ShadowMapRenderer constructor
          * @param shader Shader used to render ShadowMaps
         */
-        ShadowMapRenderer(
+        explicit ShadowMapRenderer(
             Shader &&shader
         );
 

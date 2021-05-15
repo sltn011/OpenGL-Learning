@@ -21,13 +21,13 @@ namespace OGL::E1::GUI {
         ImGui::DestroyContext();
     }
 
-    std::unordered_map<WindowsType, std::unique_ptr<BasicWindow>> &GUIRenderer::getWindows(
+    std::unordered_map<WindowsTypes, std::unique_ptr<BasicWindow>> &GUIRenderer::getWindows(
     ){
         return m_windows;
     }
 
     void GUIRenderer::addWindow(
-        WindowsType windowType,
+        WindowsTypes windowType,
         std::unique_ptr<BasicWindow> window
     ) {
         m_windows.emplace(windowType, std::move(window));
@@ -67,25 +67,24 @@ namespace OGL::E1::GUI {
 
     void GUIRenderer::handleUserActivity(
     ) {
-        WindowsType winType = m_mainWindow.getChangedWindow();
-        if (winType != WindowsType::NONE) {
+        WindowsTypes winType = m_mainWindow.getChangedWindow();
+        if (winType != WindowsTypes::NONE) {
             auto winIt = m_windows.find(winType);
             if (winIt != m_windows.end()) {
                 winIt->second->m_enabled ^= true;
             }
             else {
-                auto newWindow = createWindow(winType, true);
-                addWindow(winType, std::move(newWindow));
+                addWindow(winType, createWindow(winType, true));
             }
         }
     }
 
     std::unique_ptr<BasicWindow> GUIRenderer::createWindow(
-        WindowsType windowType,
+        WindowsTypes windowType,
         bool isEnabled
     ) const {
         switch (windowType) {
-        case OGL::E1::GUI::WindowsType::ObjectTransform:
+        case OGL::E1::GUI::WindowsTypes::ObjectTransform:
             return std::make_unique<ObjectTransformWindow>(isEnabled);
 
         default:
