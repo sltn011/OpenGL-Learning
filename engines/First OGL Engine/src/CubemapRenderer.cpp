@@ -2,11 +2,6 @@
 
 namespace OGL::E1 {
 
-    CubemapRenderer::CubemapRenderer(
-    ) {
-
-    }
-
     Cubemap CubemapRenderer::render( 
         Scene &scene, 
         int cubemapSize, 

@@ -25,27 +25,6 @@ namespace OGL::E1 {
     */
     class CubemapRenderer {
      public:
-        /**
-         * @brief CubemapRenderer constructor
-        */
-        CubemapRenderer(
-        );
-
-        CubemapRenderer( 
-            CubemapRenderer const &rhs
-        ) = delete;
-
-        CubemapRenderer( 
-            CubemapRenderer &&rhs
-        ) = default;
-
-        CubemapRenderer &operator=( 
-            CubemapRenderer const &rhs
-        ) = delete;
-
-        CubemapRenderer &operator=( 
-            CubemapRenderer &&rhs
-        ) = default;
 
         /**
          * @brief Renders Scene into Cubemap
