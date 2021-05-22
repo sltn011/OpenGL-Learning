@@ -34,7 +34,7 @@ namespace OGL {
         RenderBufferObject m_renderBufferObj;
 
      protected:
-        static float const frameQuadData[];
+        static float const s_frameQuadData[];
 
      public:
 

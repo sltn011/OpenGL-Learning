@@ -2,23 +2,39 @@
 
 namespace OGL::E1::GUI {
 
+    int GUIRenderer::s_numberOfInstances = 0;
+
     GUIRenderer::GUIRenderer(
         GLFWwindow *window, 
         std::string glslVersion
     ) : m_mainWindow{ true } {
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO &io = ImGui::GetIO();
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init(glslVersion.c_str());
-        ImGui::StyleColorsDark();
+        if (!s_numberOfInstances) {
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImGuiIO &io = ImGui::GetIO();
+            ImGui_ImplGlfw_InitForOpenGL(window, true);
+            ImGui_ImplOpenGL3_Init(glslVersion.c_str());
+            ImGui::StyleColorsDark();
+        }
+        ++s_numberOfInstances;
     }
 
     GUIRenderer::~GUIRenderer(
     ) {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
+        --s_numberOfInstances;
+        if (!s_numberOfInstances) {
+            ImGui_ImplOpenGL3_Shutdown();
+            ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
+        }
+    }
+
+    GUIRenderer::GUIRenderer(
+        GUIRenderer &&rhs
+    ) noexcept :
+        m_mainWindow{ std::move(rhs.m_mainWindow) },
+        m_windows{ std::move(rhs.m_windows)} {
+        ++s_numberOfInstances;
     }
 
     std::unordered_map<WindowsTypes, std::unique_ptr<BasicWindow>> &GUIRenderer::getWindows(

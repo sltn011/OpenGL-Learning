@@ -14,7 +14,7 @@ namespace OGL {
         glGenFramebuffers(1, &m_descriptor);
         glBindVertexArray(m_frameQuadVAO.value());
         glBindBuffer(GL_ARRAY_BUFFER, m_frameQuadVBO.value());
-        glBufferData(GL_ARRAY_BUFFER, 96, frameQuadData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 96, s_frameQuadData, GL_STATIC_DRAW);
         glEnableVertexAttribArray(frameQuadVerticesVertexAttribIndex);
         glVertexAttribPointer(frameQuadVerticesVertexAttribIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(frameQuadTexCoordVertexAttribIndex);
@@ -125,7 +125,7 @@ namespace OGL {
         return m_renderBufferObj;
     }
 
-    float const FrameBufferObject::frameQuadData[] = {
+    float const FrameBufferObject::s_frameQuadData[] = {
         // position      // texture
         -1.0f, +1.0f,    0.0f, 1.0f,
         -1.0f, -1.0f,    0.0f, 0.0f,

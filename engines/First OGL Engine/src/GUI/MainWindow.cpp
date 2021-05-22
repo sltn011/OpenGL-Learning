@@ -1,4 +1,5 @@
 #include "GUI/MainWindow.hpp"
+
 namespace OGL::E1::GUI {
 
     MainWindow::MainWindow(
@@ -13,7 +14,6 @@ namespace OGL::E1::GUI {
     void MainWindow::render(
     ) {
         m_hadUserActivity = false;
-
 
         ImGui::Begin("Engine1 Main Window");
 

@@ -31,6 +31,9 @@ namespace OGL::E1::GUI {
         /// Hashmap wth Key: GUI window type, Value: Pointer to GUI window
         std::unordered_map<WindowsTypes, std::unique_ptr<BasicWindow>> m_windows;
 
+        // Number of instances of this class - used when allocating and deallocating ImGui resources
+        static int s_numberOfInstances;
+
      public:
         /**
          * @brief GUIRenderer constructor
@@ -54,7 +57,7 @@ namespace OGL::E1::GUI {
 
         GUIRenderer(
             GUIRenderer &&rhs
-        ) = default;
+        ) noexcept;
 
         GUIRenderer &operator=(
             GUIRenderer const &rhs

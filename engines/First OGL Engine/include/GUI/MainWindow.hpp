@@ -33,6 +33,22 @@ namespace OGL::E1::GUI {
         explicit MainWindow(
             bool isEnabled = false
         );
+
+        MainWindow(
+            MainWindow const &rhs
+        ) = default;
+
+        MainWindow(
+            MainWindow &&rhs
+        ) = default;
+
+        MainWindow &operator=(
+            MainWindow const &rhs
+        ) = default;
+
+        MainWindow &operator=(
+            MainWindow &&rhs
+        ) = default;
         
         /**
          * @brief Renders MainWindow

@@ -14,7 +14,12 @@ namespace OGL {
     /**
      * @brief Class that provides initialization of GLFW context following RAII idiom
     */
-    struct GLFWInitRAII {
+    class GLFWInitRAII {
+
+        // Count of instances of this class
+        static int s_numberOfInstances;
+
+     public:
 
         /**
          * @brief Constructor that initializes GLFW
@@ -30,13 +35,17 @@ namespace OGL {
 
         GLFWInitRAII( 
             GLFWInitRAII const &rhs
-        ) = delete;
+        );
 
         GLFWInitRAII &operator=( 
             GLFWInitRAII const &rhs
-        ) = delete;
+        ) = default;
 
         GLFWInitRAII( 
+            GLFWInitRAII &&rhs
+        ) noexcept;
+
+        GLFWInitRAII &operator=(
             GLFWInitRAII &&rhs
         ) = default;
     };

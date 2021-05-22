@@ -75,17 +75,17 @@ public:
             "shaders/01-coloredShapes.frag"
         );
 
-        m_normalRenderer           .emplace(std::move(normalShader));
-        m_transpRenderer           .emplace(std::move(transpShader));
-        m_skyboxRenderer           .emplace(std::move(skyboxShader));
-        m_mirrorRenderer           .emplace(std::move(mirrorShader));
-        m_cubemapRenderer          .emplace();
-        m_instancesRenderer        .emplace(std::move(instancesShader));
-        m_shadowMapRenderer        .emplace(std::move(shadowMapRender));
-        m_shadowCubemapRenderer    .emplace(std::move(shadowCubemapRenderer));
-        m_lightSourcesDebugRenderer.emplace(std::move(lightSourcesRenderer), 0.005f);
-        m_coloredShapesRenderer    .emplace(std::move(coloredShapesShader));
-        m_guiRenderer              .emplace(m_window, "#version 330" );
+        m_normalRenderer            = OGL::E1::NormalRenderer{ std::move(normalShader) };
+        m_transpRenderer            = OGL::E1::TransparentRenderer{ std::move(transpShader) };
+        m_skyboxRenderer            = OGL::E1::SkyboxRenderer{std::move(skyboxShader)};
+        m_mirrorRenderer            = OGL::E1::MirrorRenderer{ std::move(mirrorShader) };
+        m_cubemapRenderer           = OGL::E1::CubemapRenderer{};
+        m_instancesRenderer         = OGL::E1::InstancesRenderer{ std::move(instancesShader) };
+        m_shadowMapRenderer         = OGL::E1::ShadowMapRenderer{ std::move(shadowMapRender) };
+        m_shadowCubemapRenderer     = OGL::E1::ShadowCubemapRenderer{ std::move(shadowCubemapRenderer) };
+        m_lightSourcesDebugRenderer = OGL::E1::LightSourcesDebugRenderer{ std::move(lightSourcesRenderer), 0.005f };
+        m_coloredShapesRenderer     = OGL::E1::ColoredShapesRenderer{ std::move(coloredShapesShader) };
+        m_guiRenderer               = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
 
 
         loadLevel("levels/01-level.json");
