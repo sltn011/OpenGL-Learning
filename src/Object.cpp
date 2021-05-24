@@ -3,7 +3,7 @@
 namespace OGL {
 
     Object::Object( 
-        Model &model, 
+        Model *model,
         glm::vec3 position,
         float scale,
         float rotationAngle,
@@ -17,7 +17,7 @@ namespace OGL {
     }
 
     Object::Object(
-        Model &model, 
+        Model *model,
         glm::vec3 position,
         float scale, 
         glm::quat quat,
@@ -30,7 +30,7 @@ namespace OGL {
     }
 
     Object::Object(
-        Model &model, 
+        Model *model,
         glm::vec3 position, 
         float scale, 
         float xAngle,
@@ -45,7 +45,7 @@ namespace OGL {
     }
 
     Object::Object(
-        Model &model,
+        Model *model,
         glm::vec3 position,
         float scale,
         glm::vec3 eulerAngles,
@@ -60,37 +60,52 @@ namespace OGL {
     void Object::draw( 
         Shader &shader
     ) const {
+        if (!hasModel()) {
+            return;
+        }
         shader.setUniformMatrix4("model", m_modelMatrix);
-        m_model.draw(shader);
+        m_model->draw(shader);
     }
 
     void Object::drawInstanced( 
         Shader &shader, 
         uint32_t amount
     ) const {
+        if (!hasModel()) {
+            return;
+        }
         shader.setUniformMatrix4("model", m_modelMatrix);
-        m_model.drawInstanced(shader, amount);
+        m_model->drawInstanced(shader, amount);
     }
 
     void Object::drawShape(
         Shader &shader
     ) const {
+        if (!hasModel()) {
+            return;
+        }
         shader.setUniformMatrix4("model", m_modelMatrix);
-        m_model.drawShape(shader);
+        m_model->drawShape(shader);
     }
 
     void Object::drawShapeInstanced(
         Shader &shader, 
         uint32_t amount
     ) const {
+        if (!hasModel()) {
+            return;
+        }
         shader.setUniformMatrix4("model", m_modelMatrix);
-        m_model.drawShapeInstanced(shader, amount);
+        m_model->drawShapeInstanced(shader, amount);
     }
 
     void Object::setVertexAttribInstancedModelMat4( 
         int attribLocation
     ) {
-        m_model.setVertexAttribInstancedModelMat4(attribLocation);
+        if (!hasModel()) {
+            return;
+        }
+        m_model->setVertexAttribInstancedModelMat4(attribLocation);
     }
 
     glm::vec3 Object::getPosition(
@@ -186,12 +201,33 @@ namespace OGL {
 
     std::string Object::getName(
     ) const {
-        return m_model.getName() + std::to_string(m_id);
+        if (!hasModel()) {
+            return {};
+        }
+        else {
+            return m_model->getName() + std::to_string(m_id);
+        }
     }
 
     std::string Object::getModelPath(
     ) const {
-        return m_model.getFullPath();
+        if (!hasModel()) {
+            return {};
+        }
+        else {
+            return m_model->getFullPath();
+        }
+    }
+
+    bool Object::hasModel(
+    ) const {
+        return m_model != nullptr;
+    }
+
+    void Object::setModel(
+        Model *newModelPtr
+    ) {
+        m_model = newModelPtr;
     }
 
     void Object::recalculateModelMatrix(

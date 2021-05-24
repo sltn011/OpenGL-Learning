@@ -112,7 +112,7 @@ namespace OGL::E1 {
         std::string const &path,
         uint32_t modelId
     ) {
-        m_modelsTable[modelId] = Model(path);
+        m_modelsTable.emplace(modelId, std::make_unique<Model>(path));
         m_objectsMaxIDs[modelId] = 0;
     }
 
@@ -129,7 +129,7 @@ namespace OGL::E1 {
 
         return m_scene->addNormalObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 rotationAngle,
@@ -151,7 +151,7 @@ namespace OGL::E1 {
 
         return m_scene->addNormalObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 quat,
@@ -174,7 +174,7 @@ namespace OGL::E1 {
 
         return m_scene->addNormalObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 xAngle,
@@ -197,7 +197,7 @@ namespace OGL::E1 {
 
         return m_scene->addNormalObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 eulerAngles,
@@ -219,7 +219,7 @@ namespace OGL::E1 {
 
         return m_scene->addTransparentObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 rotationAngle,
@@ -241,7 +241,7 @@ namespace OGL::E1 {
 
         return m_scene->addTransparentObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 quat,
@@ -264,7 +264,7 @@ namespace OGL::E1 {
 
         return m_scene->addTransparentObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 xAngle,
@@ -287,7 +287,7 @@ namespace OGL::E1 {
 
         return m_scene->addTransparentObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 eulerAngles,
@@ -309,7 +309,7 @@ namespace OGL::E1 {
 
         return m_scene->addMirrorObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 rotationAngle,
@@ -331,7 +331,7 @@ namespace OGL::E1 {
 
         return m_scene->addMirrorObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 quat,
@@ -354,7 +354,7 @@ namespace OGL::E1 {
 
         return m_scene->addMirrorObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 xAngle,
@@ -377,7 +377,7 @@ namespace OGL::E1 {
 
         return m_scene->addMirrorObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 eulerAngles,
@@ -400,7 +400,7 @@ namespace OGL::E1 {
 
         return m_scene->addInstancedObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 rotationAngle,
@@ -424,7 +424,7 @@ namespace OGL::E1 {
 
         return m_scene->addInstancedObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 quat,
@@ -449,7 +449,7 @@ namespace OGL::E1 {
 
         return m_scene->addInstancedObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 xAngle,
@@ -474,7 +474,7 @@ namespace OGL::E1 {
 
         return m_scene->addInstancedObj(
             Object{
-                m_modelsTable[modelID],
+                m_modelsTable[modelID].get(),
                 pos,
                 scale,
                 eulerAngles,

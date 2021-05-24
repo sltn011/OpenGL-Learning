@@ -100,7 +100,7 @@ namespace OGL::E1 {
 
 
 
-        /// Hashmap of Key: Model's ID, Value: Model object - stores Models used in Scene
+        /// Hashmap of Key: Model's ID, Value: Owning pointer to Model object - stores Models used in Scene
         modelsTable       m_modelsTable;
 
         /// Hashmap of Key: Model's ID, Value: Maximum ID of Object with this Model
@@ -171,7 +171,6 @@ namespace OGL::E1 {
           * @brief Loads new Model from file and adds it to models hashmap
           * @param path Path to model file
           * @param modelId ID assigned to new Model object in Engine
-          * @warning For now - add all Models before adding any Object or memory reallocation can break references in Objects
          */
          void addModel(
              std::string const &path,
@@ -558,8 +557,6 @@ namespace OGL::E1 {
           * Method is mandatory for implementing own game engine using Engine1Base class. \n
           * In this method you should create Scene, renderer objects, load Models, Objects, Skybox and light sources \n
           * from json file or create them yourself. Static ShadowMaps, ShadowCubemaps and Cubemaps can also be created in this method.
-          * 
-          * @warning For now - add all Models before adding any Object or memory reallocation can break references in Objects
           * 
           * @return True indicates that all resources loaded correctly, False to indicate error - game loop will be skipped
          */

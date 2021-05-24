@@ -166,7 +166,7 @@ int main(
 
     OGL::Model myModel("models/Backpack/backpack.obj");
 
-    OGL::Object myObject(myModel);
+    OGL::Object myObject(&myModel);
     myObject.setPosition(glm::vec3{ 0.0f, 0.0f, -2.0f });
     myObject.setScale(1.2f);
     myObject.setRotation(-45.0f, glm::vec3(1.0f, 1.0f, 1.0f));

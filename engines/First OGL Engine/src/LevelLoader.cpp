@@ -38,7 +38,7 @@ namespace OGL::E1 {
         modelsTable table;
         for (auto &[strKey, path] : fromJSON) {
             int key = std::stoi(strKey);
-            table.emplace(key, Model{ path });
+            table.emplace(key, std::make_unique<Model>(path));
         }
         return table;
     }
@@ -83,7 +83,7 @@ namespace OGL::E1 {
         float scale              = objJSON["Scale"];
         std::array<float, 3> rot = objJSON["Rotation"];
         return Object{
-            modelsTable.at(modelID),
+            modelsTable.at(modelID).get(),
             glm::vec3{pos[0], pos[1], pos[2]},
             scale,
             glm::vec3{rot[0], rot[1], rot[2]},

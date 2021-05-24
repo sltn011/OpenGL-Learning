@@ -22,7 +22,7 @@ namespace OGL {
          * @brief Exception constructor
          * @param info Exception message
         */
-        Exception(
+        explicit Exception(
             std::string const &info
         );
 
@@ -30,7 +30,7 @@ namespace OGL {
          * @brief Exception constructor
          * @param info Exception message
         */
-        Exception(
+        explicit Exception(
             std::string &&info
         );
 

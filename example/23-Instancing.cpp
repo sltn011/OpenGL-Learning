@@ -172,8 +172,8 @@ int main(
 
     glm::vec3 planetCenter{ 0.0f, -2.0f, -200.0f };
 
-    OGL::Object planetObj(planet, planetCenter, 20.0f);
-    OGL::Object asteroidObj(asteroid, planetCenter);
+    OGL::Object planetObj(&planet, planetCenter, 20.0f);
+    OGL::Object asteroidObj(&asteroid, planetCenter);
 
     size_t numInstances = 25000;
 

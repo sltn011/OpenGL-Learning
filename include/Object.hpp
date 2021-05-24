@@ -17,36 +17,36 @@ namespace OGL {
     */
     class Object {
      protected:
-        /// Reference to Model used by Object
-        Model    &m_model;
+        /// Pointer to Model used by Object - Flyweight pattern
+        Model     *m_model;
 
         /// Object's position in world space
-        glm::vec3 m_position;
+        glm::vec3  m_position;
 
         /// Object's scale
-        float     m_scale;
+        float      m_scale;
 
         /// Object's rotation angles around X, Y, Z in degrees - YXZ rotation order
-        glm::vec3 m_rotAngles;
+        glm::vec3  m_rotAngles;
 
         /// Object's model matrix
-        glm::mat4 m_modelMatrix;
+        glm::mat4  m_modelMatrix;
 
         /// Object's ID
-        uint32_t  m_id;
+        uint32_t   m_id;
 
      public:
         /**
          * @brief Object constructor
-         * @param model Reference to Model used by Object
+         * @param model Pointer to Model used by Object
          * @param position Object's position in world space
          * @param scale Object's scale
          * @param rotationAngle Object's rotation in degrees
          * @param rotationAxis Object's rotation axis
          * @param objectID Object's ID
         */
-        Object(
-            Model &model, 
+        explicit Object(
+            Model *model,
             glm::vec3 position = { 0.0f, 0.0f, 0.0f }, 
             float scale = 1.0f, 
             float rotationAngle = 0.0f, 
@@ -56,14 +56,14 @@ namespace OGL {
 
         /**
          * @brief Object constructor
-         * @param model Reference to Model used by Object
+         * @param model Pointer to Model used by Object
          * @param position Object's position in world space
          * @param scale Object's scale
          * @param quat Object's rotation quaternion
          * @param objectID Object's ID
         */
         Object(
-            Model &model,
+            Model *model,
             glm::vec3 position,
             float scale,
             glm::quat quat,
@@ -72,7 +72,7 @@ namespace OGL {
 
         /**
          * @brief Object constructor
-         * @param model Reference to Model used by Object
+         * @param model Pointer to Model used by Object
          * @param position Object's position in world space
          * @param scale Object's scale
          * @param xAngle Object's rotation around X axis in degrees - YXZ rotation order
@@ -81,7 +81,7 @@ namespace OGL {
          * @param objectID Object's ID
         */
         Object(
-            Model &model,
+            Model *model,
             glm::vec3 position,
             float scale,
             float xAngle,
@@ -92,14 +92,14 @@ namespace OGL {
 
         /**
          * @brief Object constructor
-         * @param model Reference to Model used by Object
+         * @param model Pointer to Model used by Object
          * @param position Object's position in world space
          * @param scale Object's scale
          * @param eulerAngles Object's rotation angles around X, Y, Z in degrees - YXZ rotation order
          * @param objectID Object's ID
         */
         Object(
-            Model &model,
+            Model *model,
             glm::vec3 position,
             float scale,
             glm::vec3 eulerAngles,
@@ -273,6 +273,21 @@ namespace OGL {
         */
         std::string getModelPath(
         ) const;
+
+        /**
+         * @brief Checks if Object currently has Model assigned to it
+         * @return True if Model is assigned, False otherwise
+        */
+        bool hasModel(
+        ) const;
+
+        /**
+         * @brief Assigns Model used by Object
+         * @param modelPtr Pointer to Model or nullptr
+        */
+        void setModel(
+            Model *modelPtr
+        );
 
      protected:
         /**

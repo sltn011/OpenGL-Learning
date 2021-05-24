@@ -38,61 +38,6 @@ namespace OGL {
         /// Container of Model's textures
         std::vector<ModelTexture> m_loadedTextures;
 
-        /**
-         * @brief Loads Model from file
-         * @param path Path to Model file
-         * @param flags Assimp library flags to process Model - triangulate and flip UV's by default
-        */
-        void loadModel( 
-            std::string const &path, 
-            int flags = aiProcess_Triangulate | aiProcess_FlipUVs
-        );
-
-        /**
-         * @brief Processes data loaded by Assimp and fills Model data
-         * @param node Assimp node pointer
-         * @param scene Assimp scene pointer
-        */
-        void processNode( 
-            aiNode *node, 
-            aiScene const *scene
-        );
-
-        /**
-         * @brief Processes data loaded by Assimp to create Mesh object
-         * @param mesh Assimp mesh structure pointer
-         * @param scene Assimp scene pointer
-         * @return Mesh object created from data in Assimp mesh structure
-        */
-        Mesh processMesh( 
-            aiMesh *mesh, 
-            aiScene const *scene
-        );
-
-        /**
-         * @brief Loads textures used in Model's material
-         * @param material Assimp material struct pointer
-         * @param texType Assimp type of loaded textures
-         * @param typeName Type of loaded texture used in Model
-         * @return 
-        */
-        std::vector<ModelTexture> loadMaterialTexture( 
-            aiMaterial *material, 
-            aiTextureType texType, 
-            TextureType typeName
-        );
-
-        /**
-         * @brief Loads texture from file and creates OpenGL texture id for it
-         * @param directory Directory with texture file
-         * @param path File name
-         * @return ID of OpenGL texture
-        */
-        static int textureFromFile(
-            std::string const &directory,
-            std::string const &path
-        );
-
      public:
         /**
          * @brief Empty Model default constructor
@@ -105,7 +50,7 @@ namespace OGL {
          * @param path Path to Model file
          * @param flags Assimp library flags to process Model - triangulate and flip UV's by default
         */
-        Model( 
+        explicit Model( 
             std::string const &path, 
             int flags = aiProcess_Triangulate | aiProcess_FlipUVs
         );
@@ -181,6 +126,63 @@ namespace OGL {
         */
         std::string getFullPath(
         ) const;
+
+     private:
+
+         /**
+          * @brief Loads Model from file
+          * @param path Path to Model file
+          * @param flags Assimp library flags to process Model - triangulate and flip UV's by default
+         */
+         void loadModel(
+             std::string const &path,
+             int flags = aiProcess_Triangulate | aiProcess_FlipUVs
+         );
+
+         /**
+          * @brief Processes data loaded by Assimp and fills Model data
+          * @param node Assimp node pointer
+          * @param scene Assimp scene pointer
+         */
+         void processNode(
+             aiNode * node,
+             aiScene const *scene
+         );
+
+         /**
+          * @brief Processes data loaded by Assimp to create Mesh object
+          * @param mesh Assimp mesh structure pointer
+          * @param scene Assimp scene pointer
+          * @return Mesh object created from data in Assimp mesh structure
+         */
+         Mesh processMesh(
+             aiMesh * mesh,
+             aiScene const *scene
+         );
+
+         /**
+          * @brief Loads textures used in Model's material
+          * @param material Assimp material struct pointer
+          * @param texType Assimp type of loaded textures
+          * @param typeName Type of loaded texture used in Model
+          * @return
+         */
+         std::vector<ModelTexture> loadMaterialTexture(
+             aiMaterial * material,
+             aiTextureType texType,
+             TextureType typeName
+         );
+
+         /**
+          * @brief Loads texture from file and creates OpenGL texture id for it
+          * @param directory Directory with texture file
+          * @param path File name
+          * @return ID of OpenGL texture
+         */
+         static int textureFromFile(
+             std::string const &directory,
+             std::string const &path
+         );
 
     };
 

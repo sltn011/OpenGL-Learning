@@ -41,7 +41,7 @@ namespace OGL::E1 {
     ) {
         std::unordered_map<std::string, std::string> modelsPaths;
         for (auto &[key, val] : modelsTable) {
-            modelsPaths[std::to_string(key)] = val.getFullPath();
+            modelsPaths[std::to_string(key)] = val->getFullPath();
         }
         return nlohmann::json(modelsPaths);
     }
@@ -224,7 +224,7 @@ namespace OGL::E1 {
     ) const {
         std::unordered_map<std::string, uint32_t> reversed;
         for (auto &[key, val] : table) {
-            reversed[val.getFullPath()] = key;
+            reversed[val->getFullPath()] = key;
         }
         return reversed;
     }

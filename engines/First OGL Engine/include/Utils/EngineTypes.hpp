@@ -83,13 +83,14 @@ namespace OGL {
                                  
         using pMirrorCubemap     = std::pair<Object, maybeCubemap>;
         using pObjInstancesNum   = std::pair<Object, uint32_t>;
+
+        using smartModelPtr      = std::unique_ptr<Model>;
                                  
-        using modelsTable        = std::unordered_map<uint32_t, Model>;
+        using modelsTable        = std::unordered_map<uint32_t, smartModelPtr>;
         using objectsIDs         = std::unordered_map<uint32_t, uint32_t>;
         using objectsVec         = std::vector<Object>;
         using mirrorObjsVec      = std::vector<pMirrorCubemap>;
         using instancedObjsVec   = std::vector<pObjInstancesNum>;
-        using gameObjects        = std::unordered_map<uint32_t, objectsVec>;
 
         using pDirLightShadow    = std::pair<DirectionalLight, maybeShadowMap>;
         using pPointLightShadows = std::pair<PointLight, maybeShadowCubemap>;
