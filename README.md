@@ -18,9 +18,10 @@ JSON: https://github.com/nlohmann/json
 To compile examples set paths to required libraries in CMakeLists.txt and use CMake to generate compile files  
   
 # TODO LIST:  
-Rotation of objects with quaternions  
+~~Rotation of objects with quaternions~~  
+Instanced rendering of Objects  
 GUI for editing and debugging scene  
-Saving and loading scenes to/from files  
+~~Saving and loading scenes to/from files~~  
 Normal mapping, parallax mapping  
 HDR, Bloom, SSAO  
 Deferred Shading  
