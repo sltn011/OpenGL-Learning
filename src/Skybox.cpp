@@ -3,7 +3,7 @@
 namespace OGL {
     
     Skybox::Skybox( 
-        std::string const folderPath, 
+        std::string const &folderPath, 
         GLenum cubemapTextureUnit
     ) : Cubemap{folderPath, cubemapTextureUnit} {
         float constexpr skyboxVertices[] = {

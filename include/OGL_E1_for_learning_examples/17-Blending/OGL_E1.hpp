@@ -120,7 +120,7 @@ namespace OGL::E1 {
         ) {
             m_objects[groupID].emplace_back(
                 factory<Object>(
-                    *m_modelsTable[modelID].get(),
+                    m_modelsTable[modelID].get(),
                     pos,
                     scale,
                     rotationAngleRadians,

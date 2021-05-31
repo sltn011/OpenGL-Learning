@@ -5,10 +5,7 @@ namespace OGL {
     CameraFree::CameraFree( 
         glm::vec3 positionVec,
         glm::vec3 forwardVec, 
-        glm::vec3 worldUpVec,
         float moveSpeed, 
-        float yawAngle, 
-        float pitchAngle,
         float fov,
         float aspect,
         float near,
@@ -16,10 +13,7 @@ namespace OGL {
     ) : BasicCamera { 
         positionVec,
         forwardVec, 
-        worldUpVec, 
         moveSpeed, 
-        yawAngle,
-        pitchAngle,
         fov, 
         aspect,
         near, 

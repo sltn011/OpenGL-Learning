@@ -22,10 +22,8 @@ public:
         OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
             glm::vec3{ 0.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
-            1.0f, -90.0f, 0.0f,
-            45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
-            );
+            1.0f, 45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
+        );
 
         m_shaders[0].use();
         m_shaders[0].setUniformMatrix4("projection", OGL::E1::GameCamera::inst->getProjectionMatrix());
@@ -106,7 +104,7 @@ public:
         // Sort transparent objects by distance to player using map
         std::map<float, OGL::E1::smartObjPtr const&> map;
         for (auto const &obj : m_objects[2]) {
-            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->m_postiton);
+            float dist = glm::distance(OGL::E1::GameCamera::inst->getPos(), obj->getPosition());
             map.emplace(dist, obj);
         }
 

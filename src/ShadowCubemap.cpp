@@ -6,11 +6,11 @@ namespace OGL {
         int size,
         GLenum cubemapTextureUnit,
         float farCameraPlane,
-        std::array<glm::mat4, 6> const &lightProjMatrices
+        std::array<glm::mat4, 6> const &lightProjViewsMatrices
     ) : m_textureUnit{ cubemapTextureUnit },
-        m_mapSize{size},
-        m_farPlane{farCameraPlane},
-        m_lightProjs{lightProjMatrices} {
+        m_mapSize{ size },
+        m_farPlane{ farCameraPlane },
+        m_lightProjViews{ lightProjViewsMatrices } {
 
         ColorBufferObject cubemap;
         Texture::setActive(m_textureUnit);
@@ -67,6 +67,11 @@ namespace OGL {
         return m_textureUnit;
     }
 
+    int ShadowCubemap::mapSize(
+    ) const {
+        return m_mapSize;
+    }
+
     float ShadowCubemap::farPlane(
     ) const {
         return m_farPlane;
@@ -75,7 +80,7 @@ namespace OGL {
     glm::mat4 ShadowCubemap::lightProjView(
         int sideIndex
     ) const {
-        return m_lightProjs.at(sideIndex);
+        return m_lightProjViews.at(sideIndex);
     }
 
 }

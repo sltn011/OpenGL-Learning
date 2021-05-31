@@ -19,10 +19,10 @@ namespace OGL::E1 {
         m_shader.setUniformVec3("viewerPos", camPos);
 
         dirLights &sceneDirLights = scene.getDirLights();
-        m_shader.setUniformInt("numDirLights", sceneDirLights.size());
+        m_shader.setUniformInt("numDirLights", static_cast<int>(sceneDirLights.size()));
         for (size_t i = 0; i < sceneDirLights.size(); ++i) {
             auto &[light, pShadowMap] = sceneDirLights[i];
-            light.loadInShader(m_shader, i);
+            light.loadInShader(m_shader, static_cast<int>(i));
             if (!pShadowMap) {
                 continue;
             }
@@ -32,10 +32,10 @@ namespace OGL::E1 {
         }
 
         pointLights &scenePointLights = scene.getPointLights();
-        m_shader.setUniformInt("numPointLights", scenePointLights.size());
+        m_shader.setUniformInt("numPointLights", static_cast<int>(scenePointLights.size()));
         for (size_t i = 0; i < scenePointLights.size(); ++i) {
             auto &[light, pShadowCubemap] = scenePointLights[i];
-            light.loadInShader(m_shader, i);
+            light.loadInShader(m_shader, static_cast<int>(i));
             if (!pShadowCubemap) {
                 continue;
             }
@@ -45,10 +45,10 @@ namespace OGL::E1 {
         }
 
         spotLights &sceneSpotLights = scene.getSpotLights();
-        m_shader.setUniformInt("numSpotLights", sceneSpotLights.size());
+        m_shader.setUniformInt("numSpotLights", static_cast<int>(sceneSpotLights.size()));
         for (size_t i = 0; i < sceneSpotLights.size(); ++i) {
             auto &[light, pShadowMap] = sceneSpotLights[i];
-            light.loadInShader(m_shader, i);
+            light.loadInShader(m_shader, static_cast<int>(i));
             if (!pShadowMap) {
                 continue;
             }
@@ -59,7 +59,7 @@ namespace OGL::E1 {
 
         std::map<float, Object const&> objectsMap;
         for (auto const &obj : scene.getTransparentObjs()) {
-            float dist = glm::distance(camPos, obj.m_postiton);
+            float dist = glm::distance(camPos, obj.getPosition());
             objectsMap.emplace(dist, obj);
         }
 

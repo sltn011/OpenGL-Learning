@@ -38,13 +38,13 @@ namespace OGL {
     }
 
     void UniformBufferObject::setBindingPoint(
-        size_t pointIndex
+        GLuint pointIndex
     ) {
         glBindBufferBase(GL_UNIFORM_BUFFER, pointIndex, m_descriptor);
     }
 
     void UniformBufferObject::setBindingPoint( 
-        size_t pointIndex, 
+        GLuint pointIndex,
         size_t offset, 
         size_t size
     ) {

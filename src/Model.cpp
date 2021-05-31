@@ -13,7 +13,18 @@ namespace OGL {
             throw Exception("Error importing model!:\n" + std::string{importer.GetErrorString()});
         }
 
-        m_directory = path.substr(0, path.find_last_of('/'));
+        size_t pathFileDivisor = path.find_last_of('/');
+        size_t pathFormatDivisor = path.find_last_of('.');
+
+        if (pathFileDivisor == std::string::npos) {
+            pathFileDivisor = -1;
+        }
+        else {
+            m_directory = path.substr(0, pathFileDivisor);
+        }
+        
+        m_name = path.substr(pathFileDivisor + 1, pathFormatDivisor - pathFileDivisor - 1);
+        m_format = path.substr(pathFormatDivisor + 1, path.size() - pathFormatDivisor);
 
         processNode(scene->mRootNode, scene);
     }
@@ -38,8 +49,8 @@ namespace OGL {
     ) {
         std::vector<Vertex>       vertices(mesh->mNumVertices);
         std::vector<unsigned int> indices;
-        std::vector<ModelTexture>      textures;
-        Colors                    colors{};
+        std::vector<ModelTexture> textures;
+        Material                  material{};
 
         for (size_t i = 0; i < mesh->mNumVertices; ++i) {
             vertices[i].m_pos.x = mesh->mVertices[i].x;
@@ -67,39 +78,38 @@ namespace OGL {
         }
 
         if (mesh->mMaterialIndex >= 0) {
-            aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+            aiMaterial *meshMaterialPtr = scene->mMaterials[mesh->mMaterialIndex];
 
-            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(material, aiTextureType_DIFFUSE, TextureType::Diffuse);
+            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_DIFFUSE, TextureType::Diffuse);
             textures.insert(textures.end(), diffuseMap.begin(), diffuseMap.end());
 
-            std::vector<ModelTexture> specularMap = loadMaterialTexture(material, aiTextureType_SPECULAR, TextureType::Specular);
+            std::vector<ModelTexture> specularMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_SPECULAR, TextureType::Specular);
             textures.insert(textures.end(), specularMap.begin(), specularMap.end());
 
-            std::vector<ModelTexture> normalMap = loadMaterialTexture(material, aiTextureType_NORMALS, TextureType::Normal);
+            std::vector<ModelTexture> normalMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_NORMALS, TextureType::Normal);
             textures.insert(textures.end(), normalMap.begin(), normalMap.end());
 
-            std::vector<ModelTexture> heightMap = loadMaterialTexture(material, aiTextureType_HEIGHT, TextureType::Height);
+            std::vector<ModelTexture> heightMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_HEIGHT, TextureType::Height);
             textures.insert(textures.end(), heightMap.begin(), heightMap.end());
 
             aiColor3D amb{};
-            material->Get(AI_MATKEY_COLOR_AMBIENT, amb);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_AMBIENT, amb);
 
             aiColor3D diff{};
-            material->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
 
             aiColor3D spec{};
-            material->Get(AI_MATKEY_COLOR_SPECULAR, spec);
+            meshMaterialPtr->Get(AI_MATKEY_COLOR_SPECULAR, spec);
 
             for (int i = 0; i < 3; ++i) {
-                colors.m_ambient[i] = amb[i];
-                colors.m_diffuse[i] = diff[i];
-                colors.m_specular[i] = spec[i];
+                material.m_ambient[i] = amb[i];
+                material.m_diffuse[i] = diff[i];
+                material.m_specular[i] = spec[i];
             }
-
-            material->Get(AI_MATKEY_SHININESS, colors.m_specularExponent);
+            meshMaterialPtr->Get(AI_MATKEY_SHININESS, material.m_specularExponent);
         }
         
-        return Mesh{ vertices, indices, textures, colors };
+        return Mesh{ vertices, indices, textures, material };
     }
 
     std::vector<ModelTexture> Model::loadMaterialTexture( 
@@ -110,7 +120,7 @@ namespace OGL {
         std::vector<ModelTexture> textures;
         for (size_t i = 0; i < material->GetTextureCount(texType); ++i) {
             aiString str;
-            material->GetTexture(texType, i, &str);
+            material->GetTexture(texType, static_cast<unsigned int>(i), &str);
 
             bool alreadyLoaded = false;
             for (size_t i = 0; i < m_loadedTextures.size(); ++i) {
@@ -123,7 +133,7 @@ namespace OGL {
 
             if (!alreadyLoaded) {
                 ModelTexture texture;
-                texture.m_id = textureFromFile(str.C_Str(), m_directory);
+                texture.m_id = textureFromFile(m_directory, str.C_Str());
                 texture.m_type = typeName;
                 texture.m_path = str.C_Str();
                 textures.push_back(texture);
@@ -134,9 +144,8 @@ namespace OGL {
     }
 
     int Model::textureFromFile(
-        std::string const &path,
         std::string const &directory,
-        bool gamma
+        std::string const &path
     ) {
         std::string filename = directory + '/' + std::string{ path };
 
@@ -182,7 +191,7 @@ namespace OGL {
     }
 
     Model::Model( 
-        char const *path, 
+        std::string const &path,
         int flags
     ) {
         loadModel(path, flags);
@@ -198,7 +207,7 @@ namespace OGL {
 
     void Model::drawInstanced( 
         Shader &shader,
-        size_t amount
+        uint32_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].drawInstanced(shader, amount);
@@ -215,7 +224,7 @@ namespace OGL {
 
     void Model::drawShapeInstanced(
         Shader &shader, 
-        size_t amount
+        uint32_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].drawShapeInstanced(shader, amount);
@@ -228,6 +237,26 @@ namespace OGL {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
             m_meshes[i].setVertexAttribInstancedModelMat4(attribLocation);
         }
+    }
+
+    std::string Model::getDirectory(
+    ) const {
+        return m_directory;
+    }
+
+    std::string Model::getName(
+    ) const {
+        return m_name;
+    }
+
+    std::string Model::getFormat(
+    ) const {
+        return m_format;
+    }
+
+    std::string Model::getFullPath(
+    ) const {
+        return (m_directory.empty() ? "" : getDirectory() + "/") + getName() + "." + getFormat();
     }
 
 } // OGL

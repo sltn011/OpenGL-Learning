@@ -19,36 +19,36 @@ namespace OGL::E1 {
         return m_transparentObjects.emplace_back(std::move(obj));
     }
 
-    std::pair<Object, smartCubemap> &Scene::addMirrorObj(
+    pMirrorCubemap &Scene::addMirrorObj(
         Object obj
     ) {
-        std::pair<Object, smartCubemap> pair{std::move(obj), nullptr};
+        std::pair<Object, maybeCubemap> pair{ std::move(obj), std::nullopt };
         return m_mirrorObjects.emplace_back(std::move(pair)); // Cubemap is empty first
     }
 
-    std::pair<Object, size_t> &Scene::addInstancedObj(
+    pObjInstancesNum &Scene::addInstancedObj(
         Object obj,
-        size_t numInstances
+        uint32_t numInstances
     ) {
         return m_instancedObjects.emplace_back(std::move(obj), numInstances);
     }
 
-    std::pair<DirectionalLight, smartShadowMap> &Scene::addDirLight(
+    pDirLightShadow &Scene::addDirLight(
         DirectionalLight dirLight
     ) {
-       return m_dirLights.emplace_back(dirLight, nullptr);
+       return m_dirLights.emplace_back(dirLight, std::nullopt);
     }
 
-    std::pair<PointLight, smartShadowCubemap> &Scene::addPointLight(
+    pPointLightShadows &Scene::addPointLight(
         PointLight pointLight
     ) {
-        return m_pointLights.emplace_back(pointLight, nullptr);
+        return m_pointLights.emplace_back(pointLight, std::nullopt);
     }
 
-    std::pair<SpotLight, smartShadowMap> &Scene::addSpotLight(
+    pSpotLightShadows &Scene::addSpotLight(
         SpotLight spotLight
     ) {
-       return m_spotLights.emplace_back(spotLight, nullptr);
+       return m_spotLights.emplace_back(spotLight, std::nullopt);
     }
 
     objectsVec &Scene::getNormalObjs(
@@ -87,12 +87,12 @@ namespace OGL::E1 {
     }
 
     void Scene::replaceSkybox( 
-        smartSkybox &&skybox
+        Skybox &&skybox
     ) {
         m_skybox = std::move(skybox);
     }
 
-    smartSkybox &Scene::getSkybox(
+    maybeSkybox &Scene::getSkybox(
     ) {
         return m_skybox;
     }

@@ -49,9 +49,7 @@ namespace Object {
 OGL::CameraFree freeCam{
     {0.0f, 0.0f, 5.0f},
     {0.0f, 0.0f, -1.0f},
-    {0.0f, 1.0f, 0.0f},
-    5.0f, -90.0f, 0.0f,
-    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
+    5.0f, 45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
 
 void windowResizeCallback(
@@ -168,11 +166,10 @@ int main(
 
     OGL::Model myModel("models/Backpack/backpack.obj");
 
-    OGL::Object myObject(myModel);
-    myObject.m_postiton = glm::vec3{ 0.0f, 0.0f, -2.0f };
-    myObject.m_scale = 1.2f;
-    myObject.m_rotationAngle = -45.0f;
-    myObject.m_rotationAxis = glm::vec3(1.0f, 1.0f, 1.0f);
+    OGL::Object myObject(&myModel);
+    myObject.setPosition(glm::vec3{ 0.0f, 0.0f, -2.0f });
+    myObject.setScale(1.2f);
+    myObject.setRotation(-45.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

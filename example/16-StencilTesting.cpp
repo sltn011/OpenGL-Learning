@@ -24,10 +24,8 @@ public:
         OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
             glm::vec3{ 0.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
-            1.0f, -90.0f, 0.0f,
-            45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
-            );
+            1.0f, 45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f
+        );
 
         for (auto &shader : m_shaders) {
             shader.use();
@@ -110,14 +108,14 @@ public:
 
         m_shaders[1].use();
         for (size_t i = 1; i < m_objects.size(); ++i) {
-            float oldSize = m_objects[i]->m_scale;
+            float oldSize = m_objects[i]->getScale();
             float newSize = oldSize * 1.1f;
 
-            m_objects[i]->m_scale = newSize; // Resize
+            m_objects[i]->setScale(newSize); // Resize
 
             m_objects[i]->draw(m_shaders[1]); // Draw bigger container with only one color only where stencil value won't be 1
 
-            m_objects[i]->m_scale = oldSize; // Resize back
+            m_objects[i]->setScale(oldSize); // Resize back
         }
 
         glStencilMask(0xFF); // Write to buffer allowed

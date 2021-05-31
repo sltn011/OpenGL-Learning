@@ -14,7 +14,7 @@ namespace OGL {
         glGenFramebuffers(1, &m_descriptor);
         glBindVertexArray(m_frameQuadVAO.value());
         glBindBuffer(GL_ARRAY_BUFFER, m_frameQuadVBO.value());
-        glBufferData(GL_ARRAY_BUFFER, 96, frameQuadData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 96, s_frameQuadData, GL_STATIC_DRAW);
         glEnableVertexAttribArray(frameQuadVerticesVertexAttribIndex);
         glVertexAttribPointer(frameQuadVerticesVertexAttribIndex, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(frameQuadTexCoordVertexAttribIndex);
@@ -25,6 +25,16 @@ namespace OGL {
     FrameBufferObject::~FrameBufferObject(
     ) {
         glDeleteFramebuffers(1, &m_descriptor);
+    }
+
+    FrameBufferObject::FrameBufferObject(
+        FrameBufferObject &&rhs
+    ) noexcept : 
+        Descriptor{std::move(rhs)},
+        m_frameQuadVAO{ std::move(rhs.m_frameQuadVAO) },
+        m_frameQuadVBO{ std::move(rhs.m_frameQuadVBO) },
+        m_renderBufferObj{ std::move(rhs.m_renderBufferObj) } {
+        m_colorBufferObjs = std::move(rhs.m_colorBufferObjs);
     }
 
     void FrameBufferObject::attachColorBuffer(
@@ -105,7 +115,7 @@ namespace OGL {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    std::map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(
+    std::unordered_map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(
     ) {
         return m_colorBufferObjs;
     }
@@ -115,7 +125,7 @@ namespace OGL {
         return m_renderBufferObj;
     }
 
-    float const FrameBufferObject::frameQuadData[] = {
+    float const FrameBufferObject::s_frameQuadData[] = {
         // position      // texture
         -1.0f, +1.0f,    0.0f, 1.0f,
         -1.0f, -1.0f,    0.0f, 0.0f,

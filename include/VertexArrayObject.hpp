@@ -1,3 +1,7 @@
+/**
+* @file VertexArrayObject.hpp
+*/
+
 #ifndef OGL_VAO_H
 #define OGL_VAO_H
 
@@ -6,11 +10,20 @@
 
 namespace OGL {
 
+    /**
+     * @brief Class to work with OpenGL's VertexArrayObjects that describes how the vertex attributes are stored in VertexBufferObject and ElementBufferObject
+    */
     class VertexArrayObject : public Descriptor {
      public:
+        /**
+         * @brief VertexArrayObject constructor
+        */
         VertexArrayObject(
         );
 
+        /**
+         * @brief VertexArrayObject destructor
+        */
         ~VertexArrayObject(
         );
 
@@ -30,9 +43,15 @@ namespace OGL {
             VertexArrayObject &&rhs
         ) = default;
 
+        /**
+         * @brief Binds VertexArrayObject
+        */
         void bind(
         ) const;
 
+        /**
+         * @brief Unbinds VertexArrayObject
+        */
         static void unbind(
         );
     };

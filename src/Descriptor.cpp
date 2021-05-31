@@ -12,16 +12,14 @@ namespace OGL {
 
     Descriptor::Descriptor( 
         Descriptor &&rhs
-    ) : m_descriptor{rhs.m_descriptor} {
-        rhs.m_descriptor = 0;
+    ) noexcept : m_descriptor{std::exchange(rhs.m_descriptor, 0)} {
+        
     }
 
     Descriptor &Descriptor::operator=( 
         Descriptor &&rhs
-    ) {
-        unsigned int buf = m_descriptor;
-        m_descriptor = rhs.m_descriptor;
-        rhs.m_descriptor = buf;
+    ) noexcept {
+        std::swap(m_descriptor, rhs.m_descriptor);
         return *this;
     }
 

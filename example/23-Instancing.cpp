@@ -37,9 +37,7 @@ namespace System {
 OGL::CameraFree freeCam{
     {0.0f, 10.0f, 250.0f},
     {0.0f, 0.0f, -1.0f},
-    {0.0f, 1.0f, 0.0f},
-    5.0f, -90.0f, 0.0f,
-    45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 1.0f, 1000.0f
+    5.0f, 45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 1.0f, 1000.0f
 };
 
 void framebufferSizeCallback(
@@ -174,8 +172,8 @@ int main(
 
     glm::vec3 planetCenter{ 0.0f, -2.0f, -200.0f };
 
-    OGL::Object planetObj(planet, planetCenter, 20.0f);
-    OGL::Object asteroidObj(asteroid, planetCenter);
+    OGL::Object planetObj(&planet, planetCenter, 20.0f);
+    OGL::Object asteroidObj(&asteroid, planetCenter);
 
     size_t numInstances = 25000;
 

@@ -5,24 +5,24 @@ namespace OGL {
     BasicCamera::BasicCamera( 
         glm::vec3 positionVec,
         glm::vec3 forwardVec,
-        glm::vec3 worldUpVec,
         float moveSpeed,
-        float yawAngle,
-        float pitchAngle,
         float fov,
         float aspect,
         float near,
         float far
     ) : m_position{ positionVec }, 
         m_forward{ forwardVec }, 
-        m_worldUp{ worldUpVec },
-        m_speed{ moveSpeed }, 
-        m_yaw{ yawAngle }, 
-        m_pitch{ pitchAngle }, 
+        m_right{ 0.0f, 0.0f, 0.0f },
+        m_up{ 0.0f, 0.0f, 0.0f },
+        m_worldUp{ 0.0f, 1.0f, 0.0f },
+        m_speed{ moveSpeed },  
         m_fov{ fov }, 
         m_aspect{ aspect }, 
         m_near{ near }, 
         m_far{ far } {
+        glm::vec3 normForward = glm::normalize(m_forward);
+        m_pitch = glm::degrees(std::asin(normForward.y));
+        m_yaw = glm::degrees(std::atan2(normForward.z, normForward.x));
     }
 
     BasicCamera::~BasicCamera(
@@ -47,6 +47,11 @@ namespace OGL {
     glm::vec3 BasicCamera::getForward(
     ) const {
         return m_forward;
+    }
+
+    glm::vec3 BasicCamera::getWorldUp(
+    ) const {
+        return m_worldUp;
     }
 
     glm::vec3 BasicCamera::getUp(

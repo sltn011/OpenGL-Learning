@@ -8,7 +8,7 @@ namespace OGL {
     ) : m_textureUnit{ cubemapTextureUnit } {
         Texture::setActive(cubemapTextureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
-        for (size_t i = 0; i < 6; ++i) {
+        for (GLenum i = 0; i < 6; ++i) {
             Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, size, size, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         }
 
@@ -26,7 +26,8 @@ namespace OGL {
     Cubemap::Cubemap( 
         std::string const &folderPath, 
         GLenum cubemapTextureUnit
-    ) : m_textureUnit{cubemapTextureUnit} {
+    ) : m_textureUnit{ cubemapTextureUnit },
+        m_folderPath{ folderPath } {
         std::string const fileNames[6] = {
             "right.jpg",
             "left.jpg",
@@ -40,7 +41,7 @@ namespace OGL {
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
 
         stbi_set_flip_vertically_on_load(false);
-        for (size_t i = 0; i < 6; ++i) {
+        for (GLenum i = 0; i < 6; ++i) {
             std::string filePath = folderPath + "/" + fileNames[i];
             int width, height, nrChannels;
             unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
@@ -82,6 +83,11 @@ namespace OGL {
     GLenum Cubemap::unit(
     ) const {
         return m_textureUnit;
+    }
+
+    std::string Cubemap::folderPath(
+    ) const {
+        return m_folderPath;
     }
 
 } // OGL

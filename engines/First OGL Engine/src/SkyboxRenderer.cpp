@@ -12,8 +12,8 @@ namespace OGL::E1 {
         Scene &scene,
         BasicCamera const *camera
     ) {
-        smartSkybox &skyboxPtr = scene.getSkybox();
-        if (!skyboxPtr) {
+        maybeSkybox &skybox = scene.getSkybox();
+        if (!skybox) {
             return;
         }
 
@@ -24,9 +24,9 @@ namespace OGL::E1 {
         m_shader.setUniformMatrix4("view", viewMatrNoTranslation);
         m_shader.setUniformMatrix4("projection", camera->getProjectionMatrix());
 
-        m_shader.setUniformInt("skyboxSampler", skyboxPtr->unit() - GL_TEXTURE0);
+        m_shader.setUniformInt("skyboxSampler", skybox->unit() - GL_TEXTURE0);
 
-        skyboxPtr->bind();
+        skybox->bind();
         glDepthFunc(GL_LEQUAL);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
         glDepthFunc(GL_LESS);

@@ -1,0 +1,137 @@
+{
+    "Camera": {
+        "Clip Far": 100.0,
+        "Clip Near": 0.009999999776482582,
+        "Direction": [
+            -4.371138828673793e-08,
+            0.0,
+            -1.0
+        ],
+        "FoV": 45.0,
+        "Move Speed": 1.0,
+        "Position": [
+            0.0,
+            0.0,
+            5.0
+        ]
+    },
+    "Lights": {
+        "Directional": [
+            {
+                "Color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Direction": [
+                    -0.30000001192092896,
+                    -0.5,
+                    -0.20000000298023224
+                ]
+            }
+        ],
+        "Point": [],
+        "Spot": []
+    },
+    "Models": {
+        "0": "models/Axises/axises.obj"
+    },
+    "Objects": {
+        "Instanced": [],
+        "Mirror": [],
+        "Normal": [
+            {
+                "Model ID": 0,
+                "Object ID": 0,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            },
+            {
+                "Model ID": 0,
+                "Object ID": 1,
+                "Position": [
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            },
+            {
+                "Model ID": 0,
+                "Object ID": 2,
+                "Position": [
+                    -1.0,
+                    0.0,
+                    -1.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            },
+            {
+                "Model ID": 0,
+                "Object ID": 3,
+                "Position": [
+                    -1.0,
+                    1.0,
+                    1.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            },
+            {
+                "Model ID": 0,
+                "Object ID": 4,
+                "Position": [
+                    -1.0,
+                    -1.0,
+                    1.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            },
+            {
+                "Model ID": 0,
+                "Object ID": 5,
+                "Position": [
+                    1.0,
+                    1.0,
+                    -1.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    -0.0
+                ],
+                "Scale": 1.0
+            }
+        ],
+        "Transparent": []
+    },
+    "Skybox": null
+}

@@ -6,38 +6,33 @@ namespace OGL {
         DirectionalLight dirLight,
         glm::vec3 sceneCenter,
         float sceneDownscale,
-        float nearPlane,
-        float farPlane
+        float near,
+        float far
     ) : BasicCamera {
         sceneCenter - dirLight.m_direction,
         sceneCenter,
-        {0.0f, 1.0f, 0.0f},
-        0.0f,
-        0.0f,
         0.0f,
         0.0f,
         1.0f,
-        nearPlane,
-        farPlane },
+        near,
+        far },
         m_scale {sceneDownscale},
         m_hasPerspective{ false } {
     }
 
     CameraShadowMap::CameraShadowMap(
         SpotLight spotLight,
-        float nearPlane,
-        float farPlane
+        float near,
+        float far
     ) : BasicCamera {
         spotLight.m_position,
         spotLight.m_direction,
-        {0.0f, 1.0f, 0.0f},
-        0.0f,
-        0.0f,
         0.0f,
         90.0f,
         1.0f,
-        nearPlane,
-        farPlane },
+        near,
+        far },
+        m_scale{ 1.0f },
         m_hasPerspective{ true } {
     }
 

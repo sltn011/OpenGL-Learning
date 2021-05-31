@@ -4,7 +4,7 @@
 #include "Skybox.hpp"
 #include "CameraCubemap.hpp"
 #include "FrameBufferObject.hpp"
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1.hpp"
 
 const int skyboxTextureID = 15;
 const int shadowCubemapFirstID = 16;
@@ -31,25 +31,22 @@ public:
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ -0.1f, 0.15f, -0.6f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
-            180.0f,
-            0.0f,
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
             0.01f,
             100.0f
         );
 
-        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+        m_scene = std::make_unique<OGL::E1::Scene>(std::move(gameCamera));
 
-        OGL::Shader normalShader("shaders/23-normalObjWithShadows.vert", "shaders/23-normalObjWithShadows.frag"); normalShader.showWarnings(true);
+        OGL::Shader normalShader("shaders/23-normalObjWithShadows.vert", "shaders/23-normalObjWithShadows.frag");
         OGL::Shader pointLightShadowsShader("shaders/23-normalObjDepthCubemap.vert", "shaders/23-normalObjDepthCubemap.geom", "shaders/23-normalObjDepthCubemap.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_shadowCubemapRenderer = OGL::E1::factory<OGL::E1::ShadowCubemapRenderer>(std::move(pointLightShadowsShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_normalRenderer.emplace(std::move(normalShader));
+        m_shadowCubemapRenderer.emplace(std::move(pointLightShadowsShader));
+        m_skyboxRenderer.emplace(std::move(skyboxShader));
 
         // Objects
         addModel("models/BigWoodCrate/bigWoodCrate.obj", 0);
@@ -75,14 +72,12 @@ public:
         for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
             auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
             OGL::CameraShadowCubemap cam(pointLight, 0.01f, 2.0f);
-            shadowCubemap = std::make_unique<OGL::ShadowCubemap>(
-                m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstID + i, shadowCubemapSize)
-            );
+            shadowCubemap = m_shadowCubemapRenderer->render(*m_scene, cam, GL_TEXTURE0 + shadowCubemapFirstID + i, shadowCubemapSize);
         }
         glViewport(0, 0, screenWidth, screenHeight);
 
         stbi_set_flip_vertically_on_load(false);
-        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
+        m_scene->replaceSkybox(OGL::Skybox("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
 
         return true;
@@ -102,15 +97,6 @@ public:
     bool userDestroy(
     ) override {
         return true;
-    }
-
-    void keyCallback(
-        int key,
-        int scancode,
-        int action,
-        int mods
-    ) override {
-        
     }
 };
 

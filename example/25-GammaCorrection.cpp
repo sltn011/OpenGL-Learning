@@ -4,7 +4,7 @@
 #include "Skybox.hpp"
 #include "CameraCubemap.hpp"
 #include "FrameBufferObject.hpp"
-#include "First OGL Engine/OGL_E1.hpp"
+#include "OGL_E1.hpp"
 
 const int skyboxTextureID = 15;
 
@@ -31,23 +31,20 @@ public:
         OGL::E1::smartCamPtr gameCamera = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ 0.0f, 0.15f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
-            glm::vec3{ 0.0f, 1.0f, 0.0f },
             1.0f,
-            -90.0f,
-            0.0f,
             45.0f,
             static_cast<float>(screenWidth) / static_cast<float>(screenHeight),
             0.01f,
             1000.0f
             );
 
-        m_scene = OGL::E1::factory<OGL::E1::Scene>(std::move(gameCamera));
+        m_scene = std::make_unique<OGL::E1::Scene>(std::move(gameCamera));
 
         OGL::Shader normalShader("shaders/21-gammaCorrectionObj.vert", "shaders/21-gammaCorrectionObj.frag");
         OGL::Shader skyboxShader("shaders/01-playgroundSkybox.vert", "shaders/01-playgroundSkybox.frag");
 
-        m_normalRenderer = OGL::E1::factory<OGL::E1::NormalRenderer>(std::move(normalShader));
-        m_skyboxRenderer = OGL::E1::factory<OGL::E1::SkyboxRenderer>(std::move(skyboxShader));
+        m_normalRenderer.emplace(std::move(normalShader));
+        m_skyboxRenderer.emplace(std::move(skyboxShader));
 
         // Objects
         addModel("models/WoodPlanksPlane/woodPlanksPlane.obj", 0);
@@ -62,7 +59,7 @@ public:
         addPointLight({ 0.2f, 0.35f, 0.0f }, { 0.6f, 0.6f, 0.6f });
 
         stbi_set_flip_vertically_on_load(false);
-        m_scene->replaceSkybox(OGL::E1::factory<OGL::Skybox>("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
+        m_scene->replaceSkybox(OGL::Skybox("textures/Skybox1", GL_TEXTURE0 + skyboxTextureID));
         stbi_set_flip_vertically_on_load(true);
 
         glDisable(GL_CULL_FACE);
@@ -100,9 +97,12 @@ public:
             m_doGammaCorrection ^= true;
             std::cout << (m_doGammaCorrection ? "Gamma correction on" : "Gamma correction off") << std::endl;
         }
-        else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
             m_ifTrueDoubleElseLinear ^= true;
             std::cout << (m_ifTrueDoubleElseLinear ? "Double distance attenuation" : "Linear distance attenuation") << std::endl;
+        }
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            glfwSetWindowShouldClose(m_window, true);
         }
     }
 };

@@ -120,15 +120,14 @@ namespace OGL {
 
     Shader::Shader( 
         Shader &&rhs
-    ) {
-        m_programmID = rhs.m_programmID;
-        rhs.m_programmID = 0;
-        m_showWarnings = rhs.m_showWarnings;
+    ) noexcept : 
+        m_programmID{ std::exchange(rhs.m_programmID, 0) },
+        m_showWarnings{ rhs.m_showWarnings } {
     }
 
     Shader &Shader::operator=( 
         Shader &&rhs
-    ) {
+    ) noexcept {
         std::swap(m_programmID, rhs.m_programmID);
         std::swap(m_showWarnings, rhs.m_showWarnings);
         return *this;
@@ -202,7 +201,7 @@ namespace OGL {
 
     bool Shader::setUniformMatrix4( 
         std::string const &name, 
-        glm::mat4 const &matrix, 
+        glm::mat4 const &val, 
         bool doTranspose
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
@@ -212,13 +211,13 @@ namespace OGL {
             }
             return false;
         }
-        glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(matrix));
+        glUniformMatrix4fv(loc, 1, doTranspose, glm::value_ptr(val));
         return true;
     }
 
     bool Shader::setUniformVec3( 
         std::string const &name, 
-        glm::vec3 const &vec
+        glm::vec3 const &val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
@@ -227,7 +226,22 @@ namespace OGL {
             }
             return false;
         }
-        glUniform3fv(loc, 1, &vec[0]);
+        glUniform3fv(loc, 1, &(val.x));
+        return true;
+    }
+
+    bool Shader::setUniformVec4(
+        std::string const &name,
+        glm::vec4 const &val
+    ) {
+        GLint loc = glGetUniformLocation(m_programmID, name.c_str());
+        if (loc == -1) {
+            if (m_showWarnings) {
+                warnInvalidUniformLocation(name);
+            }
+            return false;
+        }
+        glUniform4fv(loc, 1, &(val.x));
         return true;
     }
 
@@ -242,7 +256,7 @@ namespace OGL {
             }
             return false;
         }
-        glUniformBlockBinding(m_programmID, blockIndex, bindingPointIndex);
+        glUniformBlockBinding(m_programmID, blockIndex, static_cast<GLuint>(bindingPointIndex));
         return true;
     }
 
@@ -268,7 +282,7 @@ namespace OGL {
         unsigned int shaderId
     ) {
         std::string infoLog(512, ' ');
-        glGetShaderInfoLog(shaderId, infoLog.size(), nullptr, infoLog.data());
+        glGetShaderInfoLog(shaderId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 
@@ -284,7 +298,7 @@ namespace OGL {
         unsigned int programmId
     ) {
         std::string infoLog(512, ' ');
-        glGetProgramInfoLog(programmId, infoLog.size(), nullptr, infoLog.data());
+        glGetProgramInfoLog(programmId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
         throw Exception(infoLog);
     }
 
