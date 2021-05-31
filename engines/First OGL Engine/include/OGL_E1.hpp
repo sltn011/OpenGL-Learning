@@ -150,7 +150,7 @@ namespace OGL::E1 {
          Engine1Base(
              int          screenWidth,
              int          screenHeight,
-             std::string  title = "Engine1_v.0.2.7.2",
+             std::string  title = "Engine1_v.0.4",
              bool         isWindowed = true,
              int          numSamples = 8
          );
