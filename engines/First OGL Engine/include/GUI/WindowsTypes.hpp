@@ -13,7 +13,8 @@ namespace OGL::E1::GUI {
     enum class WindowsTypes {
         NONE,
         MainWindow,
-        ObjectTransform
+        ObjectTransform,
+        EnvironmentControl
     };
 
 } // OGL::E1::GUI

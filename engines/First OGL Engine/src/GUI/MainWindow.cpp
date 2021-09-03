@@ -19,6 +19,7 @@ namespace OGL::E1::GUI {
 
         static constexpr char* windowsList[] = {
             "Object Transform",
+            "Environment Control"
         };
 
         ImGui::Text("Window Selector");
@@ -36,6 +37,11 @@ namespace OGL::E1::GUI {
             switch (m_windowsDropDownIndex) {
             case 0:
                 m_changedWindow = WindowsTypes::ObjectTransform;
+                m_hadUserActivity = true;
+                break;
+
+            case 1:
+                m_changedWindow = WindowsTypes::EnvironmentControl;
                 m_hadUserActivity = true;
                 break;
 

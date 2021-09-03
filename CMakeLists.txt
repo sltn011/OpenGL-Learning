@@ -230,6 +230,7 @@ add_library(OGL_E1_GUI STATIC
         "engines/First OGL Engine/src/GUI/MainWindow.cpp"
         "engines/First OGL Engine/src/GUI/ObjectTransformWindow.cpp"
         "engines/First OGL Engine/src/GUI/CursorPicker.cpp"
+		"engines/First OGL Engine/src/GUI/EnvironmentControlWindow.cpp"
 )
 
 target_include_directories(OGL_E1 PUBLIC "engines/First OGL Engine/include")

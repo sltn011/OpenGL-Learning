@@ -103,6 +103,9 @@ namespace OGL::E1::GUI {
         case OGL::E1::GUI::WindowsTypes::ObjectTransform:
             return std::make_unique<ObjectTransformWindow>(isEnabled);
 
+        case OGL::E1::GUI::WindowsTypes::EnvironmentControl:
+            return std::make_unique<EnvironmentControlWindow>(isEnabled);
+
         default:
             return nullptr;
         }

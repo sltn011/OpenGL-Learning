@@ -1,17 +1,5 @@
 #include "OGL_E1.hpp"
 
-const int shadowMapDirLightFirstTextureID = 10;
-const int shadowCubemapFirstTextureID = shadowMapDirLightFirstTextureID + 4;
-const int shadowMapSpotLightFirstTextureID = shadowCubemapFirstTextureID + 4;
-const int skyboxTextureID = 22;
-const int cubemapTextureID = 23;
-
-
-const int cubemapSize = 512;
-const int shadowMapSize = 1024 * 2;
-const int shadowCubemapSize = 1024;
-
-
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(
@@ -90,57 +78,9 @@ public:
 
         loadLevel("levels/01-level.json");
 
+        rebuildShadows();
 
-        glViewport(0, 0, shadowMapSize, shadowMapSize);
-        for (size_t i = 0; i < m_scene->getDirLights().size(); ++i) {
-            auto &[dirLight, shadowMap] = m_scene->getDirLights()[i];
-            OGL::CameraShadowMap cam{ dirLight, m_scene->getNormalObjs().front().getPosition(), 2.5f, 0.1f, 6.0f };
-            shadowMap = m_shadowMapRenderer->render(
-                *m_scene,
-                cam,
-                GL_TEXTURE0 + shadowMapDirLightFirstTextureID + i,
-                shadowMapSize
-            );
-        }
-
-        glViewport(0, 0, shadowCubemapSize, shadowCubemapSize);
-        for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
-            auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
-            OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
-            shadowCubemap = m_shadowCubemapRenderer->render(
-                *m_scene,
-                cam,
-                GL_TEXTURE0 + shadowCubemapFirstTextureID + i,
-                shadowCubemapSize
-            );
-        }
-
-        glViewport(0, 0, shadowMapSize, shadowMapSize);
-        for (size_t i = 0; i < m_scene->getSpotLights().size(); ++i) {
-            auto &[spotLight, shadowMap] = m_scene->getSpotLights()[i];
-            OGL::CameraShadowMap cam{ spotLight, 0.1f, 6.0f };
-            shadowMap = m_shadowMapRenderer->render(
-                *m_scene,
-                cam,
-                GL_TEXTURE0 + shadowMapSpotLightFirstTextureID + i,
-                shadowMapSize
-            );
-        }
-
-        glViewport(0, 0, cubemapSize, cubemapSize);
-        for (auto &p : m_scene->getMirrorObjs()) {
-            p.second = m_cubemapRenderer->render(
-                *m_scene,
-                cubemapSize,
-                GL_TEXTURE0 + cubemapTextureID,
-                p.first.getPosition(),
-                m_normalRenderer,
-                m_skyboxRenderer,
-                m_transpRenderer,
-                m_instancesRenderer
-            );
-        }
-        glViewport(0, 0, screenWidth, screenHeight);
+        rebuildReflections();
 
         return true;
     }

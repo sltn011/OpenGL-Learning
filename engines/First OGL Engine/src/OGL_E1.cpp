@@ -66,6 +66,8 @@ namespace OGL::E1 {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendEquation(GL_FUNC_ADD);
+
+        UtilsLibrary::m_engine = this;
     }
 
     Engine1Base::~Engine1Base(
@@ -607,6 +609,107 @@ namespace OGL::E1 {
             m_modelsTable,
             *m_scene
         );
+    }
+
+    void Engine1Base::rebuildDirLightsShadows(
+    ) {
+        if (!m_scene || !m_shadowMapRenderer) {
+            return;
+        }
+
+        glViewport(0, 0, m_shadowMapSize, m_shadowMapSize);
+        for (size_t i = 0; i < m_scene->getDirLights().size(); ++i) {
+            auto &[dirLight, shadowMap] = m_scene->getDirLights()[i];
+            OGL::CameraShadowMap cam{ dirLight, m_scene->getNormalObjs().front().getPosition(), 2.5f, 0.1f, 6.0f };
+            shadowMap = m_shadowMapRenderer->render(
+                *m_scene,
+                cam,
+                GL_TEXTURE0 + m_shadowMapDirLightFirstTextureID + i,
+                m_shadowMapSize
+            );
+        }
+
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+        glViewport(0, 0, screenWidth, screenHeight);
+    }
+
+    void Engine1Base::rebuildPointLightsShadows(
+    ) {
+        if (!m_scene || !m_shadowCubemapRenderer) {
+            return;
+        }
+
+        glViewport(0, 0, m_shadowCubemapSize, m_shadowCubemapSize);
+        for (size_t i = 0; i < m_scene->getPointLights().size(); ++i) {
+            auto &[pointLight, shadowCubemap] = m_scene->getPointLights()[i];
+            OGL::CameraShadowCubemap cam(pointLight, 0.01f, 3.5f);
+            shadowCubemap = m_shadowCubemapRenderer->render(
+                *m_scene,
+                cam,
+                GL_TEXTURE0 + m_shadowCubemapFirstTextureID + i,
+                m_shadowCubemapSize
+            );
+        }
+
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+        glViewport(0, 0, screenWidth, screenHeight);
+    }
+
+    void Engine1Base::rebuildSpotLightsShadows(
+    ) {
+        if (!m_scene || !m_shadowMapRenderer) {
+            return;
+        }
+
+        glViewport(0, 0, m_shadowMapSize, m_shadowMapSize);
+        for (size_t i = 0; i < m_scene->getSpotLights().size(); ++i) {
+            auto &[spotLight, shadowMap] = m_scene->getSpotLights()[i];
+            OGL::CameraShadowMap cam{ spotLight, 0.1f, 6.0f };
+            shadowMap = m_shadowMapRenderer->render(
+                *m_scene,
+                cam,
+                GL_TEXTURE0 + m_shadowMapSpotLightFirstTextureID + i,
+                m_shadowMapSize
+            );
+        }
+        
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+        glViewport(0, 0, screenWidth, screenHeight);
+    }
+
+    void Engine1Base::rebuildShadows(
+    ) {
+        rebuildDirLightsShadows();
+        rebuildPointLightsShadows();
+        rebuildSpotLightsShadows();
+    }
+
+    void Engine1Base::rebuildReflections(
+    ) {
+        if (!m_scene || !m_cubemapRenderer) {
+            return;
+        }
+
+        glViewport(0, 0, m_mirrorCubemapSize, m_mirrorCubemapSize);
+        for (auto &p : m_scene->getMirrorObjs()) {
+            p.second = m_cubemapRenderer->render(
+                *m_scene,
+                m_mirrorCubemapSize,
+                GL_TEXTURE0 + m_mirrorCubemapFirstTextureID,
+                p.first.getPosition(),
+                m_normalRenderer,
+                m_skyboxRenderer,
+                m_transpRenderer,
+                m_instancesRenderer
+            );
+        }
+
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+        glViewport(0, 0, screenWidth, screenHeight);
     }
 
     bool Engine1Base::userDestroy(

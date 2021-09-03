@@ -32,6 +32,7 @@
 #include "Utils/EngineTypes.hpp"
 #include "Utils/Events.hpp"
 #include "Utils/factory.hpp"
+#include "Utils/UtilsLibrary.hpp"
 #include "System.hpp"
 
 #include "stb_image.h"
@@ -138,6 +139,25 @@ namespace OGL::E1 {
         /// GLFW cursor reposition callback function which calls Engine1Base's or override of cursorRepositionCallback @ref cursorRepositionCallback
         GLFWcursorposfun   m_cursorReposFunc;
 
+
+
+    public:
+
+        /// ShadowMap data
+        int32_t m_shadowMapSize = 1024;
+
+        /// ShadowCubemap size
+        int32_t m_shadowCubemapSize = 1024;
+
+        /// ShadowMaps texture ID's
+        int32_t m_shadowMapDirLightFirstTextureID = 10;
+        int32_t m_shadowCubemapFirstTextureID = m_shadowMapDirLightFirstTextureID + 4;
+        int32_t m_shadowMapSpotLightFirstTextureID = m_shadowCubemapFirstTextureID + 4;
+
+        /// Mirror Cubemap size
+        int32_t m_mirrorCubemapSize = 256;
+        int32_t m_mirrorCubemapFirstTextureID = 23;
+
      public:
          /**
           * @brief Engine1Base constructor
@@ -150,7 +170,7 @@ namespace OGL::E1 {
          Engine1Base(
              int          screenWidth,
              int          screenHeight,
-             std::string  title = "Engine1_v.0.4",
+             std::string  title = "Engine1",
              bool         isWindowed = true,
              int          numSamples = 8
          );
@@ -548,6 +568,36 @@ namespace OGL::E1 {
          */
          void saveLevel(
              std::string const &filePath
+         );
+
+         /**
+          * @brief Rebuilds shadowmaps for all scene's DirectionalLight sources
+         */
+         void rebuildDirLightsShadows(
+         );
+
+         /**
+          * @brief Rebuilds shadowmaps for all scene's PointLight sources
+         */
+         void rebuildPointLightsShadows(
+         );
+
+         /**
+          * @brief Rebuilds shadowmaps for all scene's SpotLight sources
+         */
+         void rebuildSpotLightsShadows(
+         );
+
+         /**
+          * @brief Rebuilds shadowmaps for all scene's light sources
+         */
+         void rebuildShadows(
+         );
+
+         /**
+          * @brief Rebuilds cubemaps for all scene's mirror objects
+         */
+         void rebuildReflections(
          );
 
      protected:

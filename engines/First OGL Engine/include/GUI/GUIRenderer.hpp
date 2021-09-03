@@ -11,6 +11,7 @@
 
 #include "GUI/MainWindow.hpp"
 #include "GUI/ObjectTransformWindow.hpp"
+#include "GUI/EnvironmentControlWindow.hpp"
 
 #include <string>
 #include <unordered_map>
