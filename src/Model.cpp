@@ -68,6 +68,14 @@ namespace OGL {
             else {
                 vertices[i].m_tex = glm::vec2{0.0f, 0.0f};
             }
+
+            vertices[i].m_tangent.x = mesh->mTangents[i].x;
+            vertices[i].m_tangent.y = mesh->mTangents[i].y;
+            vertices[i].m_tangent.z = mesh->mTangents[i].z;
+
+            vertices[i].m_bitangent.x = mesh->mBitangents[i].x;
+            vertices[i].m_bitangent.y = mesh->mBitangents[i].y;
+            vertices[i].m_bitangent.z = mesh->mBitangents[i].z;
         }
 
         for (size_t i = 0; i < mesh->mNumFaces; ++i) {

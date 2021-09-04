@@ -275,6 +275,7 @@ add_executable(24-BlinnPhong example/24-BlinnPhong.cpp ${DEARIMGUI_FILES})
 add_executable(25-GammaCorrection example/25-GammaCorrection.cpp ${DEARIMGUI_FILES})
 add_executable(26-ShadowMapping example/26-ShadowMapping.cpp ${DEARIMGUI_FILES})
 add_executable(27-PointShadow example/27-PointShadow.cpp ${DEARIMGUI_FILES})
+add_executable(28-NormalMapping example/28-NormalMapping.cpp)
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI assimp)
@@ -308,5 +309,6 @@ target_link_libraries(24-BlinnPhong glad glfw assimp OpenGLTools OGL_E1 OGL_E1_G
 target_link_libraries(25-GammaCorrection glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
 target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
 target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
+target_link_libraries(28-NormalMapping glad glfw assimp OpenGLTools)
 ######################################################################################################
 

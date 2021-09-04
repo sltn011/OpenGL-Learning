@@ -52,7 +52,7 @@ namespace OGL {
         */
         explicit Model( 
             std::string const &path, 
-            int flags = aiProcess_Triangulate | aiProcess_FlipUVs
+            int flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
         );
 
         /**
@@ -136,7 +136,7 @@ namespace OGL {
          */
          void loadModel(
              std::string const &path,
-             int flags = aiProcess_Triangulate | aiProcess_FlipUVs
+             int flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
          );
 
          /**

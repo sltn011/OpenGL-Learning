@@ -33,6 +33,12 @@ namespace OGL {
 
         /// Coordinate of texture
         glm::vec2 m_tex;
+
+        /// Tangent vector
+        glm::vec3 m_tangent;
+
+        /// Bitangent vector
+        glm::vec3 m_bitangent;
     };
 
     /**
