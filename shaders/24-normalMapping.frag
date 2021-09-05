@@ -32,16 +32,29 @@ struct DirectionalLight {
 	vec3 direction;
 };
 
+struct PointLight {
+	vec3 color;
+	vec3 position;
+
+	float attenuationConst;
+	float attenuationLinear;
+	float attenuationQuadratic;
+};
+
 uniform Material material;
 
 uniform DirectionalLight directionalLight[1];
+uniform PointLight pointLight[1];
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 
+float attenuationCoefficient(PointLight light, vec3 vertexPos);
 
 vec3 ambientComponent(Material material, vec3 lightColor);
 vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal);
+vec3 diffuseComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal);
 vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir);
+vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir);
 
 void main() {
 	vec3 viewDir = normalize(fs_in.vertexPos - viewerPos);
@@ -66,9 +79,11 @@ void main() {
 	norm = PerFragmentNormals ? norm : normalize(fs_in.vertexNorm);
 	//=====
 
-	vec3 amb  = ambientComponent(material, directionalLight[0].color);
-	vec3 diff = diffuseComponent(material, directionalLight[0], norm);
-	vec3 spec = specularComponent(material, directionalLight[0], norm, viewDir);
+	float attenuation = attenuationCoefficient(pointLight[0], fs_in.vertexPos);
+
+	vec3 amb  = vec3(0, 0, 0);
+	vec3 diff = attenuation * diffuseComponent(material, pointLight[0], fs_in.vertexPos, norm);
+	vec3 spec = attenuation * specularComponent(material, pointLight[0], fs_in.vertexPos, norm, viewDir);
 	ambient += amb;
 	diffuse += diff;
 	specular += spec * (diff == 0.0 ? 0 : 1);
@@ -106,6 +121,28 @@ vec3 diffuseComponent(Material material, DirectionalLight light, vec3 normal) {
 
 vec3 specularComponent(Material material, DirectionalLight light, vec3 normal, vec3 viewDir) {
 	vec3 lightDir = normalize(light.direction);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	float dotProduct = dot(halfwayDir, normal);
+	float spec = pow(-min(0.0, dotProduct), material.specularExponent);
+	return spec * material.colorSpecular * light.color;
+}
+
+
+
+float attenuationCoefficient(PointLight light, vec3 vertexPos) {
+	float dist = length(vertexPos - light.position);
+	float attenuation = 1.0 / (light.attenuationConst + light.attenuationLinear * dist + light.attenuationQuadratic * pow(dist, 2));
+	return attenuation;
+}
+
+vec3 diffuseComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal) {
+	vec3 lightDir = normalize(vertexPos - light.position);
+	float diff = -min(0.0, dot(lightDir, normal));
+	return diff * material.colorDiffuse * light.color;
+}
+
+vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3 normal, vec3 viewDir) {
+	vec3 lightDir = normalize(vertexPos - light.position);
 	vec3 halfwayDir = normalize(lightDir + viewDir);
 	float dotProduct = dot(halfwayDir, normal);
 	float spec = pow(-min(0.0, dotProduct), material.specularExponent);

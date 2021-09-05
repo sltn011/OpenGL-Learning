@@ -91,10 +91,6 @@ namespace OGL {
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, m_tangent));
         glEnableVertexAttribArray(3);
 
-        // Vertex bitangent
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, m_tangent));
-        glEnableVertexAttribArray(4);
-
         VertexArrayObject::unbind();
     }
 

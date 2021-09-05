@@ -36,9 +36,6 @@ namespace OGL {
 
         /// Tangent vector
         glm::vec3 m_tangent;
-
-        /// Bitangent vector
-        glm::vec3 m_bitangent;
     };
 
     /**

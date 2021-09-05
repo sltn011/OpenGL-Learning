@@ -7,7 +7,7 @@
 #include "Shader.hpp"
 #include "CameraFree.hpp"
 #include "Object.hpp"
-#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -35,7 +35,7 @@ namespace System {
 }
 
 OGL::CameraFree freeCam{
-    {0.0f, 0.25f, 3.0f},
+    {0.20f, 1.0f, 1.0f},
     {0.0f, 0.0f, -1.0f},
     5.0f, 45.0f, static_cast<float>(Screen::width) / static_cast<float>(Screen::height), 0.01f, 100.0f
 };
@@ -157,13 +157,13 @@ int main(
     ShaderPtr = &shaderProgramm;
 
     OGL::Model WallModel("models/BrickWall/brickWall.obj");
-    OGL::Object Wall(&WallModel, glm::vec3(0.0f), 1.0f, glm::vec3{-90.0f, 0.0f, 0.0f});
+    OGL::Object Wall(&WallModel, glm::vec3{ 1.0f, 0.0f, 1.0f }, 1.0f, glm::vec3{ -90.0f, 0.0f, 0.0f });
 
-    OGL::DirectionalLight Light(glm::vec3{ 0.20f, -1.0f, 1.0f });
+    OGL::PointLight Light(glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f });
 
     shaderProgramm.use();
     Light.loadInShader(shaderProgramm, 0);
-    shaderProgramm.setUniformInt("numDirLights", 1);
+    shaderProgramm.setUniformInt("numPointLights", 1);
     shaderProgramm.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
     shaderProgramm.setUniformBool("PerFragmentNormals", PerFragmentNormals);
 
@@ -173,6 +173,15 @@ int main(
         float currentFrameTime = (float)glfwGetTime();
         System::deltaTime = currentFrameTime - System::lastFrameTime;
         System::lastFrameTime = currentFrameTime;
+
+        glm::vec3 pos = Wall.getPosition();
+        float x = pos.x;
+        float z = pos.z;
+        float newX = x * cos(System::deltaTime) - z * sin(System::deltaTime);
+        float newZ = z * cos(System::deltaTime) + x * sin(System::deltaTime);
+        pos.x = newX;
+        pos.z = newZ;
+        Wall.setPosition(pos);
 
         processKeyInput(window);
 

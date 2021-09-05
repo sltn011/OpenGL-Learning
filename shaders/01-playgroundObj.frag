@@ -61,6 +61,7 @@ in VS_OUT {
 	vec3 vertexPos;
 	vec3 vertexNorm;
 	vec2 vertexTex;
+	mat3 TBN;
 	vec4 vertexPosDirLightSpace[MAX_DIR_LIGHTS];
 	vec4 vertexPosSpotLightSpace[MAX_SPOT_LIGHTS];
 } fs_in;
@@ -85,6 +86,8 @@ uniform PointLight pointLight[MAX_POINT_LIGHTS];
 uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
 
 
+
+vec3 calculateNormalVector();
 
 float attenuationCoefficient(PointLight light, vec3 vertexPos);
 float attenuationCoefficient(SpotLight light, vec3 vertexPos);
@@ -127,7 +130,7 @@ float or(float x, float y);
 
 
 void main() {
-	vec3 norm = normalize(fs_in.vertexNorm);
+	vec3 norm = calculateNormalVector();
 	vec3 viewDir = normalize(fs_in.vertexPos - viewerPos);
 
 	float alpha = vec4(texture(material.textureDiffuse[0], fs_in.vertexTex)).a;
@@ -188,6 +191,17 @@ void main() {
 }
 
 
+
+vec3 calculateNormalVector() {
+	vec3 surfaceNormal = normalize(fs_in.vertexNorm);
+	vec3 sampledNormal = (texture(material.textureNormal[0], fs_in.vertexTex)).rgb;
+	sampledNormal = sampledNormal * 2.0 - 1.0;
+	sampledNormal = normalize(fs_in.TBN * sampledNormal);
+
+	float useSampled = whenEq(material.numNormalTextures, 1.0);
+
+	return normalize(useSampled * sampledNormal + (1.0 - useSampled) * surfaceNormal);
+}
 
 float attenuationCoefficient(PointLight light, vec3 vertexPos) {
 	float dist = length(vertexPos - light.position);

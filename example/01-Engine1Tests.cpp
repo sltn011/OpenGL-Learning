@@ -17,6 +17,8 @@ public:
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
+        stbi_set_flip_vertically_on_load(false);
+
         OGL::Shader normalShader(
             "shaders/01-playgroundObj.vert",
             "shaders/01-playgroundObj.frag"
@@ -76,7 +78,7 @@ public:
         m_guiRenderer               = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
 
 
-        loadLevel("levels/01-level.json");
+        loadLevel("levels/03-level.json");
 
         rebuildShadows();
 

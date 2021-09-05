@@ -40,7 +40,7 @@ namespace OGL {
         Texture::setActive(cubemapTextureUnit);
         m_texture.bind(GL_TEXTURE_CUBE_MAP);
 
-        stbi_set_flip_vertically_on_load(false);
+        //stbi_set_flip_vertically_on_load(false);
         for (GLenum i = 0; i < 6; ++i) {
             std::string filePath = folderPath + "/" + fileNames[i];
             int width, height, nrChannels;
@@ -52,7 +52,7 @@ namespace OGL {
             Texture::allocate(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         }
-        stbi_set_flip_vertically_on_load(true);
+        //stbi_set_flip_vertically_on_load(true);
 
         Texture::setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         Texture::setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
