@@ -48,11 +48,13 @@ namespace OGL {
         /**
          * @brief Constructor of Model loaded from file
          * @param path Path to Model file
-         * @param flags Assimp library flags to process Model - triangulate and flip UV's by default
+         * @param bFlipTexturesHorizontally True if textures should be flipped horizontally
+         * @param flags Assimp library flags to process Model - triangulate and calculate tangents by default
         */
         explicit Model( 
             std::string const &path, 
-            int flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
+            bool bFlipTexturesHorizontally = true,
+            int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace
         );
 
         /**
@@ -132,11 +134,13 @@ namespace OGL {
          /**
           * @brief Loads Model from file
           * @param path Path to Model file
-          * @param flags Assimp library flags to process Model - triangulate and flip UV's by default
+          * @param bFlipTexturesHorizontally True if textures should be flipped horizontally
+          * @param flags Assimp library flags to process Model - triangulate and calculate tangents by default
          */
          void loadModel(
              std::string const &path,
-             int flags = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
+             bool bFlipTexturesHorizontally = true,
+             int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace
          );
 
          /**

@@ -164,7 +164,7 @@ int main(
     normalsShader.uniformBlockBinding("Matrices", 0);
     ubo.unbind();
 
-    OGL::Model myModel("models/Backpack/backpack.obj");
+    OGL::Model myModel("models/Backpack/backpack.obj", false);
 
     OGL::Object myObject(&myModel);
     myObject.setPosition(glm::vec3{ 0.0f, 0.0f, -2.0f });

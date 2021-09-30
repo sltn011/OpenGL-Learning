@@ -3,7 +3,8 @@
 namespace OGL {
 
     void Model::loadModel( 
-        std::string const &path, 
+        std::string const &path,
+        bool bFlipTexturesHorizontally,
         int flags
     ) {
         Assimp::Importer importer;
@@ -12,6 +13,8 @@ namespace OGL {
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             throw Exception("Error importing model!:\n" + std::string{importer.GetErrorString()});
         }
+
+        stbi_set_flip_vertically_on_load(bFlipTexturesHorizontally);
 
         size_t pathFileDivisor = path.find_last_of('/');
         size_t pathFormatDivisor = path.find_last_of('.');
@@ -196,9 +199,10 @@ namespace OGL {
 
     Model::Model( 
         std::string const &path,
+        bool bFlipTexturesHorizontally,
         int flags
     ) {
-        loadModel(path, flags);
+        loadModel(path, bFlipTexturesHorizontally, flags);
     }
 
     void Model::draw( 

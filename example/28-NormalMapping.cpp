@@ -156,10 +156,10 @@ int main(
     shaderProgramm.showWarnings(true);
     ShaderPtr = &shaderProgramm;
 
-    OGL::Model WallModel("models/BrickWall/brickWall.obj");
+    OGL::Model WallModel("models/BrickWall/Var1/brickWall.obj");
     OGL::Object Wall(&WallModel, glm::vec3{ 1.0f, 0.0f, 1.0f }, 1.0f, glm::vec3{ -90.0f, 0.0f, 0.0f });
 
-    OGL::PointLight Light(glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f });
+    OGL::PointLight Light(glm::vec3{ 4.0f, 2.0f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f });
 
     shaderProgramm.use();
     Light.loadInShader(shaderProgramm, 0);
@@ -181,7 +181,7 @@ int main(
         float newZ = z * cos(System::deltaTime) + x * sin(System::deltaTime);
         pos.x = newX;
         pos.z = newZ;
-        Wall.setPosition(pos);
+        //Wall.setPosition(pos);
 
         processKeyInput(window);
 

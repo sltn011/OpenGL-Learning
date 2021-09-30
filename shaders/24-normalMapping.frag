@@ -81,7 +81,7 @@ void main() {
 
 	float attenuation = attenuationCoefficient(pointLight[0], fs_in.vertexPos);
 
-	vec3 amb  = vec3(0, 0, 0);
+	vec3 amb  = ambientComponent(material, pointLight[0].color);
 	vec3 diff = attenuation * diffuseComponent(material, pointLight[0], fs_in.vertexPos, norm);
 	vec3 spec = attenuation * specularComponent(material, pointLight[0], fs_in.vertexPos, norm, viewDir);
 	ambient += amb;
