@@ -13,3 +13,4 @@ illum 2
 map_Kd crateDiffuse.png
 map_Ks crateSpecular.png
 map_Kn crateNormal.png
+map_Bump crateDepth.png

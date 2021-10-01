@@ -25,7 +25,7 @@ struct Material {
 	sampler2D textureDiffuse[1];
 	sampler2D textureSpecular[1];
 	sampler2D textureNormal[1];
-	sampler2D textureHeight[1];
+	sampler2D textureDepth[1];
 
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
@@ -175,7 +175,7 @@ vec3 specularComponent(Material material, PointLight light, vec3 vertexPos, vec3
 }
 
 vec3 ParallaxMapping(vec3 viewDirTBN, vec2 texCoord) {
-	float height = texture(material.textureHeight[0], texCoord).r;
+	float height = texture(material.textureDepth[0], texCoord).r;
 	vec2 xyView = viewDirTBN.xy;
 	if (bDivide) {
 		xyView /= viewDirTBN.z;
@@ -196,11 +196,11 @@ vec3 SteepParallaxMapping(vec3 viewDirTBN, vec2 texCoord) {
 	vec2 deltaTexCoords = maxP / DepthLayers;
 
 	vec2 currentTexCoords = texCoord;
-	float currentDepthValue = texture(material.textureHeight[0], currentTexCoords).r;
+	float currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
 
 	while (currentLayerDepth < currentDepthValue) {
 		currentTexCoords -= deltaTexCoords;
-		currentDepthValue = texture(material.textureHeight[0], currentTexCoords).r;
+		currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
 		currentLayerDepth += deltaLayerDepth;
 	}
 
@@ -209,7 +209,7 @@ vec3 SteepParallaxMapping(vec3 viewDirTBN, vec2 texCoord) {
 	if (bEnableParallaxOcclusion) {
 		vec2 beforeTexCoord = currentTexCoords + deltaTexCoords;
 
-		float beforeDepth = texture(material.textureHeight[0], beforeTexCoord).r - currentLayerDepth + deltaLayerDepth;
+		float beforeDepth = texture(material.textureDepth[0], beforeTexCoord).r - currentLayerDepth + deltaLayerDepth;
 		float afterDepth = currentDepthValue - currentLayerDepth;
 
 		float alpha = afterDepth / (afterDepth - beforeDepth);
@@ -224,7 +224,7 @@ vec3 SteepParallaxMapping(vec3 viewDirTBN, vec2 texCoord) {
 
 		int currentIteration = reliefParallaxIterations;
 		while (currentIteration > 0) {
-			currentDepthValue = texture(material.textureHeight[0], currentTexCoords).r;
+			currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
 			deltaTexCoords /= 2.0;
 			deltaLayerDepth /= 2.0;
 			if (currentDepthValue > currentLayerDepth) {
@@ -257,7 +257,7 @@ float ParallaxSelfShadowing(vec2 texCoord, vec3 tangengLightDir, float depth) {
 
 		float currentLayerDepth = depth - deltaDepth;
 		vec2 currentTexCoord = texCoord + deltaTexCoord;
-		float currentDepthValue = texture(material.textureHeight[0], currentTexCoord).r;
+		float currentDepthValue = texture(material.textureDepth[0], currentTexCoord).r;
 
 		int samplesUnderSurface = 0;
 		float stepIndex = 1.0;
@@ -271,7 +271,7 @@ float ParallaxSelfShadowing(vec2 texCoord, vec3 tangengLightDir, float depth) {
 			++stepIndex;
 			currentLayerDepth -= deltaDepth;
 			currentTexCoord += deltaTexCoord;
-			currentDepthValue = texture(material.textureHeight[0], currentTexCoord).r;
+			currentDepthValue = texture(material.textureDepth[0], currentTexCoord).r;
 		}
 
 		ShadowMultiplier = samplesUnderSurface < 1 ? 1.0 : 1.0 - ShadowMultiplier;

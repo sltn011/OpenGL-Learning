@@ -121,7 +121,7 @@ namespace OGL {
                 break;
 
             case TextureType::Height:
-                name = "textureHeight[" + std::to_string(heightTexCnt++) + "]";
+                name = "textureDepth[" + std::to_string(heightTexCnt++) + "]";
                 break;
 
             default:
@@ -137,7 +137,7 @@ namespace OGL {
         shader.setUniformInt("material.numDiffuseTextures", diffuseTexCnt);
         shader.setUniformInt("material.numSpecularTextures", specularTexCnt);
         shader.setUniformInt("material.numNormalTextures", normalTexCnt);
-        shader.setUniformInt("material.numHeightTextures", heightTexCnt);
+        shader.setUniformInt("material.numDepthTextures", heightTexCnt);
         shader.setUniformVec3("material.colorAmbient", m_material.m_ambient);
         shader.setUniformVec3("material.colorDiffuse", m_material.m_diffuse);
         shader.setUniformVec3("material.colorSpecular", m_material.m_specular);

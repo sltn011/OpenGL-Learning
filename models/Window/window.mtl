@@ -13,6 +13,7 @@ illum 2
 map_Kd brickWallDiffuse.jpg
 map_Ks brickWallSpecular.jpg
 map_Kn brickWallNormal.png
+map_Bump brickWallDepth.png
 
 newmtl Window
 Ns 225.000000

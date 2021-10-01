@@ -6,8 +6,12 @@
 #define MAX_DIFFUSE_TEXTURES  1
 #define MAX_SPECULAR_TEXTURES 1
 #define MAX_NORMAL_TEXTURES   1
-#define MAX_HEIGHT_TEXTURES   1
+#define MAX_DEPTH_TEXTURES   1
 float gamma = 2.2;
+
+float HeightScale = 0.03f;
+int DepthLayers = 30;
+int ReliefParallaxIterations = 30;
 
 
 
@@ -18,8 +22,8 @@ struct Material {
 	int numSpecularTextures;
 	sampler2D textureNormal[MAX_NORMAL_TEXTURES];
 	int numNormalTextures;
-	sampler2D textureHeight[MAX_HEIGHT_TEXTURES];
-	int numHeightTextures;
+	sampler2D textureDepth[MAX_DEPTH_TEXTURES];
+	int numDepthTextures;
 
 	vec3 colorAmbient;
 	vec3 colorDiffuse;
@@ -87,7 +91,7 @@ uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
 
 
 
-vec3 calculateNormalVector();
+vec3 calculateNormalVector(vec2 texCoord);
 
 float attenuationCoefficient(PointLight light, vec3 vertexPos);
 float attenuationCoefficient(SpotLight light, vec3 vertexPos);
@@ -105,6 +109,8 @@ vec3 specularComponent(Material material, SpotLight light, vec3 vertexPos, vec3 
 float calculateDirectShadow(int lightIndex, vec3 fragNormal);
 float calculatePointShadow(int lightIndex, vec3 fragPos);
 float calculateSpotShadow(int lightIndex, vec3 fragNormal);
+
+vec3 SteepParallaxMapping(vec3 viewDirTBN, vec2 texCoord);
 
 
 
@@ -130,14 +136,18 @@ float or(float x, float y);
 
 
 void main() {
-	vec3 norm = calculateNormalVector();
 	vec3 viewDir = normalize(fs_in.vertexPos - viewerPos);
 
-	float alpha = vec4(texture(material.textureDiffuse[0], fs_in.vertexTex)).a;
+	vec3 Parallax = SteepParallaxMapping(transpose(fs_in.TBN) * -viewDir, fs_in.vertexTex);
+	vec2 texCoord = Parallax.xy * whenEq(material.numDepthTextures, 1) + fs_in.vertexTex * whenNe(material.numDepthTextures, 1);
+
+	vec3 norm = calculateNormalVector(texCoord);
+
+	float alpha = vec4(texture(material.textureDiffuse[0], texCoord)).a;
 	alpha *= whenNe(vec4(material.numDiffuseTextures), vec4(0)).a;
 	
-	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)), vec3(gamma));
-	vec3 specularCol = vec3(texture(material.textureSpecular[0], fs_in.vertexTex));
+	vec3 diffuseCol = pow(vec3(texture(material.textureDiffuse[0], texCoord)), vec3(gamma));
+	vec3 specularCol = vec3(texture(material.textureSpecular[0], texCoord));
 
 	vec3 ambient  = vec3(0.0);
 	vec3 diffuse  = vec3(0.0);
@@ -192,9 +202,9 @@ void main() {
 
 
 
-vec3 calculateNormalVector() {
+vec3 calculateNormalVector(vec2 texCoord) {
 	vec3 surfaceNormal = normalize(fs_in.vertexNorm);
-	vec3 sampledNormal = (texture(material.textureNormal[0], fs_in.vertexTex)).rgb;
+	vec3 sampledNormal = (texture(material.textureNormal[0], texCoord)).rgb;
 	sampledNormal = sampledNormal * 2.0 - 1.0;
 	sampledNormal = normalize(fs_in.TBN * sampledNormal);
 
@@ -323,6 +333,53 @@ float calculateSpotShadow(int lightIndex, vec3 fragNormal) {
 		}
 	}
 	return (shadow / 9.0) * whenLe(currentDepth, 1.0);
+}
+
+vec3 SteepParallaxMapping(vec3 viewDirTBN, vec2 texCoord) {
+
+	float deltaLayerDepth = 1.0 / DepthLayers;
+	float currentLayerDepth = 0.0;
+
+	vec2 maxP = viewDirTBN.xy * HeightScale;
+	maxP /= viewDirTBN.z;
+	vec2 deltaTexCoords = maxP / DepthLayers;
+
+	vec2 currentTexCoords = texCoord;
+	float currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
+
+	while (currentLayerDepth < currentDepthValue) {
+		currentTexCoords -= deltaTexCoords;
+		currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
+		currentLayerDepth += deltaLayerDepth;
+	}
+
+	vec2 resultCoord = currentTexCoords;
+
+	deltaTexCoords /= 2.0;
+	deltaLayerDepth /= 2.0;
+
+	currentTexCoords += deltaTexCoords;
+	currentLayerDepth -= deltaLayerDepth;
+
+	int currentIteration = ReliefParallaxIterations;
+	while (currentIteration > 0) {
+		currentDepthValue = texture(material.textureDepth[0], currentTexCoords).r;
+		deltaTexCoords /= 2.0;
+		deltaLayerDepth /= 2.0;
+		if (currentDepthValue > currentLayerDepth) {
+			currentTexCoords -= deltaTexCoords;
+			currentLayerDepth += deltaLayerDepth;
+		}
+		else {
+			currentTexCoords += deltaTexCoords;
+			currentLayerDepth -= deltaLayerDepth;
+		}
+		--currentIteration;
+	}
+
+	resultCoord = currentTexCoords;
+
+	return vec3(resultCoord, currentDepthValue);
 }
 
 
