@@ -231,6 +231,7 @@ add_library(OGL_E1_GUI STATIC
         "engines/First OGL Engine/src/GUI/ObjectTransformWindow.cpp"
         "engines/First OGL Engine/src/GUI/CursorPicker.cpp"
 		"engines/First OGL Engine/src/GUI/EnvironmentControlWindow.cpp"
+		"engines/First OGL Engine/src/GUI/PostprocessingWindow.cpp"
 )
 
 target_include_directories(OGL_E1 PUBLIC "engines/First OGL Engine/include")
@@ -277,6 +278,7 @@ add_executable(26-ShadowMapping example/26-ShadowMapping.cpp ${DEARIMGUI_FILES})
 add_executable(27-PointShadow example/27-PointShadow.cpp ${DEARIMGUI_FILES})
 add_executable(28-NormalMapping example/28-NormalMapping.cpp)
 add_executable(29-ParallaxMapping example/29-ParallaxMapping.cpp ${DEARIMGUI_FILES})
+add_executable(30-HDR example/30-HDR.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI assimp)
@@ -312,5 +314,6 @@ target_link_libraries(26-ShadowMapping glad glfw assimp OpenGLTools OGL_E1 OGL_E
 target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1 OGL_E1_GUI)
 target_link_libraries(28-NormalMapping glad glfw assimp OpenGLTools)
 target_link_libraries(29-ParallaxMapping glad glfw assimp OpenGLTools)
+target_link_libraries(30-HDR glad glfw OGL_E1 OGL_E1_GUI assimp)
 ######################################################################################################
 

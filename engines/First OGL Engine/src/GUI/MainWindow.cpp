@@ -19,7 +19,8 @@ namespace OGL::E1::GUI {
 
         static constexpr char* windowsList[] = {
             "Object Transform",
-            "Environment Control"
+            "Environment Control",
+            "Postprocessing"
         };
 
         ImGui::Text("Window Selector");
@@ -42,6 +43,11 @@ namespace OGL::E1::GUI {
 
             case 1:
                 m_changedWindow = WindowsTypes::EnvironmentControl;
+                m_hadUserActivity = true;
+                break;
+
+            case 2:
+                m_changedWindow = WindowsTypes::Postprocessing;
                 m_hadUserActivity = true;
                 break;
 

@@ -23,6 +23,8 @@
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
 
+#include "PostprocessingData.hpp"
+
 #include "LevelSaver.hpp"
 #include "LevelLoader.hpp"
 
@@ -99,6 +101,12 @@ namespace OGL::E1 {
         /// Renderer of GUI, or std::nullopt if not created yet - not mandatory
         GUI::maybeGUIRenderer          m_guiRenderer;
 
+        /// Shader used for postprocessing
+        std::optional<Shader> m_postprocessingShader;
+
+        /// Framebuffers used for postprocessing
+        std::optional<FrameBufferObject> m_renderFramebuffer;
+        std::optional<FrameBufferObject> m_postprocessingFramebuffer;
 
 
         /// Hashmap of Key: Model's ID, Value: Owning pointer to Model object - stores Models used in Scene
@@ -139,7 +147,9 @@ namespace OGL::E1 {
         /// GLFW cursor reposition callback function which calls Engine1Base's or override of cursorRepositionCallback @ref cursorRepositionCallback
         GLFWcursorposfun   m_cursorReposFunc;
 
+        PostprocessingData m_postprocessingData;
 
+        int32_t m_windowSamples;
 
     public:
 
@@ -598,6 +608,31 @@ namespace OGL::E1 {
           * @brief Rebuilds cubemaps for all scene's mirror objects
          */
          void rebuildReflections(
+         );
+
+         void initPostprocessing(
+             Shader &&postprocessingShader
+         );
+
+         void drawPostprocessingQuad(
+         );
+
+         virtual void loadPostprocessingShader(
+         );
+
+         PostprocessingData getPostprocessingData(
+         ) const;
+
+         void togglePostprocessing(
+             bool bEnabled
+         );
+
+         void toggleHDR(
+             bool bEnabled
+         );
+
+         void setHDRExposure(
+             float exposure
          );
 
      protected:

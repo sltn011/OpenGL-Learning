@@ -106,6 +106,9 @@ namespace OGL::E1::GUI {
         case OGL::E1::GUI::WindowsTypes::EnvironmentControl:
             return std::make_unique<EnvironmentControlWindow>(isEnabled);
 
+        case OGL::E1::GUI::WindowsTypes::Postprocessing:
+            return std::make_unique<PostprocessingWindow>(isEnabled);
+
         default:
             return nullptr;
         }

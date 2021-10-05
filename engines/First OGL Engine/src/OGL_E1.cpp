@@ -16,6 +16,7 @@ namespace OGL::E1 {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_SAMPLES, numSamples);
+        m_windowSamples = numSamples;
 
         GLFWmonitor *monitor = isWindowed ? nullptr : glfwGetPrimaryMonitor();
 
@@ -88,10 +89,18 @@ namespace OGL::E1 {
             m_system.deltaTime = currentFrameTime - m_system.lastFrameTime;
             m_system.lastFrameTime = currentFrameTime;
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
+                m_renderFramebuffer->bind(GL_FRAMEBUFFER);
+            }
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             if (!userFrameUpdate(m_system.deltaTime)) {
                 m_gameShouldRun = false;
+            }
+
+            if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
+                drawPostprocessingQuad();
             }
 
             if (m_showGUI && m_guiRenderer) {
@@ -710,6 +719,116 @@ namespace OGL::E1 {
         int screenWidth, screenHeight;
         glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
         glViewport(0, 0, screenWidth, screenHeight);
+    }
+
+    void Engine1Base::initPostprocessing(
+        Shader &&postprocessingShader
+    ) {
+        int width, height;
+        glfwGetWindowSize(m_window, &width, &height);
+
+
+
+        m_renderFramebuffer = FrameBufferObject{ 0, 1 };
+        m_renderFramebuffer->bind(GL_FRAMEBUFFER);
+
+        ColorBufferObject renderColorBuffer;
+        RenderBufferObject renderDepthBuffer;
+
+        if (m_windowSamples != 1) {
+            renderColorBuffer.allocateStorageMultisample(width, height, m_windowSamples, GL_RGBA16F);
+            renderDepthBuffer.allocateStorageMultisample(width, height, m_windowSamples, GL_DEPTH24_STENCIL8);
+            m_renderFramebuffer->attachColorBufferMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(renderColorBuffer));
+            m_renderFramebuffer->attachRenderBufferMultisample(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, std::move(renderDepthBuffer));
+        }
+        else {
+            renderColorBuffer.allocateStorage(width, height, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+            renderDepthBuffer.allocateStorage(width, height, GL_DEPTH24_STENCIL8);
+            m_renderFramebuffer->attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(renderColorBuffer));
+            m_renderFramebuffer->attachRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, std::move(renderDepthBuffer));
+        }
+
+        if (!m_renderFramebuffer->isComplete(GL_FRAMEBUFFER)) {
+            FrameBufferObject::unbind(GL_FRAMEBUFFER);
+            throw Exception{ "Error creating render framebuffer!" };
+        }
+
+
+
+        m_postprocessingFramebuffer = FrameBufferObject{ 0, 1 };
+        m_postprocessingFramebuffer->bind(GL_FRAMEBUFFER);
+
+        ColorBufferObject postprocessingColorBuffer;
+        RenderBufferObject postprocessingDepthBuffer;
+
+        postprocessingColorBuffer.allocateStorage(width, height, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+        postprocessingDepthBuffer.allocateStorage(width, height, GL_DEPTH24_STENCIL8);
+        m_postprocessingFramebuffer->attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(postprocessingColorBuffer));
+        m_postprocessingFramebuffer->attachRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, std::move(postprocessingDepthBuffer));
+        
+        if (!m_postprocessingFramebuffer->isComplete(GL_FRAMEBUFFER)) {
+            FrameBufferObject::unbind(GL_FRAMEBUFFER);
+            throw Exception{ "Error creating postprocessing framebuffer!" };
+        }
+
+
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+
+        m_postprocessingShader = std::move(postprocessingShader);
+    }
+
+    void Engine1Base::drawPostprocessingQuad(
+    ) {
+        if (!m_renderFramebuffer || !m_postprocessingFramebuffer || !m_postprocessingShader) {
+            return;
+        }
+
+        int width, height;
+        glfwGetWindowSize(m_window, &width, &height);
+
+        m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
+        m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        m_postprocessingShader->use();
+        loadPostprocessingShader();
+        m_postprocessingFramebuffer->drawQuad(GL_COLOR_ATTACHMENT0);
+    }
+
+    void Engine1Base::loadPostprocessingShader(
+    ) {
+        if (!m_postprocessingShader) {
+            return;
+        }
+
+        m_postprocessingShader->setUniformInt("fboTexture", 0);
+        m_postprocessingShader->setUniformBool("bEnableHDR", m_postprocessingData.bEnableHDR);
+        m_postprocessingShader->setUniformFloat("HDRExposure", m_postprocessingData.HDRExposure);
+    }
+
+    PostprocessingData Engine1Base::getPostprocessingData(
+    ) const {
+        return m_postprocessingData;
+    }
+
+    void Engine1Base::togglePostprocessing(
+        bool bEnabled
+    ) {
+        m_postprocessingData.bEnablePostprocessing = bEnabled;
+    }
+
+    void Engine1Base::toggleHDR(
+        bool bEnabled
+    ) {
+        m_postprocessingData.bEnableHDR = bEnabled;
+    }
+
+    void Engine1Base::setHDRExposure(
+        float exposure
+    ) {
+        m_postprocessingData.HDRExposure = exposure;
     }
 
     bool Engine1Base::userDestroy(

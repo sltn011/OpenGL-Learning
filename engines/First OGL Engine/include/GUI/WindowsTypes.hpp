@@ -14,7 +14,8 @@ namespace OGL::E1::GUI {
         NONE,
         MainWindow,
         ObjectTransform,
-        EnvironmentControl
+        EnvironmentControl,
+        Postprocessing
     };
 
 } // OGL::E1::GUI

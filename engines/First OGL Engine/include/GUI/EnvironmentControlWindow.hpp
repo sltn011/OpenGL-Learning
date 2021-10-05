@@ -7,7 +7,7 @@
 
 #include "GUI/BasicWindow.hpp"
 #include "Object.hpp"
-#include "Utils/Delegates.hpp"
+#include "Utils/Delegate.hpp"
 #include "Utils/UtilsLibrary.hpp"
 
 namespace OGL::E1::GUI {
@@ -32,8 +32,8 @@ namespace OGL::E1::GUI {
         void render(
         ) override;
 
-        Delegate m_OnRebuildShadows;
-        Delegate m_OnRebuildReflections;
+        Delegate<> m_OnRebuildShadows;
+        Delegate<> m_OnRebuildReflections;
 
     };
 
