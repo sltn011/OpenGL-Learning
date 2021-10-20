@@ -8,6 +8,9 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 #include "Shader.hpp"
 #include "VertexArrayObject.hpp"
 #include "VertexBufferObject.hpp"
@@ -36,6 +39,13 @@ namespace OGL {
 
         /// Tangent vector
         glm::vec3 m_tangent;
+
+        bool operator==(Vertex const &rhs) const {
+            return
+                m_pos == rhs.m_pos &&
+                m_norm == rhs.m_norm &&
+                m_tex == rhs.m_tex;
+        }
     };
 
     /**
@@ -202,8 +212,21 @@ namespace OGL {
             int attribLocation
         );
 
+        bool isEmpty(
+        ) const;
+
     };
 
 }
+
+template<>
+struct std::hash<OGL::Vertex> {
+    size_t operator()(OGL::Vertex const &vertex) const {
+        size_t posHash = hash<glm::vec3>{}(vertex.m_pos);
+        size_t normHash = hash<glm::vec3>{}(vertex.m_norm);
+        size_t texHash = hash<glm::vec2>{}(vertex.m_tex);
+        return ((posHash ^ (normHash << 1)) >> 1) ^ (texHash << 1);
+    }
+};
 
 #endif // OGL_MESH_H

@@ -2,6 +2,9 @@
 #include <iostream>
 #include <fstream>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(
@@ -21,7 +24,7 @@ public:
         int screenWidth, screenHeight;
         glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
 
-        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFirstPerson>(
+        OGL::E1::GameCamera::inst = OGL::E1::factory<OGL::CameraFree>(
             glm::vec3{ 0.0f, 0.0f, 0.0f },
             glm::vec3{ 0.0f, 0.0f, -1.0f },
             1.0f, 45.0f, static_cast<float>(screenWidth) / static_cast<float>(screenHeight), 0.01f, 100.0f

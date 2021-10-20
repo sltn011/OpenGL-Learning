@@ -192,4 +192,9 @@ namespace OGL {
         VertexArrayObject::unbind();
     }
 
+    bool Mesh::isEmpty(
+    ) const {
+        return m_vertices.empty();
+    }
+
 } // OGL
