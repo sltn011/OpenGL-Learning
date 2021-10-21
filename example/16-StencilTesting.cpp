@@ -2,9 +2,6 @@
 #include <iostream>
 #include <fstream>
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(

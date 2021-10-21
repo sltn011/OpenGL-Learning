@@ -48,7 +48,7 @@ set(DEARIMGUI_FILES
 
 ######################################################################################################
 # Set directory where executables are created
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "./example")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "./example/exec")
 
 # Generate compile_commands.json for vscode
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

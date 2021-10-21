@@ -101,9 +101,6 @@ namespace OGL {
         using spotLights         = std::vector<pSpotLightShadows>;
                                  
         using shadersPack        = std::vector<Shader>;
-                                 
-        enum Events;             
-        using eventsQueue        = std::queue<Events>;
 
         namespace GUI {
             

@@ -254,7 +254,7 @@ namespace OGL::E1 {
 
             return Skybox(
                 skyboxJSON["Folder Path"],
-                skyboxJSON["Texture Unit"] + GL_TEXTURE0
+                static_cast<GLenum>(skyboxJSON["Texture Unit"]) + GL_TEXTURE0
             );
         }
         catch (nlohmann::detail::type_error) {

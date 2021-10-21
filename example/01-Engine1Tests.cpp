@@ -1,8 +1,5 @@
 #include "OGL_E1.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-
 class Test : public OGL::E1::Engine1Base {
 public:
     Test(

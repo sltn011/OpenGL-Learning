@@ -3,6 +3,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
 namespace OGL::E1 {
 
     Engine1Base::Engine1Base(
@@ -926,7 +929,7 @@ namespace OGL::E1 {
         if (m_guiRenderer) {
             auto &windowsMap = m_guiRenderer->getWindows();
 
-            auto &maybeWindow = windowsMap.find(GUI::WindowsTypes::ObjectTransform);
+            auto maybeWindow = windowsMap.find(GUI::WindowsTypes::ObjectTransform);
             if (maybeWindow != windowsMap.end()) {
                 if (maybeWindow->second->m_enabled) {
                     GUI::ObjectTransformWindow* transformWindow = dynamic_cast<GUI::ObjectTransformWindow*>(maybeWindow->second.get());
