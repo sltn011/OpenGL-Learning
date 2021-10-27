@@ -65,6 +65,11 @@ public:
             "shaders/01-coloredShapes.frag"
         );
 
+        OGL::Shader postprocessingShader(
+            "shaders/01-postprocessing.vert",
+            "shaders/01-postprocessing.frag"
+        );
+
         m_normalRenderer            = OGL::E1::NormalRenderer{ std::move(normalShader) };
         m_transpRenderer            = OGL::E1::TransparentRenderer{ std::move(transpShader) };
         m_skyboxRenderer            = OGL::E1::SkyboxRenderer{std::move(skyboxShader)};
@@ -76,6 +81,10 @@ public:
         m_lightSourcesDebugRenderer = OGL::E1::LightSourcesDebugRenderer{ std::move(lightSourcesRenderer), 0.005f };
         m_coloredShapesRenderer     = OGL::E1::ColoredShapesRenderer{ std::move(coloredShapesShader) };
         m_guiRenderer               = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
+
+
+        initPostprocessing(std::move(postprocessingShader));
+        togglePostprocessing(true);
 
 
         loadLevel("levels/03-level.json");
