@@ -23,7 +23,7 @@ set(GLM_INCLUDES "D:/OpenGL/Libs/GLM_0.9.9.8" CACHE PATH "Path to directory with
 set(STB_INCLUDE "D:/OpenGL/Libs/STB_Image" CACHE PATH "Path to directory with STB header")
 
 # Path to directory with Assimp Source
-set(ASSIMP_SOURCE "D:/OpenGL/Libs/assimp-5.0.1" CACHE PATH "Path to directory with Assimp source")
+set(ASSIMP_SOURCE "D:/OpenGL/Libs/Assimp" CACHE PATH "Path to directory with Assimp source")
 set(ASSIMP_BUILT "${ASSIMP_SOURCE}/build" CACHE PATH "Path to directory with Assimp built files")
 
 # Path to directory with Dear ImGui Source
@@ -119,7 +119,7 @@ set(DEARIMGUI_FILES
 
 ######################################################################################################
 # Set directory where executables are created
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "./example")
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "./example/exec")
 
 # Generate compile_commands.json for vscode
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
