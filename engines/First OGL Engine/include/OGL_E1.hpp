@@ -165,7 +165,7 @@ namespace OGL::E1 {
         int32_t m_shadowMapSpotLightFirstTextureID = m_shadowCubemapFirstTextureID + 4;
 
         /// Mirror Cubemap size
-        int32_t m_mirrorCubemapSize = 256;
+        int32_t m_mirrorCubemapSize = 1024;
         int32_t m_mirrorCubemapFirstTextureID = 23;
 
      public:

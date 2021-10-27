@@ -172,6 +172,12 @@ namespace OGL {
              std::string const &filename
          );
 
+         glm::vec3 CalculateTangent(
+             Vertex const &v1,
+             Vertex const &v2,
+             Vertex const &v3
+         ) const;
+
     };
 
 } // OGL

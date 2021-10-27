@@ -69,7 +69,9 @@ namespace OGL {
 
         std::unordered_map<Vertex, int> vertexIndex;
 
+        Vertex vertex[3];
         size_t offset = 0;
+
         for (size_t face = 0; face < mesh.num_face_vertices.size(); ++face) {
 
             if (mesh.material_ids[face] != materialID) {
@@ -79,33 +81,38 @@ namespace OGL {
             for (size_t v = 0; v < 3; ++v) {
                 tinyobj::index_t index = mesh.indices[offset + v];
 
-                Vertex vertex;
 
-                vertex.m_pos.x = static_cast<float>(attrib.vertices[3 * index.vertex_index + 0]);
-                vertex.m_pos.y = static_cast<float>(attrib.vertices[3 * index.vertex_index + 1]);
-                vertex.m_pos.z = static_cast<float>(attrib.vertices[3 * index.vertex_index + 2]);
+                vertex[v].m_pos.x = static_cast<float>(attrib.vertices[3 * index.vertex_index + 0]);
+                vertex[v].m_pos.y = static_cast<float>(attrib.vertices[3 * index.vertex_index + 1]);
+                vertex[v].m_pos.z = static_cast<float>(attrib.vertices[3 * index.vertex_index + 2]);
 
                 if (index.normal_index >= 0) {
-                    vertex.m_norm.x = static_cast<float>(attrib.normals[3 * index.normal_index + 0]);
-                    vertex.m_norm.y = static_cast<float>(attrib.normals[3 * index.normal_index + 1]);
-                    vertex.m_norm.z = static_cast<float>(attrib.normals[3 * index.normal_index + 2]);
+                    vertex[v].m_norm.x = static_cast<float>(attrib.normals[3 * index.normal_index + 0]);
+                    vertex[v].m_norm.y = static_cast<float>(attrib.normals[3 * index.normal_index + 1]);
+                    vertex[v].m_norm.z = static_cast<float>(attrib.normals[3 * index.normal_index + 2]);
                 }
 
                 if (index.texcoord_index >= 0) {
-                    vertex.m_tex.x = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 0]);
-                    vertex.m_tex.y = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 1]);
-                }
-
-                if (vertexIndex.count(vertex) == 0) {
-                    indices.push_back(static_cast<unsigned int>(vertexIndex.size()));
-
-                    vertices.push_back(vertex);
-                    vertexIndex.emplace(vertex, indices.back());
-                }
-                else {
-                    indices.push_back(vertexIndex[vertex]);
+                    vertex[v].m_tex.x = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 0]);
+                    vertex[v].m_tex.y = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 1]);
                 }
             }
+
+            glm::vec3 tangent = CalculateTangent(vertex[0], vertex[1], vertex[2]);
+            for (int v = 0; v < 3; ++v) {
+                vertex[v].m_tangent = tangent;
+
+                if (vertexIndex.count(vertex[v]) == 0) {
+                    indices.push_back(static_cast<unsigned int>(vertexIndex.size()));
+
+                    vertices.push_back(vertex[v]);
+                    vertexIndex.emplace(vertex[v], indices.back());
+                }
+                else {
+                    indices.push_back(vertexIndex[vertex[v]]);
+                }
+            }
+
             offset += 3;
         }
 
@@ -245,6 +252,28 @@ namespace OGL {
         stbi_image_free(data);
 
         return texID;
+    }
+
+    glm::vec3 Model::CalculateTangent(
+        Vertex const &v1,
+        Vertex const &v2,
+        Vertex const &v3
+    ) const {
+
+        glm::vec3 tangent;
+
+        glm::vec3 edge1 = v2.m_pos - v1.m_pos;
+        glm::vec3 edge2 = v3.m_pos - v1.m_pos;
+        glm::vec2 deltaUV1 = v2.m_tex - v1.m_tex;
+        glm::vec2 deltaUV2 = v3.m_tex - v1.m_tex;
+
+        float f = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+        return glm::normalize(tangent);
     }
 
     Model::Model( 

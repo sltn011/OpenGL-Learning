@@ -636,7 +636,7 @@ namespace OGL::E1 {
             shadowMap = m_shadowMapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowMapDirLightFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowMapDirLightFirstTextureID + i),
                 m_shadowMapSize
             );
         }
@@ -659,7 +659,7 @@ namespace OGL::E1 {
             shadowCubemap = m_shadowCubemapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowCubemapFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowCubemapFirstTextureID + i),
                 m_shadowCubemapSize
             );
         }
@@ -682,7 +682,7 @@ namespace OGL::E1 {
             shadowMap = m_shadowMapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowMapSpotLightFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowMapSpotLightFirstTextureID + i),
                 m_shadowMapSize
             );
         }
@@ -710,7 +710,7 @@ namespace OGL::E1 {
             p.second = m_cubemapRenderer->render(
                 *m_scene,
                 m_mirrorCubemapSize,
-                GL_TEXTURE0 + m_mirrorCubemapFirstTextureID,
+                static_cast<GLenum>(GL_TEXTURE0 + m_mirrorCubemapFirstTextureID),
                 p.first.getPosition(),
                 m_normalRenderer,
                 m_skyboxRenderer,

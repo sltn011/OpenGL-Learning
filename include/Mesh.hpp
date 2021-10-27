@@ -44,7 +44,8 @@ namespace OGL {
             return
                 m_pos == rhs.m_pos &&
                 m_norm == rhs.m_norm &&
-                m_tex == rhs.m_tex;
+                m_tex == rhs.m_tex &&
+                m_tangent == rhs.m_tangent;
         }
     };
 
@@ -222,10 +223,13 @@ namespace OGL {
 template<>
 struct std::hash<OGL::Vertex> {
     size_t operator()(OGL::Vertex const &vertex) const {
-        size_t posHash = hash<glm::vec3>{}(vertex.m_pos);
-        size_t normHash = hash<glm::vec3>{}(vertex.m_norm);
-        size_t texHash = hash<glm::vec2>{}(vertex.m_tex);
-        return ((posHash ^ (normHash << 1)) >> 1) ^ (texHash << 1);
+        glm::mat4 m = glm::mat4{
+            glm::vec4{ vertex.m_pos, 0.0f },
+            glm::vec4{ vertex.m_norm, 0.0f },
+            glm::vec4{ vertex.m_tex, 0.0f, 0.0f },
+            glm::vec4{ vertex.m_tangent, 0.0f }
+        };
+        return hash<glm::mat4>{}(m);
     }
 };
 
