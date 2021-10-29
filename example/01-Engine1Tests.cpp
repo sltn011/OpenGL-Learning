@@ -70,6 +70,16 @@ public:
             "shaders/01-postprocessing.frag"
         );
 
+        OGL::Shader MipmapShader(
+            "shaders/01-playgroundBloomMipmap.vert",
+            "shaders/01-playgroundBloomMipmap.frag"
+        );
+
+        OGL::Shader CombineShader(
+            "shaders/01-playgroundBloomCombine.vert",
+            "shaders/01-playgroundBloomCombine.frag"
+        );
+
         m_normalRenderer            = OGL::E1::NormalRenderer{ std::move(normalShader) };
         m_transpRenderer            = OGL::E1::TransparentRenderer{ std::move(transpShader) };
         m_skyboxRenderer            = OGL::E1::SkyboxRenderer{std::move(skyboxShader)};
@@ -78,10 +88,13 @@ public:
         m_instancesRenderer         = OGL::E1::InstancesRenderer{ std::move(instancesShader) };
         m_shadowMapRenderer         = OGL::E1::ShadowMapRenderer{ std::move(shadowMapRender) };
         m_shadowCubemapRenderer     = OGL::E1::ShadowCubemapRenderer{ std::move(shadowCubemapRenderer) };
-        m_lightSourcesDebugRenderer = OGL::E1::LightSourcesDebugRenderer{ std::move(lightSourcesRenderer), 0.005f };
+        m_lightSourcesDebugRenderer = OGL::E1::LightSourcesDebugRenderer{ std::move(lightSourcesRenderer), 0.05f };
         m_coloredShapesRenderer     = OGL::E1::ColoredShapesRenderer{ std::move(coloredShapesShader) };
         m_guiRenderer               = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
 
+
+        m_bloom = OGL::E1::Bloom{ std::move(MipmapShader), std::move(CombineShader), glm::vec3(1.0f) };
+        m_bloom->initFrameBuffers(screenWidth, screenHeight);
 
         initPostprocessing(std::move(postprocessingShader));
         togglePostprocessing(true);

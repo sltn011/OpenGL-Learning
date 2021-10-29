@@ -37,6 +37,7 @@ namespace OGL::E1::GUI {
         Delegate<bool> m_onTogglePostprocessing;
         Delegate<bool> m_onToggleHDR;
         Delegate<float> m_onSetHDRExposure;
+        Delegate<bool> m_onToggleBloom;
 
     };
 

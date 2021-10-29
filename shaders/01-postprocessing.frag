@@ -7,17 +7,26 @@ out vec4 fragColor;
 uniform sampler2D fboTexture;
 uniform bool bEnableHDR;
 uniform float HDRExposure;
+uniform bool bEnableBloom;
+
+const vec3 emission = vec3(1, 1, 1);
 
 void main() {
     float gamma = 2.2;
 
-    vec3 hdrColor = pow(texture(fboTexture, vertexTex).rgb, vec3(gamma));
+    vec3 color = pow(texture(fboTexture, vertexTex).rgb, vec3(gamma));
 
-    if (bEnableHDR) {
-        hdrColor = vec3(1.0) - vec3(exp(-hdrColor * HDRExposure));
+    if (bEnableBloom) {
+        if(length(color) > 3.0) {
+            color += emission;        
+        }
     }
 
-    hdrColor = pow(hdrColor, vec3(1.0 / gamma));
+    if (bEnableHDR) {
+        color = vec3(1.0) - vec3(exp(-color * HDRExposure));
+    }
 
-    fragColor = vec4(hdrColor, 1.0);
+    color = pow(color, vec3(1.0 / gamma));
+
+    fragColor = vec4(color, 1.0);
 }

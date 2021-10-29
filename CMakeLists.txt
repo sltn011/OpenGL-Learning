@@ -222,6 +222,7 @@ add_library(OGL_E1 STATIC
         "engines/First OGL Engine/src/ColoredShapesRenderer.cpp"
         "engines/First OGL Engine/src/LevelSaver.cpp"
         "engines/First OGL Engine/src/LevelLoader.cpp"
+		"engines/First OGL Engine/src/Bloom.cpp"
 )
 
 add_library(OGL_E1_GUI STATIC
@@ -279,6 +280,7 @@ add_executable(27-PointShadow example/27-PointShadow.cpp ${DEARIMGUI_FILES})
 add_executable(28-NormalMapping example/28-NormalMapping.cpp)
 add_executable(29-ParallaxMapping example/29-ParallaxMapping.cpp ${DEARIMGUI_FILES})
 add_executable(30-HDR example/30-HDR.cpp ${DEARIMGUI_FILES})
+add_executable(31-Bloom example/31-Bloom.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI assimp)
@@ -315,5 +317,6 @@ target_link_libraries(27-PointShadow glad glfw assimp OpenGLTools OGL_E1 OGL_E1_
 target_link_libraries(28-NormalMapping glad glfw assimp OpenGLTools)
 target_link_libraries(29-ParallaxMapping glad glfw assimp OpenGLTools)
 target_link_libraries(30-HDR glad glfw OGL_E1 OGL_E1_GUI assimp)
+target_link_libraries(31-Bloom glad glfw OGL_E1 OGL_E1_GUI assimp)
 ######################################################################################################
 

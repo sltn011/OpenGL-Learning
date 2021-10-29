@@ -100,6 +100,21 @@ namespace OGL::E1 {
             }
 
             if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
+
+                int width, height;
+                glfwGetWindowSize(m_window, &width, &height);
+
+                if (m_postprocessingData.bEnableBloom && m_bloom) {
+                    m_bloom->drawToResultFrameBuffer(*m_renderFramebuffer);
+                    m_bloom->bindResultFrameBuffer(GL_READ_FRAMEBUFFER);
+                }
+                else {
+                    m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
+                }
+
+                m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
+                glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
                 drawPostprocessingQuad();
             }
 
@@ -727,8 +742,6 @@ namespace OGL::E1 {
         int width, height;
         glfwGetWindowSize(m_window, &width, &height);
 
-
-
         m_renderFramebuffer = FrameBufferObject{ 0, 1 };
         m_renderFramebuffer->bind(GL_FRAMEBUFFER);
 
@@ -783,13 +796,6 @@ namespace OGL::E1 {
             return;
         }
 
-        int width, height;
-        glfwGetWindowSize(m_window, &width, &height);
-
-        m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
-        m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
-        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
         FrameBufferObject::unbind(GL_FRAMEBUFFER);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         m_postprocessingShader->use();
@@ -806,6 +812,7 @@ namespace OGL::E1 {
         m_postprocessingShader->setUniformInt("fboTexture", 0);
         m_postprocessingShader->setUniformBool("bEnableHDR", m_postprocessingData.bEnableHDR);
         m_postprocessingShader->setUniformFloat("HDRExposure", m_postprocessingData.HDRExposure);
+        m_postprocessingShader->setUniformBool("bEnableBloom", m_postprocessingData.bEnableBloom);
     }
 
     PostprocessingData Engine1Base::getPostprocessingData(
@@ -829,6 +836,12 @@ namespace OGL::E1 {
         float exposure
     ) {
         m_postprocessingData.HDRExposure = exposure;
+    }
+
+    void Engine1Base::toggleBloom(
+        bool bEnabled
+    ) {
+        m_postprocessingData.bEnableBloom = bEnabled;
     }
 
     bool Engine1Base::userDestroy(

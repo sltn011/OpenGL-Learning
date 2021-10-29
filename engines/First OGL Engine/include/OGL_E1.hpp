@@ -24,6 +24,7 @@
 #include "ColoredShapesRenderer.hpp"
 
 #include "PostprocessingData.hpp"
+#include "Bloom.hpp"
 
 #include "LevelSaver.hpp"
 #include "LevelLoader.hpp"
@@ -108,6 +109,9 @@ namespace OGL::E1 {
         std::optional<FrameBufferObject> m_renderFramebuffer;
         std::optional<FrameBufferObject> m_postprocessingFramebuffer;
 
+        /// Bloom postprocessing
+        std::optional<Bloom> m_bloom;
+
 
         /// Hashmap of Key: Model's ID, Value: Owning pointer to Model object - stores Models used in Scene
         modelsTable       m_modelsTable;
@@ -165,7 +169,7 @@ namespace OGL::E1 {
         int32_t m_shadowMapSpotLightFirstTextureID = m_shadowCubemapFirstTextureID + 4;
 
         /// Mirror Cubemap size
-        int32_t m_mirrorCubemapSize = 256;
+        int32_t m_mirrorCubemapSize = 1024;
         int32_t m_mirrorCubemapFirstTextureID = 23;
 
      public:
@@ -633,6 +637,10 @@ namespace OGL::E1 {
 
          void setHDRExposure(
              float exposure
+         );
+
+         void toggleBloom(
+             bool bEnabled
          );
 
      protected:

@@ -8,9 +8,11 @@
 namespace OGL::E1 {
 
     struct PostprocessingData {
-        bool bEnablePostprocessing = false;
-        bool bEnableHDR = false;
+        bool bEnablePostprocessing = true;
+        bool bEnableHDR = true;
         float HDRExposure = 1.0f;
+
+        bool bEnableBloom = true;
     };
 
 } // OGL::E1
