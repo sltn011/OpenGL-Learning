@@ -89,33 +89,11 @@ namespace OGL::E1 {
             m_system.deltaTime = currentFrameTime - m_system.lastFrameTime;
             m_system.lastFrameTime = currentFrameTime;
 
-            if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
-                m_renderFramebuffer->bind(GL_FRAMEBUFFER);
+            if (m_gBuffer) {
+                defferedRenderPass();
             }
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-            if (!userFrameUpdate(m_system.deltaTime)) {
-                m_gameShouldRun = false;
-            }
-
-            if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
-
-                int width, height;
-                glfwGetWindowSize(m_window, &width, &height);
-
-                if (m_postprocessingData.bEnableBloom && m_bloom) {
-                    m_bloom->drawToResultFrameBuffer(*m_renderFramebuffer);
-                    m_bloom->bindResultFrameBuffer(GL_READ_FRAMEBUFFER);
-                }
-                else {
-                    m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
-                }
-
-                m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
-                glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-                drawPostprocessingQuad();
+            else {
+                forwardRenderPass();
             }
 
             if (m_showGUI && m_guiRenderer) {
@@ -842,6 +820,153 @@ namespace OGL::E1 {
         bool bEnabled
     ) {
         m_postprocessingData.bEnableBloom = bEnabled;
+    }
+
+    void Engine1Base::forwardRenderPass(
+    ) {
+        if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
+            m_renderFramebuffer->bind(GL_FRAMEBUFFER);
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        if (!userFrameUpdate(m_system.deltaTime)) {
+            m_gameShouldRun = false;
+        }
+
+        if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
+
+            int width, height;
+            glfwGetWindowSize(m_window, &width, &height);
+
+            if (m_postprocessingData.bEnableBloom && m_bloom) {
+                m_bloom->drawToResultFrameBuffer(*m_renderFramebuffer);
+                m_bloom->bindResultFrameBuffer(GL_READ_FRAMEBUFFER);
+            }
+            else {
+                m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
+            }
+
+            m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
+            glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+            drawPostprocessingQuad();
+        }
+    }
+
+    void Engine1Base::defferedRenderPass(
+    ) {
+        if (!m_gBuffer || !m_gBufferWriteShader || !m_gBufferReadShader) {
+            m_gameShouldRun = false;
+        }
+
+        m_gBufferWriteShader->use();
+        loadGBufferWriteShaderData();
+
+        m_gBuffer->bindAsRenderTarget();
+
+        glDisable(GL_BLEND);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        if (!userFrameUpdate(m_system.deltaTime)) {
+            m_gameShouldRun = false;
+        }
+
+        m_gBufferReadShader->use();
+        loadGBufferReadShaderData();
+
+        if (!m_postprocessingData.bEnablePostprocessing || !m_postprocessingFramebuffer || !m_renderFramebuffer || !m_postprocessingShader) {
+            FrameBufferObject::unbind(GL_FRAMEBUFFER);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            m_gBuffer->drawQuad(*m_gBufferReadShader);
+        }
+        else {
+            m_renderFramebuffer->bind(GL_FRAMEBUFFER);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            m_gBuffer->drawQuad(*m_gBufferReadShader);
+
+            int width, height;
+            glfwGetWindowSize(m_window, &width, &height);
+
+            if (m_postprocessingData.bEnableBloom && m_bloom) {
+                m_bloom->drawToResultFrameBuffer(*m_renderFramebuffer);
+                m_bloom->bindResultFrameBuffer(GL_READ_FRAMEBUFFER);
+            }
+            else {
+                m_renderFramebuffer->bind(GL_READ_FRAMEBUFFER);
+            }
+
+            m_postprocessingFramebuffer->bind(GL_DRAW_FRAMEBUFFER);
+            glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+            drawPostprocessingQuad();
+        }
+    }
+
+    void Engine1Base::loadGBufferWriteShaderData(
+    ) {
+        if (!m_scene || !m_gBufferWriteShader) {
+            return;
+        }
+
+        BasicCamera *camera = m_scene->getCamera().get();
+
+        m_gBufferWriteShader->setUniformMatrix4("view", camera->getViewMatrix());
+        m_gBufferWriteShader->setUniformMatrix4("projection", camera->getProjectionMatrix());
+        m_gBufferWriteShader->setUniformVec3("viewerPos", camera->getPos());
+    }
+
+    void Engine1Base::loadGBufferReadShaderData(
+    ) {
+        if (!m_scene || !m_gBufferReadShader) {
+            return;
+        }
+
+        BasicCamera *camera = m_scene->getCamera().get();
+
+        m_gBufferReadShader->setUniformMatrix4("view", camera->getViewMatrix());
+        m_gBufferReadShader->setUniformMatrix4("projection", camera->getProjectionMatrix());
+        m_gBufferReadShader->setUniformVec3("viewerPos", camera->getPos());
+
+        dirLights &sceneDirLights = m_scene->getDirLights();
+        m_gBufferReadShader->setUniformInt("numDirLights", static_cast<int>(sceneDirLights.size()));
+        for (size_t i = 0; i < sceneDirLights.size(); ++i) {
+            auto &[light, pShadowMap] = sceneDirLights[i];
+            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            if (!pShadowMap) {
+                continue;
+            }
+            pShadowMap->bindTexture();
+            m_gBufferReadShader->setUniformMatrix4("dirLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            m_gBufferReadShader->setUniformInt("dirLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
+        }
+
+        pointLights &scenePointLights = m_scene->getPointLights();
+        m_gBufferReadShader->setUniformInt("numPointLights", static_cast<int>(scenePointLights.size()));
+        for (size_t i = 0; i < scenePointLights.size(); ++i) {
+            auto &[light, pShadowCubemap] = scenePointLights[i];
+            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            if (!pShadowCubemap) {
+                continue;
+            }
+            pShadowCubemap->bindTexture();
+            m_gBufferReadShader->setUniformInt("pointLightShadowMap[" + std::to_string(i) + "]", pShadowCubemap->textureUnit() - GL_TEXTURE0);
+            m_gBufferReadShader->setUniformFloat("pointLightShadowMapFarPlane[" + std::to_string(i) + "]", pShadowCubemap->farPlane());
+        }
+
+        spotLights &sceneSpotLights = m_scene->getSpotLights();
+        m_gBufferReadShader->setUniformInt("numSpotLights", static_cast<int>(sceneSpotLights.size()));
+        for (size_t i = 0; i < sceneSpotLights.size(); ++i) {
+            auto &[light, pShadowMap] = sceneSpotLights[i];
+            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            if (!pShadowMap) {
+                continue;
+            }
+            pShadowMap->bindTexture();
+            m_gBufferReadShader->setUniformMatrix4("spotLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            m_gBufferReadShader->setUniformInt("spotLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
+        }
     }
 
     bool Engine1Base::userDestroy(
