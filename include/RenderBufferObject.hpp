@@ -70,6 +70,10 @@ namespace OGL {
             int numSamples,
             GLenum innertype
         );
+
+        void bindAsTexture(
+            GLenum textureType
+        ) const;
     };
 
 } // OGL

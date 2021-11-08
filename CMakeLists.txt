@@ -87,36 +87,37 @@ include_directories(${JSON_INCLUDE})
 
 ######################################################################################################
 add_library(OpenGLTools STATIC
-        src/GLFWInitRAII.cpp
-        src/Shader.cpp
-        src/Exception.cpp
-        src/BasicCamera.cpp
-        src/CameraStatic.cpp
-        src/CameraFree.cpp
-        src/CameraFirstPerson.cpp
-        src/CameraCubemap.cpp
-        src/Mesh.cpp
-        src/Model.cpp
-        src/Object.cpp
-        src/BasicLight.cpp
-        src/DirectionalLight.cpp
-        src/PointLight.cpp
-        src/SpotLight.cpp
-        src/Descriptor.cpp
-        src/VertexArrayObject.cpp
-        src/VertexBufferObject.cpp
-        src/ElementBufferObject.cpp
-        src/ColorBufferObject.cpp
-        src/RenderBufferObject.cpp
-        src/FrameBufferObject.cpp
-        src/UniformBufferObject.cpp
-        src/Texture.cpp
-        src/Cubemap.cpp
-        src/Skybox.cpp
-        src/ShadowMap.cpp
-        src/ShadowCubemap.cpp
-        src/CameraShadowMap.cpp
-        src/CameraShadowCubemap.cpp
+    src/GLFWInitRAII.cpp
+    src/Shader.cpp
+    src/Exception.cpp
+    src/BasicCamera.cpp
+    src/CameraStatic.cpp
+    src/CameraFree.cpp
+    src/CameraFirstPerson.cpp
+    src/CameraCubemap.cpp
+    src/Mesh.cpp
+    src/Model.cpp
+    src/Object.cpp
+    src/BasicLight.cpp
+    src/DirectionalLight.cpp
+    src/PointLight.cpp
+    src/SpotLight.cpp
+    src/Descriptor.cpp
+    src/VertexArrayObject.cpp
+    src/VertexBufferObject.cpp
+    src/ElementBufferObject.cpp
+    src/ColorBufferObject.cpp
+    src/RenderBufferObject.cpp
+    src/FrameBufferObject.cpp
+    src/UniformBufferObject.cpp
+    src/Texture.cpp
+    src/Cubemap.cpp
+    src/Skybox.cpp
+    src/ShadowMap.cpp
+    src/ShadowCubemap.cpp
+    src/CameraShadowMap.cpp
+    src/CameraShadowCubemap.cpp
+	src/GBuffer.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
@@ -147,6 +148,7 @@ add_library(OGL_E1 STATIC
         "engines/First OGL Engine/src/ColoredShapesRenderer.cpp"
         "engines/First OGL Engine/src/LevelSaver.cpp"
         "engines/First OGL Engine/src/LevelLoader.cpp"
+		"engines/First OGL Engine/src/Bloom.cpp"
 )
 
 add_library(OGL_E1_GUI STATIC
@@ -204,6 +206,8 @@ add_executable(27-PointShadow example/27-PointShadow.cpp ${DEARIMGUI_FILES})
 add_executable(28-NormalMapping example/28-NormalMapping.cpp)
 add_executable(29-ParallaxMapping example/29-ParallaxMapping.cpp ${DEARIMGUI_FILES})
 add_executable(30-HDR example/30-HDR.cpp ${DEARIMGUI_FILES})
+add_executable(31-Bloom example/31-Bloom.cpp ${DEARIMGUI_FILES})
+add_executable(32-DeferredShading example/32-DeferredShading.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI)
@@ -240,5 +244,7 @@ target_link_libraries(27-PointShadow glad glfw OpenGLTools OGL_E1 OGL_E1_GUI)
 target_link_libraries(28-NormalMapping glad glfw OpenGLTools)
 target_link_libraries(29-ParallaxMapping glad glfw OpenGLTools)
 target_link_libraries(30-HDR glad glfw OGL_E1 OGL_E1_GUI)
+target_link_libraries(31-Bloom glad glfw OGL_E1 OGL_E1_GUI)
+target_link_libraries(32-DeferredShading glad glfw OGL_E1 OGL_E1_GUI)
 ######################################################################################################
 

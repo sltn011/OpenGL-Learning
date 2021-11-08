@@ -5,6 +5,14 @@ namespace OGL {
     FrameBufferObject::FrameBufferObject( 
     ) {
         glGenFramebuffers(1, &m_descriptor);
+        glBindVertexArray(m_frameQuadVAO.value());
+        glBindBuffer(GL_ARRAY_BUFFER, m_frameQuadVBO.value());
+        glBufferData(GL_ARRAY_BUFFER, 96, s_frameQuadData, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+        glBindVertexArray(0);
     }
 
     FrameBufferObject::FrameBufferObject(
@@ -108,11 +116,27 @@ namespace OGL {
     void FrameBufferObject::drawQuad( 
         GLenum colorAttachment
     ) {
+        drawQuad(colorAttachment, 1);
+    }
+
+    void FrameBufferObject::drawQuad(
+        GLenum startingColorAttachment,
+        int numAttachmenst
+    ) {
+        for (int i = 0; i < numAttachmenst; ++i) {
+            glActiveTexture(GL_TEXTURE0 + (startingColorAttachment - GL_COLOR_ATTACHMENT0) + i);
+            m_colorBufferObjs.at(startingColorAttachment + i).bindAsTexture(GL_TEXTURE_2D);
+        }
+        glActiveTexture(GL_TEXTURE0);
+        drawQuadRaw();
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void FrameBufferObject::drawQuadRaw(
+    ) {
         glBindVertexArray(m_frameQuadVAO.value());
-        glBindTexture(GL_TEXTURE_2D, m_colorBufferObjs[colorAttachment].value());
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     std::unordered_map<GLenum, ColorBufferObject> &FrameBufferObject::getColorBuffers(

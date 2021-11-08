@@ -33,4 +33,10 @@ namespace OGL {
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 
+    void RenderBufferObject::bindAsTexture(
+        GLenum textureType
+    ) const {
+        glBindTexture(textureType, m_descriptor);
+    }
+
 } // OGL

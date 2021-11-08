@@ -22,8 +22,10 @@
 #include "ShadowCubemapRenderer.hpp"
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
+#include "GBuffer.hpp"
 
 #include "PostprocessingData.hpp"
+#include "Bloom.hpp"
 
 #include "LevelSaver.hpp"
 #include "LevelLoader.hpp"
@@ -107,6 +109,14 @@ namespace OGL::E1 {
         /// Framebuffers used for postprocessing
         std::optional<FrameBufferObject> m_renderFramebuffer;
         std::optional<FrameBufferObject> m_postprocessingFramebuffer;
+
+        /// Bloom postprocessing
+        std::optional<Bloom> m_bloom;
+
+        /// G Buffer
+        std::optional<GBuffer> m_gBuffer;
+        std::optional<Shader> m_gBufferWriteShader;
+        std::optional<Shader> m_gBufferReadShader;
 
 
         /// Hashmap of Key: Model's ID, Value: Owning pointer to Model object - stores Models used in Scene
@@ -635,6 +645,10 @@ namespace OGL::E1 {
              float exposure
          );
 
+         void toggleBloom(
+             bool bEnabled
+         );
+
      protected:
          /**
           * @brief Abstract method used to allocate resources for Engine
@@ -661,6 +675,18 @@ namespace OGL::E1 {
          virtual bool userFrameUpdate(
              float elapsedTime
          ) = 0;
+
+         void forwardRenderPass(
+         );
+
+         void defferedRenderPass(
+         );
+
+         void loadGBufferWriteShaderData(
+         );
+
+         void loadGBufferReadShaderData(
+         );
 
          /**
           * @brief Method which can be overriden to clean up resources that need to be deallocated manually

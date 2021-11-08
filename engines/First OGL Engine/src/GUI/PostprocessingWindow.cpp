@@ -11,6 +11,7 @@ namespace OGL::E1::GUI {
         m_onTogglePostprocessing.bind(engineInstance, &Engine1Base::togglePostprocessing);
         m_onToggleHDR.bind(engineInstance, &Engine1Base::toggleHDR);
         m_onSetHDRExposure.bind(engineInstance, &Engine1Base::setHDRExposure);
+        m_onToggleBloom.bind(engineInstance, &Engine1Base::toggleBloom);
     }
 
     void PostprocessingWindow::render(
@@ -32,6 +33,9 @@ namespace OGL::E1::GUI {
         }
         if (ImGui::InputFloat("HDR Exposure", &data.HDRExposure, 0.000005f, 0.000005f, "%.6f")) {
             m_onSetHDRExposure(data.HDRExposure);
+        }
+        if (ImGui::Checkbox("Toggle Bloom", &data.bEnableBloom)) {
+            m_onToggleBloom(data.bEnableBloom);
         }
 
         ImGui::End();

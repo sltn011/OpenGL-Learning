@@ -180,6 +180,14 @@ namespace OGL {
             GLenum colorAttachment
         );
 
+        void drawQuad(
+            GLenum startingColorAttachment,
+            int numAttachmenst
+        );
+
+        void drawQuadRaw(
+        );
+
         /**
          * @brief Getter of color attachments map
          * @return Reference to hashmap Color attachment -> ColorBufferObject
