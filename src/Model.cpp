@@ -75,6 +75,7 @@ namespace OGL {
         for (size_t face = 0; face < mesh.num_face_vertices.size(); ++face) {
 
             if (mesh.material_ids[face] != materialID) {
+                offset += 3;
                 continue;
             }
 
