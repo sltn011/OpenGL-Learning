@@ -3,6 +3,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
 namespace OGL::E1 {
 
     Engine1Base::Engine1Base(
@@ -626,7 +629,7 @@ namespace OGL::E1 {
             shadowMap = m_shadowMapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowMapDirLightFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowMapDirLightFirstTextureID + i),
                 m_shadowMapSize
             );
         }
@@ -649,7 +652,7 @@ namespace OGL::E1 {
             shadowCubemap = m_shadowCubemapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowCubemapFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowCubemapFirstTextureID + i),
                 m_shadowCubemapSize
             );
         }
@@ -672,7 +675,7 @@ namespace OGL::E1 {
             shadowMap = m_shadowMapRenderer->render(
                 *m_scene,
                 cam,
-                GL_TEXTURE0 + m_shadowMapSpotLightFirstTextureID + i,
+                static_cast<GLenum>(GL_TEXTURE0 + m_shadowMapSpotLightFirstTextureID + i),
                 m_shadowMapSize
             );
         }
@@ -700,7 +703,7 @@ namespace OGL::E1 {
             p.second = m_cubemapRenderer->render(
                 *m_scene,
                 m_mirrorCubemapSize,
-                GL_TEXTURE0 + m_mirrorCubemapFirstTextureID,
+                static_cast<GLenum>(GL_TEXTURE0 + m_mirrorCubemapFirstTextureID),
                 p.first.getPosition(),
                 m_normalRenderer,
                 m_skyboxRenderer,
@@ -1064,7 +1067,7 @@ namespace OGL::E1 {
         if (m_guiRenderer) {
             auto &windowsMap = m_guiRenderer->getWindows();
 
-            auto &maybeWindow = windowsMap.find(GUI::WindowsTypes::ObjectTransform);
+            auto maybeWindow = windowsMap.find(GUI::WindowsTypes::ObjectTransform);
             if (maybeWindow != windowsMap.end()) {
                 if (maybeWindow->second->m_enabled) {
                     GUI::ObjectTransformWindow* transformWindow = dynamic_cast<GUI::ObjectTransformWindow*>(maybeWindow->second.get());

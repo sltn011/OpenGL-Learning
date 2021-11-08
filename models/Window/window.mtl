@@ -12,7 +12,7 @@ d 1.000000
 illum 2
 map_Kd brickWallDiffuse.jpg
 map_Ks brickWallSpecular.jpg
-map_Kn brickWallNormal.png
+norm brickWallNormal.png
 map_Bump brickWallDepth.png
 
 newmtl Window
@@ -26,4 +26,4 @@ d 1.000000
 illum 2
 map_Kd glassDiffuse.png
 map_Ks glassSpecular.png
-map_Kn glassNormal.png
+norm glassNormal.png

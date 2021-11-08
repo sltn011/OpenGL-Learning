@@ -46,16 +46,16 @@ namespace OGL::E1 {
 
     protected:
 
-        template<typename... Args>
+        template<typename... FArgs>
         class BaseInvoker {
         public:
             virtual void invoke(
-                Args... args
+                FArgs... args
             ) const = 0;
         };
 
-        template<typename T, typename F, typename... Args>
-        struct Invoker : public BaseInvoker<Args...> {
+        template<typename T, typename F, typename... FArgs>
+        struct Invoker : public BaseInvoker<FArgs...> {
         public:
             Invoker(
                 T *Object,
@@ -66,10 +66,10 @@ namespace OGL::E1 {
             }
 
             virtual void invoke(
-                Args... args
+                FArgs... args
             ) const override {
                 if (m_object && m_method) {
-                    (m_object->*m_method)(std::forward<Args>(args)...);
+                    (m_object->*m_method)(std::forward<FArgs>(args)...);
                 }
             }
 

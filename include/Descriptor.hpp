@@ -5,6 +5,7 @@
 #ifndef OGL_DESCRIPTOR_H
 #define OGL_DESCRIPTOR_H
 
+#include <cstddef>
 #include <utility>
 
 namespace OGL {

@@ -13,9 +13,9 @@
 
 #include "stb_image.h"
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include "tiny_obj_loader.h"
+
+#include <unordered_map>
 
 namespace OGL {
     
@@ -53,8 +53,7 @@ namespace OGL {
         */
         explicit Model( 
             std::string const &path, 
-            bool bFlipTexturesHorizontally = true,
-            int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace
+            bool bFlipTexturesHorizontally = true
         );
 
         /**
@@ -139,42 +138,23 @@ namespace OGL {
          */
          void loadModel(
              std::string const &path,
-             bool bFlipTexturesHorizontally = true,
-             int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace
+             bool bFlipTexturesHorizontally = true
          );
 
-         /**
-          * @brief Processes data loaded by Assimp and fills Model data
-          * @param node Assimp node pointer
-          * @param scene Assimp scene pointer
-         */
-         void processNode(
-             aiNode * node,
-             aiScene const *scene
-         );
-
-         /**
-          * @brief Processes data loaded by Assimp to create Mesh object
-          * @param mesh Assimp mesh structure pointer
-          * @param scene Assimp scene pointer
-          * @return Mesh object created from data in Assimp mesh structure
-         */
          Mesh processMesh(
-             aiMesh * mesh,
-             aiScene const *scene
+             tinyobj::mesh_t const &mesh,
+             tinyobj::attrib_t const &attrib,
+             std::vector<tinyobj::material_t> const &materials,
+             int materialID
          );
 
-         /**
-          * @brief Loads textures used in Model's material
-          * @param material Assimp material struct pointer
-          * @param texType Assimp type of loaded textures
-          * @param typeName Type of loaded texture used in Model
-          * @return
-         */
          std::vector<ModelTexture> loadMaterialTexture(
-             aiMaterial * material,
-             aiTextureType texType,
+             tinyobj::material_t const &materialData,
              TextureType typeName
+         );
+
+         Material loadMaterialParams(
+             tinyobj::material_t const &materialData
          );
 
          /**
@@ -187,6 +167,16 @@ namespace OGL {
              std::string const &directory,
              std::string const &path
          );
+
+         static int textureFromFile(
+             std::string const &filename
+         );
+
+         glm::vec3 CalculateTangent(
+             Vertex const &v1,
+             Vertex const &v2,
+             Vertex const &v3
+         ) const;
 
     };
 

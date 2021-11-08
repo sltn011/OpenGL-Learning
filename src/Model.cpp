@@ -4,18 +4,8 @@ namespace OGL {
 
     void Model::loadModel( 
         std::string const &path,
-        bool bFlipTexturesHorizontally,
-        int flags
+        bool bFlipTexturesHorizontally
     ) {
-        Assimp::Importer importer;
-        aiScene const *scene = importer.ReadFile(path, flags);
-
-        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            throw Exception("Error importing model!:\n" + std::string{importer.GetErrorString()});
-        }
-
-        stbi_set_flip_vertically_on_load(bFlipTexturesHorizontally);
-
         size_t pathFileDivisor = path.find_last_of('/');
         size_t pathFormatDivisor = path.find_last_of('.');
 
@@ -25,129 +15,184 @@ namespace OGL {
         else {
             m_directory = path.substr(0, pathFileDivisor);
         }
-        
+
         m_name = path.substr(pathFileDivisor + 1, pathFormatDivisor - pathFileDivisor - 1);
         m_format = path.substr(pathFormatDivisor + 1, path.size() - pathFormatDivisor);
 
-        processNode(scene->mRootNode, scene);
+        tinyobj::ObjReaderConfig config;
+        config.vertex_color = false;
+
+        tinyobj::ObjReader reader;
+        if (!reader.ParseFromFile(path, config)) {
+            std::cerr << "Error parsing .obj file with path" << path << "!" << std::endl;
+            std::cerr << reader.Error() << std::endl;
+        }
+
+        if (!reader.Warning().empty()) {
+            std::cerr << "Warnings parsing .obj file with path" << path << ":" << std::endl;
+            std::cerr << reader.Warning() << std::endl;
+        }
+
+        tinyobj::attrib_t const &attrib = reader.GetAttrib();
+        std::vector<tinyobj::shape_t> const &shapes = reader.GetShapes(); 
+        std::vector<tinyobj::material_t> const &materials = reader.GetMaterials();
+
+        int maxMaterialID = 0;
+        for (size_t i = 0; i < shapes.size(); ++i) {
+            for (size_t j = 0; j < shapes[i].mesh.material_ids.size(); ++j) {
+                if (maxMaterialID < shapes[i].mesh.material_ids[j]) {
+                    maxMaterialID = shapes[i].mesh.material_ids[j];
+                }
+            }
+        }
+
+        for (size_t s = 0; s < shapes.size(); ++s) {
+            for (int matID = 0; matID <= maxMaterialID; ++matID) {
+                Mesh mesh = processMesh(shapes[s].mesh, attrib, materials, matID);
+                if (!mesh.isEmpty()) {
+                    m_meshes.push_back(std::move(mesh));
+                }
+            }
+        }
     }
 
-    void Model::processNode( 
-        aiNode *node, 
-        aiScene const *scene
+    Mesh Model::processMesh(
+        tinyobj::mesh_t const &mesh,
+        tinyobj::attrib_t const &attrib,
+        std::vector<tinyobj::material_t> const &materials,
+        int materialID
     ) {
-        for (size_t i = 0; i < node->mNumMeshes; ++i) {
-            aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            m_meshes.push_back(processMesh(mesh, scene));
-        }
-        
-        for (size_t i = 0; i < node->mNumChildren; ++i) {
-            processNode(node->mChildren[i], scene);
-        }
-    }
-
-    Mesh Model::processMesh( 
-        aiMesh *mesh,
-        aiScene const *scene
-    ) {
-        std::vector<Vertex>       vertices(mesh->mNumVertices);
+        std::vector<Vertex>       vertices;
         std::vector<unsigned int> indices;
         std::vector<ModelTexture> textures;
         Material                  material{};
 
-        for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-            vertices[i].m_pos.x = mesh->mVertices[i].x;
-            vertices[i].m_pos.y = mesh->mVertices[i].y;
-            vertices[i].m_pos.z = mesh->mVertices[i].z;
+        std::unordered_map<Vertex, int> vertexIndex;
 
-            vertices[i].m_norm.x = mesh->mNormals[i].x;
-            vertices[i].m_norm.y = mesh->mNormals[i].y;
-            vertices[i].m_norm.z = mesh->mNormals[i].z;
+        Vertex vertex[3];
+        size_t offset = 0;
 
-            if (mesh->mTextureCoords[0]) {
-                vertices[i].m_tex.x = mesh->mTextureCoords[0][i].x;
-                vertices[i].m_tex.y = mesh->mTextureCoords[0][i].y;
-            }
-            else {
-                vertices[i].m_tex = glm::vec2{0.0f, 0.0f};
+        for (size_t face = 0; face < mesh.num_face_vertices.size(); ++face) {
+
+            if (mesh.material_ids[face] != materialID) {
+                offset += 3;
+                continue;
             }
 
-            vertices[i].m_tangent.x = mesh->mTangents[i].x;
-            vertices[i].m_tangent.y = mesh->mTangents[i].y;
-            vertices[i].m_tangent.z = mesh->mTangents[i].z;
-        }
+            for (size_t v = 0; v < 3; ++v) {
+                tinyobj::index_t index = mesh.indices[offset + v];
 
-        for (size_t i = 0; i < mesh->mNumFaces; ++i) {
-            aiFace face = mesh->mFaces[i];
-            for (size_t j = 0; j < face.mNumIndices; ++j) {
-                indices.push_back(face.mIndices[j]);
-            }
-        }
 
-        if (mesh->mMaterialIndex >= 0) {
-            aiMaterial *meshMaterialPtr = scene->mMaterials[mesh->mMaterialIndex];
+                vertex[v].m_pos.x = static_cast<float>(attrib.vertices[3 * index.vertex_index + 0]);
+                vertex[v].m_pos.y = static_cast<float>(attrib.vertices[3 * index.vertex_index + 1]);
+                vertex[v].m_pos.z = static_cast<float>(attrib.vertices[3 * index.vertex_index + 2]);
 
-            std::vector<ModelTexture> diffuseMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_DIFFUSE, TextureType::Diffuse);
-            textures.insert(textures.end(), diffuseMap.begin(), diffuseMap.end());
+                if (index.normal_index >= 0) {
+                    vertex[v].m_norm.x = static_cast<float>(attrib.normals[3 * index.normal_index + 0]);
+                    vertex[v].m_norm.y = static_cast<float>(attrib.normals[3 * index.normal_index + 1]);
+                    vertex[v].m_norm.z = static_cast<float>(attrib.normals[3 * index.normal_index + 2]);
+                }
 
-            std::vector<ModelTexture> specularMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_SPECULAR, TextureType::Specular);
-            textures.insert(textures.end(), specularMap.begin(), specularMap.end());
-
-            std::vector<ModelTexture> normalMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_NORMALS, TextureType::Normal);
-            textures.insert(textures.end(), normalMap.begin(), normalMap.end());
-
-            std::vector<ModelTexture> heightMap = loadMaterialTexture(meshMaterialPtr, aiTextureType_HEIGHT, TextureType::Height);
-            textures.insert(textures.end(), heightMap.begin(), heightMap.end());
-
-            aiColor3D amb{};
-            meshMaterialPtr->Get(AI_MATKEY_COLOR_AMBIENT, amb);
-
-            aiColor3D diff{};
-            meshMaterialPtr->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
-
-            aiColor3D spec{};
-            meshMaterialPtr->Get(AI_MATKEY_COLOR_SPECULAR, spec);
-
-            for (int i = 0; i < 3; ++i) {
-                material.m_ambient[i] = amb[i];
-                material.m_diffuse[i] = diff[i];
-                material.m_specular[i] = spec[i];
-            }
-            meshMaterialPtr->Get(AI_MATKEY_SHININESS, material.m_specularExponent);
-        }
-        
-        return Mesh{ vertices, indices, textures, material };
-    }
-
-    std::vector<ModelTexture> Model::loadMaterialTexture( 
-        aiMaterial *material, 
-        aiTextureType texType,
-        TextureType typeName
-    ) {
-        std::vector<ModelTexture> textures;
-        for (size_t i = 0; i < material->GetTextureCount(texType); ++i) {
-            aiString str;
-            material->GetTexture(texType, static_cast<unsigned int>(i), &str);
-
-            bool alreadyLoaded = false;
-            for (size_t i = 0; i < m_loadedTextures.size(); ++i) {
-                if (!std::strcmp(m_loadedTextures[i].m_path.c_str(), str.C_Str())) {
-                    textures.push_back(m_loadedTextures[i]);
-                    alreadyLoaded = true;
-                    break;
+                if (index.texcoord_index >= 0) {
+                    vertex[v].m_tex.x = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 0]);
+                    vertex[v].m_tex.y = static_cast<float>(attrib.texcoords[2 * index.texcoord_index + 1]);
                 }
             }
 
-            if (!alreadyLoaded) {
-                ModelTexture texture;
-                texture.m_id = textureFromFile(m_directory, str.C_Str());
-                texture.m_type = typeName;
-                texture.m_path = str.C_Str();
-                textures.push_back(texture);
-                m_loadedTextures.push_back(texture);
+            glm::vec3 tangent = CalculateTangent(vertex[0], vertex[1], vertex[2]);
+            for (int v = 0; v < 3; ++v) {
+                vertex[v].m_tangent = tangent;
+
+                if (vertexIndex.count(vertex[v]) == 0) {
+                    indices.push_back(static_cast<unsigned int>(vertexIndex.size()));
+
+                    vertices.push_back(vertex[v]);
+                    vertexIndex.emplace(vertex[v], indices.back());
+                }
+                else {
+                    indices.push_back(vertexIndex[vertex[v]]);
+                }
             }
+
+            offset += 3;
         }
-        return textures;
+
+        tinyobj::material_t const &materialData = materials[materialID];
+
+        std::vector<ModelTexture> diffuseMap = loadMaterialTexture(materialData, TextureType::Diffuse);
+        textures.insert(textures.end(), diffuseMap.begin(), diffuseMap.end());
+
+        std::vector<ModelTexture> specularMap = loadMaterialTexture(materialData, TextureType::Specular);
+        textures.insert(textures.end(), specularMap.begin(), specularMap.end());
+
+        std::vector<ModelTexture> normalMap = loadMaterialTexture(materialData, TextureType::Normal);
+        textures.insert(textures.end(), normalMap.begin(), normalMap.end());
+
+        std::vector<ModelTexture> heightMap = loadMaterialTexture(materialData, TextureType::Height);
+        textures.insert(textures.end(), heightMap.begin(), heightMap.end());
+
+        material = loadMaterialParams(materialData);
+
+        return Mesh{ vertices, indices, textures, material };
+    }
+
+    std::vector<ModelTexture> Model::loadMaterialTexture(
+        tinyobj::material_t const &materialData,
+        TextureType typeName
+    ) {
+        std::vector<ModelTexture> textureVec;
+
+        std::string texturePath;
+        switch (typeName) {
+        case OGL::TextureType::Diffuse:
+            texturePath = materialData.diffuse_texname;
+            break;
+        case OGL::TextureType::Specular:
+            texturePath = materialData.specular_texname;
+            break;
+        case OGL::TextureType::Normal:
+            texturePath = materialData.normal_texname;
+            break;
+        case OGL::TextureType::Height:
+            texturePath = materialData.bump_texname;
+            break;
+        default:
+            break;
+        }
+
+        if (!texturePath.empty()) {
+
+            if (m_directory.empty()) {
+                texturePath = "./" + texturePath;
+            }
+            else {
+                texturePath = m_directory + "/" + texturePath;
+            }
+
+            ModelTexture texture;
+            texture.m_id = textureFromFile(texturePath);
+            texture.m_path = texturePath;
+            texture.m_type = typeName;
+
+            textureVec.push_back(texture);
+        }
+
+        return textureVec;
+    }
+
+    Material Model::loadMaterialParams(
+        tinyobj::material_t const &materialData
+    ) {
+        Material material;
+
+        for (int i = 0; i < 3; ++i) {
+            material.m_ambient[i] = static_cast<float>(materialData.ambient[i]);
+            material.m_diffuse[i] = static_cast<float>(materialData.diffuse[i]);
+            material.m_specular[i] = static_cast<float>(materialData.specular[i]);
+        }
+        material.m_specularExponent = static_cast<float>(1.0f);
+
+        return material;
     }
 
     int Model::textureFromFile(
@@ -155,6 +200,13 @@ namespace OGL {
         std::string const &path
     ) {
         std::string filename = directory + '/' + std::string{ path };
+
+        return textureFromFile(filename);
+    }
+
+    int Model::textureFromFile(
+        std::string const &filename
+    ) {
 
         unsigned int texID;
         glGenTextures(1, &texID);
@@ -203,12 +255,33 @@ namespace OGL {
         return texID;
     }
 
+    glm::vec3 Model::CalculateTangent(
+        Vertex const &v1,
+        Vertex const &v2,
+        Vertex const &v3
+    ) const {
+
+        glm::vec3 tangent;
+
+        glm::vec3 edge1 = v2.m_pos - v1.m_pos;
+        glm::vec3 edge2 = v3.m_pos - v1.m_pos;
+        glm::vec2 deltaUV1 = v2.m_tex - v1.m_tex;
+        glm::vec2 deltaUV2 = v3.m_tex - v1.m_tex;
+
+        float f = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+        return glm::normalize(tangent);
+    }
+
     Model::Model( 
         std::string const &path,
-        bool bFlipTexturesHorizontally,
-        int flags
+        bool bFlipTexturesHorizontally
     ) {
-        loadModel(path, bFlipTexturesHorizontally, flags);
+        loadModel(path, bFlipTexturesHorizontally);
     }
 
     void Model::draw( 

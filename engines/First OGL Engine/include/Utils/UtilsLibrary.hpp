@@ -4,6 +4,8 @@
 
 namespace OGL::E1 {
 
+    class Engine1Base;
+
     class UtilsLibrary {
 
         friend class Engine1Base;

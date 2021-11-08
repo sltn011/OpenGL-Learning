@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "Exception.hpp"
 
