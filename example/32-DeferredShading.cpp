@@ -98,9 +98,9 @@ public:
             obj.draw(*m_gBufferWriteShader);
         }
 
-        for (OGL::Object &obj : m_scene->getTransparentObjs()) {
-            obj.draw(*m_gBufferWriteShader);
-        }
+        //for (OGL::Object &obj : m_scene->getTransparentObjs()) {
+        //    obj.draw(*m_gBufferWriteShader);
+        //}
 
         return true;
     }

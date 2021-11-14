@@ -94,6 +94,13 @@ namespace OGL::E1 {
 
             if (m_gBuffer) {
                 defferedRenderPass();
+
+                if (m_transpRenderer) {
+                    glEnable(GL_BLEND);
+                    glClear(GL_DEPTH_BUFFER_BIT);
+                    m_transpRenderer->render(*m_scene, m_scene->getCamera().get());
+                    glDisable(GL_BLEND);
+                }
             }
             else {
                 forwardRenderPass();
