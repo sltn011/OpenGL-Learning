@@ -70,16 +70,6 @@ public:
             "shaders/01-postprocessing.frag"
         );
 
-        OGL::Shader MipmapShader(
-            "shaders/01-playgroundBloomMipmap.vert",
-            "shaders/01-playgroundBloomMipmap.frag"
-        );
-
-        OGL::Shader CombineShader(
-            "shaders/01-playgroundBloomCombine.vert",
-            "shaders/01-playgroundBloomCombine.frag"
-        );
-
         m_normalRenderer            = OGL::E1::NormalRenderer{ std::move(normalShader) };
         m_transpRenderer            = OGL::E1::TransparentRenderer{ std::move(transpShader) };
         m_skyboxRenderer            = OGL::E1::SkyboxRenderer{std::move(skyboxShader)};
@@ -93,7 +83,33 @@ public:
         m_guiRenderer               = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
 
 
-        m_bloom = OGL::E1::Bloom{ std::move(MipmapShader), std::move(CombineShader), glm::vec3(1.0f) };
+        OGL::Shader bloomDownsamplingShader(
+            "shaders/bloomDownsampling.vert",
+            "shaders/bloomDownsampling.frag"
+        );
+
+        OGL::Shader blurHorizontalShader(
+            "shaders/blurHorizontal.vert",
+            "shaders/blurHorizontal.frag"
+        );
+
+        OGL::Shader blurVerticalShader(
+            "shaders/blurVertical.vert",
+            "shaders/blurVertical.frag"
+        );
+
+        OGL::Shader bloomCombineShader(
+            "shaders/bloomCombine.vert",
+            "shaders/bloomCombine.frag"
+        );
+
+        m_bloom = OGL::E1::Bloom{
+            std::move(bloomDownsamplingShader),
+            std::move(blurHorizontalShader),
+            std::move(blurVerticalShader),
+            std::move(bloomCombineShader),
+            glm::vec3(1.0f)
+        };
         m_bloom->initFrameBuffers(screenWidth, screenHeight);
 
         initPostprocessing(std::move(postprocessingShader));
