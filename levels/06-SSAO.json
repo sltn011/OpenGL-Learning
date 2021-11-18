@@ -3,16 +3,16 @@
         "Clip Far": 100.0,
         "Clip Near": 0.009999999776482582,
         "Direction": [
-            0.7557413578033447,
-            -0.17192934453487396,
-            0.6318983435630798
+            -4.371138828673793e-08,
+            0.0,
+            1.0
         ],
         "FoV": 45.0,
         "Move Speed": 1.0,
         "Position": [
-            -0.1260586977005005,
-            0.11037289351224899,
-            -0.04173709824681282
+            0.0,
+            0.15000000596046448,
+            0.0
         ]
     },
     "Lights": {
@@ -27,7 +27,7 @@
                 "Color": [
                     2.0,
                     2.0,
-                    1.85
+                    1.850000023841858
                 ],
                 "Position": [
                     -1.0,
@@ -41,29 +41,11 @@
     "Models": {
         "0": "models/Playground/playground.obj",
         "1": "models/Crate/crate.obj",
-        "2": "models/Window/window.obj",
-        "3": "models/Monkey/monkey.obj",
-        "4": "models/Shack/shack.obj"
+        "3": "models/Shack/shack.obj"
     },
     "Objects": {
         "Instanced": [],
-        "Mirror": [
-            {
-                "Model ID": 3,
-                "Object ID": 0,
-                "Position": [
-                    0.30000001192092896,
-                    0.10000000149011612,
-                    0.30000001192092896
-                ],
-                "Rotation": [
-                    0.0,
-                    -1200.0,
-                    -0.0
-                ],
-                "Scale": 0.07
-            }
-        ],
+        "Mirror": [],
         "Normal": [
             {
                 "Model ID": 0,
@@ -141,7 +123,7 @@
                 "Scale": 0.054999999701976776
             },
             {
-                "Model ID": 4,
+                "Model ID": 3,
                 "Object ID": 0,
                 "Position": [
                     -0.699999988079071,
@@ -156,71 +138,7 @@
                 "Scale": 0.15000000596046448
             }
         ],
-        "Transparent": [
-            {
-                "Model ID": 2,
-                "Object ID": 0,
-                "Position": [
-                    0.800000011920929,
-                    0.0,
-                    -0.44999998807907104
-                ],
-                "Rotation": [
-                    0.0,
-                    99.99999237060547,
-                    -0.0
-                ],
-                "Scale": 0.10000000149011612
-            },
-            {
-                "Model ID": 2,
-                "Object ID": 1,
-                "Position": [
-                    0.6000000238418579,
-                    0.0,
-                    -0.10000000149011612
-                ],
-                "Rotation": [
-                    0.0,
-                    -25.000001907348633,
-                    -0.0
-                ],
-                "Scale": 0.10000000149011612
-            },
-            {
-                "Model ID": 2,
-                "Object ID": 2,
-                "Position": [
-                    0.3499999940395355,
-                    0.0,
-                    -0.10000000149011612
-                ],
-                "Rotation": [
-                    0.0,
-                    -65.0,
-                    -0.0
-                ],
-                "Scale": 0.10000000149011612
-            },
-            {
-                "Model ID": 2,
-                "Object ID": 3,
-                "Position": [
-                    0.0,
-                    0.0,
-                    -0.20000000298023224
-                ],
-                "Rotation": [
-                    0.0,
-                    80.0,
-                    -0.0
-                ],
-                "Scale": 0.10000000149011612
-            }
-        ]
+        "Transparent": []
     },
-    "Skybox": {
-        "Folder Path": "textures/Skybox1",
-        "Texture Unit": 22
-    }
+    "Skybox": null
 }

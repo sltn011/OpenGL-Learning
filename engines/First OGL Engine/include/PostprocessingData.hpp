@@ -13,6 +13,8 @@ namespace OGL::E1 {
         float HDRExposure = 1.0f;
 
         bool bEnableBloom = true;
+
+        bool bEnableSSAO = true;
     };
 
 } // OGL::E1

@@ -30,6 +30,10 @@ namespace OGL::E1 {
         m_window = window;
 
         glfwMakeContextCurrent(m_window);
+
+        glfwSetWindowSizeLimits(m_window, GLFW_DONT_CARE, GLFW_DONT_CARE, screenWidth, screenHeight);
+        glfwSetWindowSize(m_window, screenWidth, screenHeight);
+
         glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         glfwSetWindowUserPointer(m_window, this);
@@ -72,6 +76,10 @@ namespace OGL::E1 {
         glBlendEquation(GL_FUNC_ADD);
 
         UtilsLibrary::m_engine = this;
+
+        if (m_postprocessingData.bEnableSSAO) {
+            toggleSSAO(true);
+        }
     }
 
     Engine1Base::~Engine1Base(
@@ -832,6 +840,34 @@ namespace OGL::E1 {
         m_postprocessingData.bEnableBloom = bEnabled;
     }
 
+    void Engine1Base::toggleSSAO(
+        bool bEnabled
+    ) {
+        m_postprocessingData.bEnableSSAO = bEnabled;
+
+        if (m_postprocessingData.bEnableSSAO) {
+            int width = 0, height = 0;
+            glfwGetWindowSize(m_window, &width, &height);
+
+            m_SSAOBuffer = SSAO{width, height};
+        }
+        else {
+            m_SSAOBuffer = std::nullopt;
+        }
+    }
+
+    void Engine1Base::fillSSAOTexture(
+    ) {
+        if (!m_postprocessingData.bEnableSSAO || !m_SSAOBuffer || !m_SSAOShader || !m_gBuffer) {
+            return;
+        }
+
+        m_SSAOShader->use();
+        m_SSAOBuffer->bindAsRenderTarget();
+        m_gBuffer->drawQuad(*m_SSAOShader);
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
     void Engine1Base::forwardRenderPass(
     ) {
         if (m_postprocessingData.bEnablePostprocessing && m_postprocessingFramebuffer && m_renderFramebuffer && m_postprocessingShader) {
@@ -871,7 +907,7 @@ namespace OGL::E1 {
         }
 
         m_gBufferWriteShader->use();
-        loadGBufferWriteShaderData();
+        loadGBufferWriteShaderData(*m_gBufferWriteShader);
 
         m_gBuffer->bindAsRenderTarget();
 
@@ -883,15 +919,29 @@ namespace OGL::E1 {
             m_gameShouldRun = false;
         }
 
-        m_gBufferReadShader->use();
-        loadGBufferReadShaderData();
-
         if (!m_postprocessingData.bEnablePostprocessing || !m_postprocessingFramebuffer || !m_renderFramebuffer || !m_postprocessingShader) {
+            m_gBufferReadShader->use();
+            loadGBufferReadShaderData(*m_gBufferReadShader);
+
             FrameBufferObject::unbind(GL_FRAMEBUFFER);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             m_gBuffer->drawQuad(*m_gBufferReadShader);
         }
         else {
+            if (m_postprocessingData.bEnableSSAO && m_SSAOBuffer && m_SSAOShader) {
+                m_SSAOShader->use();
+                m_SSAOBuffer->bindAsRenderTarget();
+                m_gBuffer->drawQuad(*m_SSAOShader);
+                FrameBufferObject::unbind(GL_FRAMEBUFFER);
+            }
+
+            m_gBufferReadShader->use();
+            loadGBufferReadShaderData(*m_gBufferReadShader);
+
+            if (m_postprocessingData.bEnableSSAO && m_SSAOBuffer) {
+                m_SSAOBuffer->bindAsShaderInput(*m_gBufferReadShader, GL_TEXTURE0 + GBuffer::Buffer::MAX);
+            }
+
             m_renderFramebuffer->bind(GL_FRAMEBUFFER);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             m_gBuffer->drawQuad(*m_gBufferReadShader);
@@ -915,67 +965,69 @@ namespace OGL::E1 {
     }
 
     void Engine1Base::loadGBufferWriteShaderData(
+        Shader &writeShader
     ) {
-        if (!m_scene || !m_gBufferWriteShader) {
+        if (!m_scene) {
             return;
         }
 
         BasicCamera *camera = m_scene->getCamera().get();
 
-        m_gBufferWriteShader->setUniformMatrix4("view", camera->getViewMatrix());
-        m_gBufferWriteShader->setUniformMatrix4("projection", camera->getProjectionMatrix());
-        m_gBufferWriteShader->setUniformVec3("viewerPos", camera->getPos());
+        writeShader.setUniformMatrix4("view", camera->getViewMatrix());
+        writeShader.setUniformMatrix4("projection", camera->getProjectionMatrix());
+        writeShader.setUniformVec3("viewerPos", camera->getPos());
     }
 
     void Engine1Base::loadGBufferReadShaderData(
+        Shader &readShader
     ) {
-        if (!m_scene || !m_gBufferReadShader) {
+        if (!m_scene) {
             return;
         }
 
         BasicCamera *camera = m_scene->getCamera().get();
 
-        m_gBufferReadShader->setUniformMatrix4("view", camera->getViewMatrix());
-        m_gBufferReadShader->setUniformMatrix4("projection", camera->getProjectionMatrix());
-        m_gBufferReadShader->setUniformVec3("viewerPos", camera->getPos());
+        readShader.setUniformMatrix4("view", camera->getViewMatrix());
+        readShader.setUniformMatrix4("projection", camera->getProjectionMatrix());
+        readShader.setUniformVec3("viewerPos", camera->getPos());
 
         dirLights &sceneDirLights = m_scene->getDirLights();
-        m_gBufferReadShader->setUniformInt("numDirLights", static_cast<int>(sceneDirLights.size()));
+        readShader.setUniformInt("numDirLights", static_cast<int>(sceneDirLights.size()));
         for (size_t i = 0; i < sceneDirLights.size(); ++i) {
             auto &[light, pShadowMap] = sceneDirLights[i];
-            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            light.loadInShader(readShader, static_cast<int>(i));
             if (!pShadowMap) {
                 continue;
             }
             pShadowMap->bindTexture();
-            m_gBufferReadShader->setUniformMatrix4("dirLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
-            m_gBufferReadShader->setUniformInt("dirLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
+            readShader.setUniformMatrix4("dirLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            readShader.setUniformInt("dirLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
         }
 
         pointLights &scenePointLights = m_scene->getPointLights();
-        m_gBufferReadShader->setUniformInt("numPointLights", static_cast<int>(scenePointLights.size()));
+        readShader.setUniformInt("numPointLights", static_cast<int>(scenePointLights.size()));
         for (size_t i = 0; i < scenePointLights.size(); ++i) {
             auto &[light, pShadowCubemap] = scenePointLights[i];
-            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            light.loadInShader(readShader, static_cast<int>(i));
             if (!pShadowCubemap) {
                 continue;
             }
             pShadowCubemap->bindTexture();
-            m_gBufferReadShader->setUniformInt("pointLightShadowMap[" + std::to_string(i) + "]", pShadowCubemap->textureUnit() - GL_TEXTURE0);
-            m_gBufferReadShader->setUniformFloat("pointLightShadowMapFarPlane[" + std::to_string(i) + "]", pShadowCubemap->farPlane());
+            readShader.setUniformInt("pointLightShadowMap[" + std::to_string(i) + "]", pShadowCubemap->textureUnit() - GL_TEXTURE0);
+            readShader.setUniformFloat("pointLightShadowMapFarPlane[" + std::to_string(i) + "]", pShadowCubemap->farPlane());
         }
 
         spotLights &sceneSpotLights = m_scene->getSpotLights();
-        m_gBufferReadShader->setUniformInt("numSpotLights", static_cast<int>(sceneSpotLights.size()));
+        readShader.setUniformInt("numSpotLights", static_cast<int>(sceneSpotLights.size()));
         for (size_t i = 0; i < sceneSpotLights.size(); ++i) {
             auto &[light, pShadowMap] = sceneSpotLights[i];
-            light.loadInShader(*m_gBufferReadShader, static_cast<int>(i));
+            light.loadInShader(readShader, static_cast<int>(i));
             if (!pShadowMap) {
                 continue;
             }
             pShadowMap->bindTexture();
-            m_gBufferReadShader->setUniformMatrix4("spotLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
-            m_gBufferReadShader->setUniformInt("spotLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
+            readShader.setUniformMatrix4("spotLightProjView[" + std::to_string(i) + "]", pShadowMap->lightProjView());
+            readShader.setUniformInt("spotLightShadowMap[" + std::to_string(i) + "]", pShadowMap->textureUnit() - GL_TEXTURE0);
         }
     }
 

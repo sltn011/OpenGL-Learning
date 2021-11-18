@@ -22,10 +22,11 @@
 #include "ShadowCubemapRenderer.hpp"
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
-#include "GBuffer.hpp"
 
 #include "PostprocessingData.hpp"
 #include "Bloom.hpp"
+#include "GBuffer.hpp"
+#include "SSAO.hpp"
 
 #include "LevelSaver.hpp"
 #include "LevelLoader.hpp"
@@ -106,6 +107,8 @@ namespace OGL::E1 {
         /// Shader used for postprocessing
         std::optional<Shader> m_postprocessingShader;
 
+        std::optional<Shader> m_blurShader;
+
         /// Framebuffers used for postprocessing
         std::optional<FrameBufferObject> m_renderFramebuffer;
         std::optional<FrameBufferObject> m_postprocessingFramebuffer;
@@ -117,6 +120,9 @@ namespace OGL::E1 {
         std::optional<GBuffer> m_gBuffer;
         std::optional<Shader> m_gBufferWriteShader;
         std::optional<Shader> m_gBufferReadShader;
+
+        std::optional<SSAO> m_SSAOBuffer;
+        std::optional<Shader> m_SSAOShader;
 
 
         /// Hashmap of Key: Model's ID, Value: Owning pointer to Model object - stores Models used in Scene
@@ -649,6 +655,13 @@ namespace OGL::E1 {
              bool bEnabled
          );
 
+         void toggleSSAO(
+             bool bEnabled
+         );
+
+         void fillSSAOTexture(
+         );
+
      protected:
          /**
           * @brief Abstract method used to allocate resources for Engine
@@ -683,9 +696,11 @@ namespace OGL::E1 {
          );
 
          void loadGBufferWriteShaderData(
+             Shader &writeShader
          );
 
          void loadGBufferReadShaderData(
+             Shader &readShader
          );
 
          /**

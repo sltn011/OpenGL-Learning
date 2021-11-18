@@ -14,7 +14,9 @@ namespace OGL::E1 {
     public:
 
         Bloom(
-            Shader &&mipmapShader,
+            Shader &&downsamplingShader,
+            Shader &&horizontalBlurShader,
+            Shader &&verticalBlurShader,
             Shader &&combineShader,
             glm::vec3 thresHold
         );
@@ -50,18 +52,69 @@ namespace OGL::E1 {
 
     private:
 
-        static constexpr int s_numMipmaps = 4;
+        void initFramebuffer(
+            FrameBufferObject &fbo,
+            int width,
+            int height
+        );
+
+        void blit(
+            FrameBufferObject &from,
+            FrameBufferObject &to,
+            int width,
+            int height
+        );
+
+        void resizeImage(
+            FrameBufferObject &from,
+            FrameBufferObject &to,
+            int newWidth,
+            int newHeight
+        );
+
+        void blurImage(
+            int imageIndex,
+            int imageWidth,
+            int imageHeight
+        );
+
+        void combineImages(
+            FrameBufferObject &dst,
+            FrameBufferObject &fbo1,
+            FrameBufferObject &fbo2,
+            int dstWidth,
+            int dstHeight
+        );
+
+        void setupDownsampleShader(
+            bool bDoCutoff
+        );
+
+        void setupHorizontalBlurShader(
+            int imageWidth
+        );
+
+        void setupVerticalBlurShader(
+            int imageHeight
+        );
+
+        void setupCombineShader(
+        );
+
+        static constexpr int s_numMipmaps = 7;
+        static constexpr int s_downscale = 2;
 
         int m_resultWidth;
         int m_resultHeight;
 
-        Shader m_mipmapShader;
+        Shader m_downsamplingShader;
+        Shader m_horizontalBlurShader;
+        Shader m_verticalBlurShader;
         Shader m_combineShader;
 
-        FrameBufferObject m_mipmaps[s_numMipmaps];
-
-        FrameBufferObject m_intermediateCombineBuffer;
-
+        FrameBufferObject m_downsamples[s_numMipmaps];
+        FrameBufferObject m_intermediate[s_numMipmaps];
+        FrameBufferObject m_temp;
         FrameBufferObject m_result;
 
         glm::vec3 m_thresHold;

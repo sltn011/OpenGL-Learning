@@ -12,6 +12,7 @@ namespace OGL::E1::GUI {
         m_onToggleHDR.bind(engineInstance, &Engine1Base::toggleHDR);
         m_onSetHDRExposure.bind(engineInstance, &Engine1Base::setHDRExposure);
         m_onToggleBloom.bind(engineInstance, &Engine1Base::toggleBloom);
+        m_onToggleSSAO.bind(engineInstance, &Engine1Base::toggleSSAO);
     }
 
     void PostprocessingWindow::render(
@@ -36,6 +37,9 @@ namespace OGL::E1::GUI {
         }
         if (ImGui::Checkbox("Toggle Bloom", &data.bEnableBloom)) {
             m_onToggleBloom(data.bEnableBloom);
+        }
+        if (ImGui::Checkbox("Toggle SSAO", &data.bEnableSSAO)) {
+            m_onToggleSSAO(data.bEnableSSAO);
         }
 
         ImGui::End();

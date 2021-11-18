@@ -76,7 +76,7 @@ namespace OGL {
         glDrawBuffers(Buffer::MAX, targetBuffers);
     }
 
-    void GBuffer::drawQuad(
+    void GBuffer::bindAsShaderInput(
         Shader &shader
     ) {
         loadToShader(shader);
@@ -87,6 +87,12 @@ namespace OGL {
         }
 
         glActiveTexture(GL_TEXTURE0);
+    }
+
+    void GBuffer::drawQuad(
+        Shader &shader
+    ) {
+        bindAsShaderInput(shader);
 
         m_fbo.drawQuadRaw();
     }

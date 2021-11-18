@@ -118,6 +118,7 @@ add_library(OpenGLTools STATIC
     src/CameraShadowMap.cpp
     src/CameraShadowCubemap.cpp
 	src/GBuffer.cpp
+	src/SSAO.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
@@ -208,6 +209,7 @@ add_executable(29-ParallaxMapping example/29-ParallaxMapping.cpp ${DEARIMGUI_FIL
 add_executable(30-HDR example/30-HDR.cpp ${DEARIMGUI_FILES})
 add_executable(31-Bloom example/31-Bloom.cpp ${DEARIMGUI_FILES})
 add_executable(32-DeferredShading example/32-DeferredShading.cpp ${DEARIMGUI_FILES})
+add_executable(33-SSAO example/33-SSAO.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI)
@@ -246,5 +248,6 @@ target_link_libraries(29-ParallaxMapping glad glfw OpenGLTools)
 target_link_libraries(30-HDR glad glfw OGL_E1 OGL_E1_GUI)
 target_link_libraries(31-Bloom glad glfw OGL_E1 OGL_E1_GUI)
 target_link_libraries(32-DeferredShading glad glfw OGL_E1 OGL_E1_GUI)
+target_link_libraries(33-SSAO glad glfw OGL_E1 OGL_E1_GUI)
 ######################################################################################################
 

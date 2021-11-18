@@ -21,6 +21,10 @@ namespace OGL {
         void bindAsRenderTarget(
         );
 
+        void bindAsShaderInput(
+            Shader &shader
+        );
+
         void drawQuad(
             Shader &shader
         );

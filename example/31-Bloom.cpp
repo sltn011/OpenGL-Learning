@@ -86,19 +86,35 @@ public:
         initPostprocessing(std::move(HDRShader));
         togglePostprocessing(true);
 
-        OGL::Shader MipmapShader(
-            "shaders/27-bloomMipmap.vert",
-            "shaders/27-bloomMipmap.frag"
+        OGL::Shader bloomDownsamplingShader(
+            "shaders/bloomDownsampling.vert",
+            "shaders/bloomDownsampling.frag"
         );
 
-        OGL::Shader CombineShader(
-            "shaders/27-bloomCombine.vert",
-            "shaders/27-bloomCombine.frag"
+        OGL::Shader blurHorizontalShader(
+            "shaders/blurHorizontal.vert",
+            "shaders/blurHorizontal.frag"
         );
 
-        m_bloom = OGL::E1::Bloom{ std::move(MipmapShader), std::move(CombineShader), glm::vec3(1.0f) };
+        OGL::Shader blurVerticalShader(
+            "shaders/blurVertical.vert",
+            "shaders/blurVertical.frag"
+        );
+
+        OGL::Shader bloomCombineShader(
+            "shaders/bloomCombine.vert",
+            "shaders/bloomCombine.frag"
+        );
+        
+        m_bloom = OGL::E1::Bloom{ 
+            std::move(bloomDownsamplingShader),
+            std::move(blurHorizontalShader),
+            std::move(blurVerticalShader),
+            std::move(bloomCombineShader),
+            glm::vec3(1.0f) 
+        };
         m_bloom->initFrameBuffers(screenWidth, screenHeight);
-
+        
         return true;
     }
 

@@ -3,12 +3,18 @@
 namespace OGL::E1 {
 
     Bloom::Bloom(
-        Shader &&mipmapShader,
+        Shader &&downsamplingShader,
+        Shader &&horizontalBlurShader,
+        Shader &&verticalBlurShader,
         Shader &&combineShader,
         glm::vec3 thresHold
-    ) : m_mipmapShader{ std::move(mipmapShader) },
+    ) : m_downsamplingShader{ std::move(downsamplingShader) },
+        m_horizontalBlurShader{ std::move(horizontalBlurShader) },
+        m_verticalBlurShader{ std::move(verticalBlurShader) },
         m_combineShader{ std::move(combineShader) },
-        m_thresHold{ thresHold } {
+        m_thresHold{ thresHold },
+        m_resultWidth{ 0 },
+        m_resultHeight{ 0 } {
 
     }
 
@@ -16,56 +22,15 @@ namespace OGL::E1 {
         int windowWidth,
         int windowHeight
     ) {
+        initFramebuffer(m_result, windowWidth, windowHeight);
+        initFramebuffer(m_temp, windowWidth, windowHeight);
+
         for (int i = 0; i < s_numMipmaps; ++i) {
-            int mipmapWidth = static_cast<int>(windowWidth / std::pow(2, i));
-            int mipmapHeight = static_cast<int>(windowHeight / std::pow(2, i));
-
-            m_mipmaps[i] = FrameBufferObject{};
-            m_mipmaps[i].bind(GL_FRAMEBUFFER);
-
-            ColorBufferObject mipmapColorBuffer;
-
-            mipmapColorBuffer.allocateStorage(mipmapWidth, mipmapHeight, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-            m_mipmaps[i].attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(mipmapColorBuffer));
-
-            if (!m_mipmaps[i].isComplete(GL_FRAMEBUFFER)) {
-                FrameBufferObject::unbind(GL_FRAMEBUFFER);
-                throw Exception{ "Error creating bloom framebuffer!" };
-            }
+            int fboWidth = static_cast<int>(windowWidth / std::pow(s_downscale, i + 1));
+            int fboHeight = static_cast<int>(windowHeight / std::pow(s_downscale, i + 1));
+            initFramebuffer(m_downsamples[i], fboWidth, fboHeight);
+            initFramebuffer(m_intermediate[i], fboWidth, fboHeight);
         }
-
-
-
-        m_intermediateCombineBuffer = FrameBufferObject{};
-        m_intermediateCombineBuffer.bind(GL_FRAMEBUFFER);
-
-        ColorBufferObject intermediateColorBuffer;
-
-        intermediateColorBuffer.allocateStorage(windowWidth, windowHeight, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        m_intermediateCombineBuffer.attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(intermediateColorBuffer));
-
-        if (!m_intermediateCombineBuffer.isComplete(GL_FRAMEBUFFER)) {
-            FrameBufferObject::unbind(GL_FRAMEBUFFER);
-            throw Exception{ "Error creating bloom framebuffer!" };
-        }
-
-
-
-        m_result = FrameBufferObject{};
-        m_result.bind(GL_FRAMEBUFFER);
-
-        ColorBufferObject renderColorBuffer;
-        RenderBufferObject renderDepthBuffer;
-
-        renderColorBuffer.allocateStorage(windowWidth, windowHeight, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
-        m_result.attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(renderColorBuffer));
-
-        if (!m_result.isComplete(GL_FRAMEBUFFER)) {
-            FrameBufferObject::unbind(GL_FRAMEBUFFER);
-            throw Exception{ "Error creating bloom framebuffer!" };
-        }
-
-        FrameBufferObject::unbind(GL_FRAMEBUFFER);
 
         m_resultWidth = windowWidth;
         m_resultHeight = windowHeight;
@@ -76,48 +41,46 @@ namespace OGL::E1 {
     ) {
         glDisable(GL_DEPTH_TEST);
 
-        sceneFrameBuffer.bind(GL_READ_FRAMEBUFFER);
-        m_result.bind(GL_DRAW_FRAMEBUFFER);
-        glBlitFramebuffer(0, 0, m_resultWidth, m_resultHeight, 0, 0, m_resultWidth, m_resultHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        blit(sceneFrameBuffer, m_result, m_resultWidth, m_resultHeight);
 
-        if (s_numMipmaps < 2) {
-            return;
-        }
-
-        m_mipmapShader.use();
-        m_mipmapShader.setUniformInt("fboTexture", 0);
-        m_mipmapShader.setUniformVec3("thresHold", m_thresHold);
-
-        m_mipmaps[0].bind(GL_FRAMEBUFFER);
-        m_result.drawQuad(GL_COLOR_ATTACHMENT0);
+        setupDownsampleShader(true);
+        resizeImage(
+            m_result,
+            m_downsamples[0],
+            static_cast<int>(m_resultWidth / s_downscale),
+            static_cast<int>(m_resultHeight / s_downscale)
+        );
+        blurImage(0, static_cast<int>(m_resultWidth / s_downscale), static_cast<int>(m_resultHeight / s_downscale));
+        
         for (int i = 1; i < s_numMipmaps; ++i) {
-            glViewport(0, 0, static_cast<int>(m_resultWidth / std::pow(2, i)), static_cast<int>(m_resultHeight / std::pow(2, i)));
-            m_mipmaps[i].bind(GL_FRAMEBUFFER);
-            m_mipmaps[i - 1].drawQuad(GL_COLOR_ATTACHMENT0);
-        }
-
-        glViewport(0, 0, m_resultWidth, m_resultHeight);
-
-        m_combineShader.use();
-        m_combineShader.setUniformInt("fboTexture", 0);
-        m_combineShader.setUniformInt("resultTexture", 1);
-        glActiveTexture(GL_TEXTURE1);
-        m_result.getColorBuffers().at(GL_COLOR_ATTACHMENT0).bindAsTexture(GL_TEXTURE_2D);
-        glActiveTexture(GL_TEXTURE0);
-        for (int i = 0; i < s_numMipmaps; ++i) {
-            m_mipmaps[i].bind(GL_READ_FRAMEBUFFER);
-            m_intermediateCombineBuffer.bind(GL_DRAW_FRAMEBUFFER);
-            glBlitFramebuffer(
-                0, 0, static_cast<int>(m_resultWidth / std::pow(2, i)), static_cast<int>(m_resultHeight / std::pow(2, i)),
-                0, 0, m_resultWidth, m_resultHeight, 
-                GL_COLOR_BUFFER_BIT,
-                GL_LINEAR
+            setupDownsampleShader(false);
+            int sampleWidth = static_cast<int>(m_resultWidth / std::pow(s_downscale, i + 1));
+            int sampleHeight = static_cast<int>(m_resultHeight / std::pow(s_downscale, i + 1));
+            resizeImage(
+                m_downsamples[i - 1],
+                m_downsamples[i],
+                sampleWidth,
+                sampleHeight
             );
-            m_result.bind(GL_FRAMEBUFFER);
-            m_intermediateCombineBuffer.drawQuad(GL_COLOR_ATTACHMENT0);
+
+            blurImage(i, sampleWidth, sampleHeight);
         }
 
-        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+        setupCombineShader();
+        for (int i = s_numMipmaps - 1; i > 0; --i) {
+            int sampleWidth = static_cast<int>(m_resultWidth / std::pow(s_downscale, i));
+            int sampleHeight = static_cast<int>(m_resultHeight / std::pow(s_downscale, i));
+            combineImages(
+                m_intermediate[i - 1],
+                m_downsamples[i],
+                m_downsamples[i - 1],
+                sampleWidth,
+                sampleHeight
+            );
+            blit(m_intermediate[i - 1], m_downsamples[i - 1], sampleWidth, sampleHeight);
+        }
+        combineImages(m_temp, m_downsamples[0], m_result, m_resultWidth, m_resultHeight);
+        blit(m_temp, m_result, m_resultWidth, m_resultHeight);
 
         glEnable(GL_DEPTH_TEST);
     }
@@ -126,6 +89,109 @@ namespace OGL::E1 {
         GLenum frameBufferType
     ) {
         m_result.bind(frameBufferType);
+    }
+
+    void Bloom::initFramebuffer(
+        FrameBufferObject &fbo,
+        int width,
+        int height
+    ) {
+        fbo.bind(GL_FRAMEBUFFER);
+        ColorBufferObject cbo;
+        cbo.allocateStorage(width, height, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+        fbo.attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(cbo));
+
+        if (!fbo.isComplete(GL_FRAMEBUFFER)) {
+            FrameBufferObject::unbind(GL_FRAMEBUFFER);
+            throw Exception("Error creating FBO!");
+        }
+
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
+    void Bloom::blit(
+        FrameBufferObject &from,
+        FrameBufferObject &to,
+        int width,
+        int height
+    ) {
+        from.bind(GL_READ_FRAMEBUFFER);
+        to.bind(GL_DRAW_FRAMEBUFFER);
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
+    void Bloom::resizeImage(
+        FrameBufferObject &from,
+        FrameBufferObject &to,
+        int newWidth,
+        int newHeight
+    ) {
+        glViewport(0, 0, newWidth, newHeight);
+        to.bind(GL_FRAMEBUFFER);
+        from.drawQuad(GL_COLOR_ATTACHMENT0);
+    }
+
+    void Bloom::blurImage(
+        int imageIndex,
+        int imageWidth,
+        int imageHeight
+    ) {
+        setupHorizontalBlurShader(imageWidth);
+        m_intermediate[imageIndex].bind(GL_FRAMEBUFFER);
+        m_downsamples[imageIndex].drawQuad(GL_COLOR_ATTACHMENT0);
+        setupVerticalBlurShader(imageHeight);
+        m_downsamples[imageIndex].bind(GL_FRAMEBUFFER);
+        m_intermediate[imageIndex].drawQuad(GL_COLOR_ATTACHMENT0);
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
+    void Bloom::combineImages(
+        FrameBufferObject &dst,
+        FrameBufferObject &fbo1,
+        FrameBufferObject &fbo2,
+        int dstWidth,
+        int dstHeight
+    ) {
+        glViewport(0, 0, dstWidth, dstHeight);
+        glActiveTexture(GL_TEXTURE0);
+        fbo1.getColorBuffers().at(GL_COLOR_ATTACHMENT0).bindAsTexture(GL_TEXTURE_2D);
+        glActiveTexture(GL_TEXTURE1);
+        fbo2.getColorBuffers().at(GL_COLOR_ATTACHMENT0).bindAsTexture(GL_TEXTURE_2D);
+        dst.bind(GL_FRAMEBUFFER);
+        dst.drawQuadRaw();
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
+    void Bloom::setupDownsampleShader(
+        bool bDoCutoff
+    ) {
+        m_downsamplingShader.use();
+        m_downsamplingShader.setUniformInt("fboTexture", 0);
+        m_downsamplingShader.setUniformVec3("bloomThresHold", bDoCutoff ? m_thresHold : glm::vec3(0.0f));
+    }
+
+    void Bloom::setupHorizontalBlurShader(
+        int imageWidth
+    ) {
+        m_horizontalBlurShader.use();
+        m_horizontalBlurShader.setUniformInt("fboTexture", 0);
+        m_horizontalBlurShader.setUniformInt("imageWidth", imageWidth);
+    }
+
+    void Bloom::setupVerticalBlurShader(
+        int imageHeight
+    ) {
+        m_verticalBlurShader.use();
+        m_verticalBlurShader.setUniformInt("fboTexture", 0);
+        m_verticalBlurShader.setUniformInt("imageHeight", imageHeight);
+    }
+
+    void Bloom::setupCombineShader(
+    ) {
+        m_combineShader.use();
+        m_combineShader.setUniformInt("fboTexture1", 0);
+        m_combineShader.setUniformInt("fboTexture2", 1);
     }
 
 } // OGL::E1
