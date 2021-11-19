@@ -103,7 +103,7 @@ public:
             "shaders/bloomCombine.frag"
         );
 
-        m_bloom = OGL::E1::Bloom{
+        m_bloom = OGL::Bloom{
             std::move(bloomDownsamplingShader),
             std::move(blurHorizontalShader),
             std::move(blurVerticalShader),

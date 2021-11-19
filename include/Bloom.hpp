@@ -2,13 +2,13 @@
 * @file Bloom.hpp
 */
 
-#ifndef OGL_E1_BLOOM_H
-#define OGL_E1_BLOOM_H
+#ifndef OGL_BLOOM_H
+#define OGL_BLOOM_H
 
 #include "FrameBufferObject.hpp"
 #include "Shader.hpp"
 
-namespace OGL::E1 {
+namespace OGL {
 
     class Bloom {
     public:
@@ -120,6 +120,6 @@ namespace OGL::E1 {
         glm::vec3 m_thresHold;
     };
 
-} // OGL::E1
+} // OGL
 
-#endif // OGL_E1_BLOOM_H
+#endif // OGL_BLOOM_H

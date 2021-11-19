@@ -1,6 +1,6 @@
 #include "Bloom.hpp"
 
-namespace OGL::E1 {
+namespace OGL {
 
     Bloom::Bloom(
         Shader &&downsamplingShader,
@@ -194,4 +194,4 @@ namespace OGL::E1 {
         m_combineShader.setUniformInt("fboTexture2", 1);
     }
 
-} // OGL::E1
+} // OGL
