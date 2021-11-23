@@ -67,7 +67,6 @@ namespace OGL {
         }
 
         setupCombineShader();
-        m_combineShader.setUniformBool("bLastCombine", false);
         for (int i = s_numMipmaps - 1; i > 0; --i) {
             int sampleWidth = static_cast<int>(m_resultWidth / std::pow(s_downscale, i));
             int sampleHeight = static_cast<int>(m_resultHeight / std::pow(s_downscale, i));
@@ -80,7 +79,6 @@ namespace OGL {
             );
             blit(m_intermediate[i - 1], m_downsamples[i - 1], sampleWidth, sampleHeight);
         }
-        m_combineShader.setUniformBool("bLastCombine", true);
         combineImages(m_temp, m_downsamples[0], m_result, m_resultWidth, m_resultHeight);
         blit(m_temp, m_result, m_resultWidth, m_resultHeight);
 
