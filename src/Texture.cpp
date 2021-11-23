@@ -45,6 +45,17 @@ namespace OGL {
         glTexImage2D(textureType, 0, internalFormat, width, height, 0, format, type, data);
     }
 
+    void Texture::allocate1D(
+        GLenum textureType,
+        int length,
+        GLenum internalFormat,
+        GLenum format,
+        GLenum type,
+        void *data
+    ) {
+        glTexImage1D(textureType, 0, internalFormat, length, 0, format, type, data);
+    }
+
     void Texture::load( 
         std::string const &folderPath,
         std::string const &fileName,

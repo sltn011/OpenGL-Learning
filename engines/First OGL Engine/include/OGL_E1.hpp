@@ -107,8 +107,6 @@ namespace OGL::E1 {
         /// Shader used for postprocessing
         std::optional<Shader> m_postprocessingShader;
 
-        std::optional<Shader> m_blurShader;
-
         /// Framebuffers used for postprocessing
         std::optional<FrameBufferObject> m_renderFramebuffer;
         std::optional<FrameBufferObject> m_postprocessingFramebuffer;
@@ -120,6 +118,12 @@ namespace OGL::E1 {
         std::optional<GBuffer> m_gBuffer;
         std::optional<Shader> m_gBufferWriteShader;
         std::optional<Shader> m_gBufferReadShader;
+
+
+        std::optional<Shader> m_horizontalBlurShader;
+        std::optional<Shader> m_verticalBlurShader;
+        std::optional<FrameBufferObject> m_blurIntermediateBuffer;
+
 
         std::optional<SSAO> m_SSAOBuffer;
         std::optional<Shader> m_SSAOShader;
@@ -655,6 +659,16 @@ namespace OGL::E1 {
              bool bEnabled
          );
 
+         void initBlur(
+             Shader &&horizontalBlurShader,
+             Shader &&verticalBlurShader
+         );
+
+         void blurImage(
+             FrameBufferObject &fbo,
+             GLenum blurredColorAttachment
+         );
+
          void toggleSSAO(
              bool bEnabled
          );
@@ -692,7 +706,7 @@ namespace OGL::E1 {
          void forwardRenderPass(
          );
 
-         void defferedRenderPass(
+         void deferredRenderPass(
          );
 
          void loadGBufferWriteShaderData(

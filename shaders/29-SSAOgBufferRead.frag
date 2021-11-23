@@ -20,8 +20,11 @@ uniform sampler2D gWorldPosition;
 uniform sampler2D gDepth;
 uniform sampler2D gAlbedoSpecular;
 uniform sampler2D gNormal;
+
+uniform bool bEnableSSAO;
 uniform sampler2D gSSAO;
 
+uniform mat4 view;
 
 
 struct DirectionalLight {
@@ -116,6 +119,8 @@ void main() {
 	vec3 worldPos = texture(gWorldPosition, vertexTex).rgb;
     vec3 color = pow(texture(gAlbedoSpecular, vertexTex).rgb, vec3(gamma));
 	vec3 normal = normalize(texture(gNormal, vertexTex).rgb);
+	float ambientOcclusion = texture(gSSAO, vertexTex).r;
+	
 	
 	vec3 viewDir = normalize(worldPos - viewerPos);
 
@@ -160,7 +165,7 @@ void main() {
 		specular += spec * attenuation * litCoeff * whenNe(vec4(diffuse, 1.0), vec4(0.0)).x;
 	}
 
-	ambient *= color;
+	ambient *= (color * (bEnableSSAO ? ambientOcclusion : 1.0));
 	diffuse *= color;
 	specular *= color;
 
@@ -168,7 +173,7 @@ void main() {
 
     result = pow(result, vec3(1.0 / gamma));
 
-    fragColor = vec4(result, 1.0);
+	fragColor = vec4(result, 1.0);
 }
 
 

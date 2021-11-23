@@ -89,6 +89,15 @@ namespace OGL {
             void *data
         );
 
+        static void allocate1D(
+            GLenum textureType,
+            int length,
+            GLenum internalFormat,
+            GLenum format,
+            GLenum type,
+            void *data
+        );
+
         /**
          * @brief Loads texture from file
          * @param folderPath Path to folder with texture image

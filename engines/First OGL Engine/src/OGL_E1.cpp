@@ -38,6 +38,10 @@ namespace OGL::E1 {
 
         glfwSetWindowUserPointer(m_window, this);
 
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            throw OGL::Exception("Error loading GLAD!");
+        }
+
         m_windowResizeFunc = [](GLFWwindow *window, int newWidth, int newHeight) {
             static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->windowResizeCallback(newWidth, newHeight);
         };
@@ -57,10 +61,6 @@ namespace OGL::E1 {
             static_cast<Engine1Base*>(glfwGetWindowUserPointer(window))->cursorRepositionCallback(xpos, ypos);
         };
         glfwSetCursorPosCallback(m_window, m_cursorReposFunc);
-
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            throw OGL::Exception("Error loading GLAD!");
-        }
 
         m_system.lastMouseXPos = screenWidth / 2.0f;
         m_system.lastMouseYPos = screenHeight / 2.0f;
@@ -101,7 +101,7 @@ namespace OGL::E1 {
             m_system.lastFrameTime = currentFrameTime;
 
             if (m_gBuffer) {
-                defferedRenderPass();
+                deferredRenderPass();
 
                 if (m_transpRenderer) {
                     glEnable(GL_BLEND);
@@ -840,6 +840,54 @@ namespace OGL::E1 {
         m_postprocessingData.bEnableBloom = bEnabled;
     }
 
+    void Engine1Base::initBlur(
+        Shader &&horizontalBlurShader,
+        Shader &&verticalBlurShader
+    ) {
+        m_horizontalBlurShader = std::move(horizontalBlurShader);
+        m_verticalBlurShader = std::move(verticalBlurShader);
+
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
+
+        ColorBufferObject cbo;
+        cbo.allocateStorage(screenWidth, screenHeight, GL_TEXTURE_2D, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+
+        m_blurIntermediateBuffer = FrameBufferObject{};
+        m_blurIntermediateBuffer->bind(GL_FRAMEBUFFER);
+        m_blurIntermediateBuffer->attachColorBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, std::move(cbo));
+        if (!m_blurIntermediateBuffer->isComplete(GL_FRAMEBUFFER)) {
+            throw Exception("Error creating blur framebuffer!");
+        }
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
+    void Engine1Base::blurImage(
+        FrameBufferObject &fbo,
+        GLenum blurredColorAttachment
+    ) {
+        if (!m_horizontalBlurShader || !m_verticalBlurShader) {
+            return;
+        }
+
+        int imageWidth, imageHeight;
+        glfwGetWindowSize(m_window, &imageWidth, &imageHeight);
+
+        m_horizontalBlurShader->use();
+        m_horizontalBlurShader->setUniformInt("fboTexture", blurredColorAttachment - GL_COLOR_ATTACHMENT0);
+        m_horizontalBlurShader->setUniformInt("imageWidth", imageWidth);
+        m_blurIntermediateBuffer->bind(GL_FRAMEBUFFER);
+        fbo.drawQuad(blurredColorAttachment);
+
+        m_verticalBlurShader->use();
+        m_verticalBlurShader->setUniformInt("fboTexture", 0);
+        m_verticalBlurShader->setUniformInt("imageHeight", imageHeight);
+        fbo.bind(GL_FRAMEBUFFER);
+        m_blurIntermediateBuffer->drawQuad(GL_COLOR_ATTACHMENT0);
+
+        FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    }
+
     void Engine1Base::toggleSSAO(
         bool bEnabled
     ) {
@@ -858,14 +906,22 @@ namespace OGL::E1 {
 
     void Engine1Base::fillSSAOTexture(
     ) {
-        if (!m_postprocessingData.bEnableSSAO || !m_SSAOBuffer || !m_SSAOShader || !m_gBuffer) {
+        if (!m_postprocessingData.bEnableSSAO || !m_SSAOBuffer || !m_SSAOShader || !m_gBuffer || !m_scene) {
             return;
         }
 
         m_SSAOShader->use();
-        m_SSAOBuffer->bindAsRenderTarget();
+        loadGBufferReadShaderData(*m_SSAOShader);
+        m_SSAOShader->setUniformMatrix4("projection", m_scene->getCamera()->getProjectionMatrix());
+        m_SSAOBuffer->bindAsShaderOutput(
+            *m_SSAOShader,
+            GL_TEXTURE0 + GBuffer::Buffer::MAX,
+            GL_TEXTURE0 + GBuffer::Buffer::MAX + 1
+        );
         m_gBuffer->drawQuad(*m_SSAOShader);
         FrameBufferObject::unbind(GL_FRAMEBUFFER);
+
+        blurImage(m_SSAOBuffer->getBuffer(), GL_COLOR_ATTACHMENT0);
     }
 
     void Engine1Base::forwardRenderPass(
@@ -900,11 +956,14 @@ namespace OGL::E1 {
         }
     }
 
-    void Engine1Base::defferedRenderPass(
+    void Engine1Base::deferredRenderPass(
     ) {
         if (!m_gBuffer || !m_gBufferWriteShader || !m_gBufferReadShader) {
             m_gameShouldRun = false;
         }
+
+        int screenWidth, screenHeight;
+        glfwGetWindowSize(m_window, &screenWidth, &screenHeight);
 
         m_gBufferWriteShader->use();
         loadGBufferWriteShaderData(*m_gBufferWriteShader);
@@ -929,10 +988,7 @@ namespace OGL::E1 {
         }
         else {
             if (m_postprocessingData.bEnableSSAO && m_SSAOBuffer && m_SSAOShader) {
-                m_SSAOShader->use();
-                m_SSAOBuffer->bindAsRenderTarget();
-                m_gBuffer->drawQuad(*m_SSAOShader);
-                FrameBufferObject::unbind(GL_FRAMEBUFFER);
+                fillSSAOTexture();
             }
 
             m_gBufferReadShader->use();
@@ -984,6 +1040,8 @@ namespace OGL::E1 {
         if (!m_scene) {
             return;
         }
+
+        readShader.setUniformBool("bEnableSSAO", m_postprocessingData.bEnableSSAO);
 
         BasicCamera *camera = m_scene->getCamera().get();
 
