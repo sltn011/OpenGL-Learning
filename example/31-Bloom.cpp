@@ -76,7 +76,7 @@ public:
         m_guiRenderer = OGL::E1::GUI::GUIRenderer{ m_window, "#version 330" };
 
 
-        loadLevel("levels/03-level.json");
+        loadLevel("levels/07-bloomTest.json");
 
         rebuildShadows();
 

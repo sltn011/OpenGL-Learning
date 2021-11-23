@@ -1,0 +1,49 @@
+{
+    "Camera": {
+        "Clip Far": 25.0,
+        "Clip Near": 0.01,
+        "Direction": [
+            0.0,
+            0.0,
+            -1.0
+        ],
+        "FoV": 45.0,
+        "Move Speed": 1.0,
+        "Position": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "Lights": {
+        "Directional": [],
+        "Point": [
+            {
+                "Attenuation": [
+                    1.0,
+                    0.09000000357627869,
+                    0.03200000151991844
+                ],
+                "Color": [
+                    2.0,
+                    2.0,
+                    1.85
+                ],
+                "Position": [
+                    0.0,
+                    0.0,
+                    -3.0
+                ]
+            }
+        ],
+        "Spot": []
+    },
+    "Models": {},
+    "Objects": {
+        "Instanced": [],
+        "Mirror": [],
+        "Normal": [],
+        "Transparent": []
+    },
+    "Skybox": []
+}
