@@ -23,6 +23,8 @@
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
 
+#include "Sphere.hpp"
+
 #include "PostprocessingData.hpp"
 #include "Bloom.hpp"
 #include "GBuffer.hpp"
@@ -225,6 +227,11 @@ namespace OGL::E1 {
          void addModel(
              std::string const &path,
              uint32_t modelId
+         );
+
+         void addModel(
+             Model &&model,
+             uint32_t modelID
          );
 
          /**

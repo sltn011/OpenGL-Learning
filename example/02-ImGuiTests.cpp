@@ -33,7 +33,7 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          );
          m_coloredShapesRenderer.emplace(std::move(coloredShapesShader));
 
-         glClearColor(0.6f, 0.6f, 0.7f, 1.0f);
+         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
          m_normalRenderer->getShader().use();
          m_normalRenderer->getShader().setUniformVec3("objectColor", { 0.5f, 0.8f, 0.2f });
@@ -41,6 +41,9 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          m_guiRenderer.emplace(m_window, "#version 330");
 
          saveLevel("levels/02-level.json");
+
+         addModel(OGL::Sphere{ 1.0f, 36, 24 }, 1);
+         addNormalObject(1, glm::vec3{ 0.0f, 0.0f, -5.0f });
 
          return true;
      }

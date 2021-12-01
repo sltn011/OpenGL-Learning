@@ -132,10 +132,18 @@ namespace OGL::E1 {
 
     void Engine1Base::addModel(
         std::string const &path,
-        uint32_t modelId
+        uint32_t modelID
     ) {
-        m_modelsTable.emplace(modelId, std::make_unique<Model>(path));
-        m_objectsMaxIDs[modelId] = 0;
+        m_modelsTable.emplace(modelID, std::make_unique<Model>(path));
+        m_objectsMaxIDs[modelID] = 0;
+    }
+
+    void Engine1Base::addModel(
+        Model &&model,
+        uint32_t modelID
+    ) {
+        m_modelsTable.emplace(modelID, std::make_unique<Model>(std::move(model)));
+        m_objectsMaxIDs[modelID] = 0;
     }
 
     Object &Engine1Base::addNormalObject(

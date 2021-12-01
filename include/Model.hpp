@@ -23,6 +23,8 @@ namespace OGL {
      * @brief Class used to load models from files and render them
     */
     class Model {
+    protected:
+
         /// Container of Mesh objects of Model
         std::vector<Mesh>         m_meshes;
 
@@ -128,7 +130,7 @@ namespace OGL {
         std::string getFullPath(
         ) const;
 
-     private:
+     protected:
 
          /**
           * @brief Loads Model from file

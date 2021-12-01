@@ -120,6 +120,7 @@ add_library(OpenGLTools STATIC
 	src/Bloom.cpp
 	src/GBuffer.cpp
 	src/SSAO.cpp
+	src/Sphere.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
