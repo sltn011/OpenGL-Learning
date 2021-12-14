@@ -89,6 +89,7 @@ namespace OGL {
 
         glBindTexture(textureType, m_descriptor);
         glTexImage2D(textureType, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(textureType);
         stbi_image_free(data);
     }
 

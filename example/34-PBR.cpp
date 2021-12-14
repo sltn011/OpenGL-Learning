@@ -9,6 +9,7 @@
 #include "Sphere.hpp"
 #include "Object.hpp"
 #include "PointLight.hpp"
+#include "Texture.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -28,6 +29,7 @@ bool bRenderGUI = false;
 glm::vec3 AlbedoColor = glm::vec3{ 0.80f, 0.0, 0.0f };
 float Roughness = 0.0f;
 float Metallic = 0.0f;
+bool bIsTextured = true;
 
 struct CursorPos {
     double x;
@@ -161,6 +163,7 @@ void RenderGUI(bool bDoRender) {
     ImGui::ColorPicker3("Sphere Albedo Color", &(AlbedoColor.x));
     ImGui::SliderFloat("Roughness", &Roughness, 0.0f, 1.0f);
     ImGui::SliderFloat("Metallic", &Metallic, 0.0f, 1.0f);
+    ImGui::Checkbox("Is Texured", &bIsTextured);
 
     ImGui::End();
 
@@ -216,17 +219,38 @@ int main(
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+
+    // Shader
     OGL::Shader shaderProgramm("shaders/30-PBR.vert", "shaders/30-PBR.frag");
 
-    OGL::Sphere SphereModel(1.0f, 36, 36);
-    OGL::Object Sphere(&SphereModel, glm::vec3{ 1.0f, 0.0f, 1.0f }, 0.5, glm::vec3{ 0.0f, 0.0f, 0.0f });
 
+    // Rendered object
+    OGL::Sphere SphereModel(1.0f, 36, 36);
+    OGL::Object Sphere(&SphereModel, glm::vec3{ 1.0f, 0.0f, 1.0f }, 0.5, glm::vec3{ 90.0f, 0.0f, 0.0f });
+
+    // Textures
+    OGL::Texture AlbedoTexture("materials/OldCopper", "Albedo.png", GL_TEXTURE_2D);
+    OGL::Texture NormalTexture("materials/OldCopper", "Normal.png", GL_TEXTURE_2D);
+    OGL::Texture RoughnessTexture("materials/OldCopper", "Roughness.png", GL_TEXTURE_2D);
+    OGL::Texture MetallicTexture("materials/OldCopper", "Metallic.png", GL_TEXTURE_2D);
+    OGL::Texture AOTexture("materials/OldCopper", "AO.png", GL_TEXTURE_2D);
+    OGL::Texture *Textures[5] = { &AlbedoTexture, &NormalTexture, &RoughnessTexture, &MetallicTexture, &AOTexture };
+    std::string TextureNames[5] = { "AlbedoTexture", "NormalTexture", "RoughnessTexture", "MetallicTexture", "AOTexture" };
+
+    // Light Source
     OGL::PointLight Light(glm::vec3{ 2.0f, 2.0f, 2.0f }, glm::vec3{ 23.47f, 21.31f, 20.79f });
 
     shaderProgramm.use();
     Light.loadInShader(shaderProgramm, 0);
     shaderProgramm.setUniformInt("numPointLights", 1);
     shaderProgramm.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
+
+    for (int i = 0; i < 5; ++i) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        Textures[i]->bind(GL_TEXTURE_2D);
+        shaderProgramm.setUniformInt(TextureNames[i], i);
+    }
+    glActiveTexture(GL_TEXTURE0);
 
 
     // 6. Render loop
@@ -244,8 +268,9 @@ int main(
         shaderProgramm.setUniformVec3("viewerPos", freeCam.getPos());
         shaderProgramm.setUniformMatrix4("view", freeCam.getViewMatrix());
         shaderProgramm.setUniformVec3("AlbedoColor", AlbedoColor);
-        shaderProgramm.setUniformFloat("Roughness", Roughness);
-        shaderProgramm.setUniformFloat("Metallic", Metallic);
+        shaderProgramm.setUniformFloat("RoughnessValue", Roughness);
+        shaderProgramm.setUniformFloat("MetallicValue", Metallic);
+        shaderProgramm.setUniformBool("bIsTextured", bIsTextured);
         Sphere.draw(shaderProgramm);
 
         RenderGUI(bRenderGUI);

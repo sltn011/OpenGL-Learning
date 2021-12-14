@@ -24,8 +24,16 @@ out vec4 FragColor;
 
 
 uniform vec3 AlbedoColor;
-uniform float Roughness;
-uniform float Metallic;
+uniform float RoughnessValue;
+uniform float MetallicValue;
+
+uniform bool bIsTextured;
+uniform sampler2D AlbedoTexture;
+uniform sampler2D NormalTexture;
+uniform sampler2D RoughnessTexture;
+uniform sampler2D MetallicTexture;
+uniform sampler2D AOTexture;
+
 
 uniform vec3 viewerPos;
 uniform int numPointLights;
@@ -38,6 +46,29 @@ float attenuation(PointLight Light, vec3 FragPos) {
 	return 1.0 / (LightFragDist * LightFragDist);
 }
 
+
+
+vec3 GetAlbedo() {
+	return int(bIsTextured) * pow(texture(AlbedoTexture, fs_in.vertexTex).rgb, vec3(Gamma)) + (1 - int(bIsTextured)) * AlbedoColor; 
+}
+
+vec3 GetNormal() {
+	vec3 SampledNorm = texture(NormalTexture, fs_in.vertexTex).rgb;
+	SampledNorm = fs_in.TBN * normalize(SampledNorm * 2.0 - 1.0);
+	return normalize(int(bIsTextured) * SampledNorm + (1 - int(bIsTextured)) * fs_in.vertexNorm);
+}
+
+float GetRoughness() {
+	return int(bIsTextured) * texture(RoughnessTexture, fs_in.vertexTex).r + (1 - int(bIsTextured)) * RoughnessValue; 
+}
+
+float GetMetallic() {
+	return int(bIsTextured) * texture(MetallicTexture, fs_in.vertexTex).r + (1 - int(bIsTextured)) * MetallicValue; 
+}
+
+float GetAO() {
+	return int(bIsTextured) * texture(AOTexture, fs_in.vertexTex).r + (1 - int(bIsTextured)) * 1.0; 
+}
 
 
 
@@ -88,13 +119,21 @@ vec3 FresnelSchlick(vec3 H, vec3 V, vec3 F0) {
 
 
 void main() {
+
+	// Choose apropriate values for textured and untextured sphere
+	vec3 Albedo = GetAlbedo();
+	vec3 Normal = GetNormal();
+	float Roughness = GetRoughness();
+	float Metallic = GetMetallic();
+	float AO = GetAO();
+
 	vec3 WorldPosition = fs_in.vertexPos;
 
 	vec3 V = normalize(viewerPos - WorldPosition);
-	vec3 N = normalize(fs_in.vertexNorm);
+	vec3 N = normalize(Normal);
 
 	vec3 F0 = vec3(0.04); // Reflectance at normal incidence (0.04 for dielectrics)
-	F0 = mix(F0, AlbedoColor, Metallic);
+	F0 = mix(F0, Albedo, Metallic);
 
 	vec3 LOut = vec3(0.0); // Reflectance equation
 	for (int i = 0; i < numPointLights; ++i) {
@@ -119,10 +158,10 @@ void main() {
 
 		float NdotL = clamp(dot(N, L), 0.0, 1.0);
 
-		LOut += (Kd * AlbedoColor / PI + Specular) * Radiance * NdotL;
+		LOut += (Kd * Albedo / PI + Specular) * Radiance * NdotL;
 	}
 
-	vec3 Ambient = vec3(0.03) * AlbedoColor;
+	vec3 Ambient = vec3(0.03) * Albedo * AO;
 
 	vec3 Color = LOut + Ambient;
 	

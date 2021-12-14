@@ -80,6 +80,19 @@ namespace OGL {
             }
         }
 
+        if (indices.size() % 3 == 0) {
+            for (size_t i = 0; i < indices.size(); i += 3) {
+                Vertex &a = vertices[indices[i]];
+                Vertex &b = vertices[indices[i + 1]];
+                Vertex &c = vertices[indices[i + 2]];
+
+                glm::vec3 tangent = CalculateTangent(a, b, c);
+                a.m_tangent = tangent;
+                b.m_tangent = tangent;
+                c.m_tangent = tangent;
+            }
+        }
+
         material.m_ambient = glm::vec3(0.1f);
         material.m_diffuse = glm::vec3(0.5f);
         material.m_specular = glm::vec3(0.05f);
