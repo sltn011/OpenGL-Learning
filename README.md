@@ -25,4 +25,4 @@ GUI for editing and debugging scene(partially done)
 ~~Normal mapping, parallax mapping~~  
 ~~HDR, Bloom, SSAO~~  
 ~~Deferred Shading~~  
-PBR  
+PBR(WIP)  
