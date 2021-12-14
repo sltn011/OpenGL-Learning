@@ -211,6 +211,7 @@ add_executable(30-HDR example/30-HDR.cpp ${DEARIMGUI_FILES})
 add_executable(31-Bloom example/31-Bloom.cpp ${DEARIMGUI_FILES})
 add_executable(32-DeferredShading example/32-DeferredShading.cpp ${DEARIMGUI_FILES})
 add_executable(33-SSAO example/33-SSAO.cpp ${DEARIMGUI_FILES})
+add_executable(34-PBR example/34-PBR.cpp ${DEARIMGUI_FILES})
 
 # Linking libraries for executable
 target_link_libraries(01-Engine1Tests glad glfw OGL_E1 OGL_E1_GUI)
@@ -250,5 +251,6 @@ target_link_libraries(30-HDR glad glfw OGL_E1 OGL_E1_GUI)
 target_link_libraries(31-Bloom glad glfw OGL_E1 OGL_E1_GUI)
 target_link_libraries(32-DeferredShading glad glfw OGL_E1 OGL_E1_GUI)
 target_link_libraries(33-SSAO glad glfw OGL_E1 OGL_E1_GUI)
+target_link_libraries(34-PBR glad glfw OpenGLTools)
 ######################################################################################################
 
