@@ -23,6 +23,7 @@
 #include "LightSourcesDebugRenderer.hpp"
 #include "ColoredShapesRenderer.hpp"
 
+#include "Cube.hpp"
 #include "Sphere.hpp"
 
 #include "PostprocessingData.hpp"

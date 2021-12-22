@@ -121,6 +121,7 @@ add_library(OpenGLTools STATIC
 	src/GBuffer.cpp
 	src/SSAO.cpp
 	src/Sphere.cpp
+	src/Cube.cpp
 )
 
 target_include_directories(OpenGLTools PUBLIC include)
