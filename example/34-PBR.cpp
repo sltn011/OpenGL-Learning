@@ -34,6 +34,7 @@ float Roughness = 0.0f;
 float Metallic = 0.0f;
 bool bIsTextured = true;
 bool bUseIBL = true;
+int EnvironmentMapIndex = 0;
 
 constexpr int EnviroMapID = 10;
 constexpr int IrradianceMapID = 11;
@@ -179,6 +180,10 @@ void RenderGUI(
     ImGui::SliderFloat("Metallic", &Metallic, 0.0f, 1.0f);
     ImGui::Checkbox("Is Texured", &bIsTextured);
     ImGui::Checkbox("Use IBL", &bUseIBL);
+    ImGui::NewLine();
+    if (ImGui::Button("Change Environment Map")) {
+        EnvironmentMapIndex = (EnvironmentMapIndex + 1) % 2;
+    }
 
     ImGui::End();
 
@@ -421,9 +426,10 @@ int main(
     OGL::Texture *Textures[5] = { &AlbedoTexture, &NormalTexture, &RoughnessTexture, &MetallicTexture, &AOTexture };
     std::string TextureNames[5] = { "AlbedoTexture", "NormalTexture", "RoughnessTexture", "MetallicTexture", "AOTexture" };
 
-    OGL::Texture HDREnvironmentMap;
-    HDREnvironmentMap.loadHDR("textures/HDR/Topanga_Forest_B", "Topanga_Forest_B_3k.hdr", GL_TEXTURE_2D);
-    //HDREnvironmentMap.loadHDR("textures/HDR/Mono_Lake_C", "Mono_Lake_C_Ref.hdr", GL_TEXTURE_2D);
+    OGL::Texture HDREnvironmentMap1, HDREnvironmentMap2;
+    HDREnvironmentMap1.loadHDR("textures/HDR/Topanga_Forest_B", "Topanga_Forest_B_3k.hdr", GL_TEXTURE_2D);
+    HDREnvironmentMap2.loadHDR("textures/HDR/Mono_Lake_C", "Mono_Lake_C_Ref.hdr", GL_TEXTURE_2D);
+    OGL::Texture *EnvironmentMap[2] = { &HDREnvironmentMap1, &HDREnvironmentMap2 };
 
     // Light Source
     OGL::PointLight Lights[4] = {
@@ -447,21 +453,40 @@ int main(
     }
     glActiveTexture(GL_TEXTURE0);
 
-    OGL::Texture EnvironmentCubemap = EnvironmentMapConvert(
+    OGL::Texture EnvironmentCubemap1 = EnvironmentMapConvert(
         CubeModel,
-        HDREnvironmentMap,
+        HDREnvironmentMap1,
         GL_TEXTURE_2D,
         CubemapSize,
         EquirectangularToSkybox
     );
 
-    OGL::Texture IrradianceCubemap = EnvironmentMapConvert(
+    OGL::Texture EnvironmentCubemap2 = EnvironmentMapConvert(
         CubeModel,
-        EnvironmentCubemap,
+        HDREnvironmentMap2,
+        GL_TEXTURE_2D,
+        CubemapSize,
+        EquirectangularToSkybox
+    );
+
+    OGL::Texture IrradianceCubemap1 = EnvironmentMapConvert(
+        CubeModel,
+        EnvironmentCubemap1,
         GL_TEXTURE_CUBE_MAP,
         IrradianceCubemapSize,
         EnvironmentToIrradianceShader
     );
+
+    OGL::Texture IrradianceCubemap2 = EnvironmentMapConvert(
+        CubeModel,
+        EnvironmentCubemap2,
+        GL_TEXTURE_CUBE_MAP,
+        IrradianceCubemapSize,
+        EnvironmentToIrradianceShader
+    );
+
+    OGL::Texture *EnvironmentCubemap[2] = { &EnvironmentCubemap1, &EnvironmentCubemap2 };
+    OGL::Texture *IrradianceCubemap[2] = { &IrradianceCubemap1, &IrradianceCubemap2 };
 
     // 6. Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -477,7 +502,7 @@ int main(
         ShaderProgramm.use();
 
         glActiveTexture(GL_TEXTURE0 + IrradianceMapID);
-        IrradianceCubemap.bind(GL_TEXTURE_CUBE_MAP);
+        IrradianceCubemap[EnvironmentMapIndex]->bind(GL_TEXTURE_CUBE_MAP);
         glActiveTexture(GL_TEXTURE0);
         ShaderProgramm.setUniformBool("bUseIBL", bUseIBL);
         ShaderProgramm.setUniformInt("IrradianceCubemap", IrradianceMapID);
@@ -499,7 +524,7 @@ int main(
             ColoredSpheres[i].draw(ShaderProgramm);
         }
 
-        RenderCubemap(CubeModel, EnvironmentCubemap, EnvironmentSkyboxShader);
+        RenderCubemap(CubeModel, *(EnvironmentCubemap[EnvironmentMapIndex]), EnvironmentSkyboxShader);
 
         RenderGUI(bRenderGUI);
 
