@@ -30,4 +30,4 @@ namespace OGL {
 
 } // OGL
 
-#endif // OGL_CUBE_HPP_HPP
+#endif // OGL_CUBE_HPP

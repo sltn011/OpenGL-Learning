@@ -45,6 +45,9 @@ class EngineImGuiTest : public OGL::E1::Engine1Base {
          addModel(OGL::Sphere{ 1.0f, 36, 24 }, 1);
          addNormalObject(1, glm::vec3{ 0.0f, 0.0f, -5.0f });
 
+         addModel(OGL::Cube{ 1.0f, 0.5f, 0.2f }, 2);
+         addNormalObject(2, glm::vec3{ 0.0f, 3.0f, -5.0f }, 1.0f, 1.0f, 20.0f, 10.0f);
+
          return true;
      }
 

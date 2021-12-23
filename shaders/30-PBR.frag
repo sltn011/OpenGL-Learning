@@ -34,6 +34,9 @@ uniform sampler2D RoughnessTexture;
 uniform sampler2D MetallicTexture;
 uniform sampler2D AOTexture;
 
+uniform bool bUseIBL;
+uniform samplerCube IrradianceCubemap;
+
 
 uniform vec3 viewerPos;
 uniform int numPointLights;
@@ -108,11 +111,14 @@ float SmithGGX(vec3 N, vec3 V, vec3 L, float Roughness) {
 }
 
 // F
-vec3 FresnelSchlick(vec3 H, vec3 V, vec3 F0) {
-	float HdotV = clamp(dot(H, V), 0.0, 1.0);
-	return F0 + (1.0 - F0) * pow(clamp(1.0 - HdotV, 0.0, 1.0), 5.0);
+vec3 FresnelSchlick(float cosTheta, vec3 F0) {
+	return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}  
 
 
 
@@ -146,7 +152,7 @@ void main() {
 		// Cook-Torrance BRDF
 		float NDF = TrowbridgeReitzGGX(N, H, Roughness);
 		float G = SmithGGX(N, V, L, Roughness);
-		vec3 F = FresnelSchlick(H, V, F0);
+		vec3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
 		vec3 Numerator = NDF * G * F;
 		float Denominator = 4 * clamp(dot(V, N), 0.0, 1.0) * clamp(dot(L, N), 0.0, 1.0) + 0.0001; // Prevent division by zero
@@ -161,9 +167,20 @@ void main() {
 		LOut += (Kd * Albedo / PI + Specular) * Radiance * NdotL;
 	}
 
-	vec3 Ambient = vec3(0.03) * Albedo * AO;
+	vec3 Ambient = vec3(0.0);
+	if (bUseIBL) {
+		vec3 Ks = FresnelSchlickRoughness(clamp(dot(N, V), 0.0, 1.0), F0, Roughness);
+		vec3 Kd = 1.0 - Ks;
+		Kd *= 1.0 - Metallic;
+		vec3 Irradiance = texture(IrradianceCubemap, N).rgb;
+		vec3 Diffuse = Irradiance * Albedo;
+		Ambient = Kd * Diffuse * AO;
+	}
+	else {
+		Ambient = vec3(0.03) * Albedo * AO;
+	}
 
-	vec3 Color = LOut + Ambient;
+	vec3 Color = Ambient + LOut;
 	
 	// HDR
 	Color = Color / (Color + 1.0);

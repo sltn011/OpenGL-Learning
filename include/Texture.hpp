@@ -110,6 +110,12 @@ namespace OGL {
             GLenum textureType
         );
 
+        void loadHDR(
+            std::string const &folderPath,
+            std::string const &fileName,
+            GLenum textureType
+        );
+
         /**
          * @brief Sets supplied texture unit as active
          * @param textureUnit GL_TEXTURE{N} texture unit

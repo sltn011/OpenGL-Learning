@@ -2,6 +2,7 @@
 float gamma = 2.2;
 
 in vec3 vertNormal;
+in vec2 vertTex;
 
 
 

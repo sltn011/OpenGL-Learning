@@ -93,6 +93,34 @@ namespace OGL {
         stbi_image_free(data);
     }
 
+    void Texture::loadHDR(
+        std::string const &folderPath,
+        std::string const &fileName,
+        GLenum textureType
+    ) {
+        std::string filePath = folderPath + '/' + fileName;
+
+        stbi_set_flip_vertically_on_load(true);
+
+        int width, height, nrComponents;
+        float *data = stbi_loadf(filePath.c_str(), &width, &height, &nrComponents, 0);
+        if (!data) {
+            stbi_set_flip_vertically_on_load(false);
+            throw Exception("Error loading texture " + filePath);
+        }
+        
+        glBindTexture(textureType, m_descriptor);
+        glTexImage2D(textureType, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+        stbi_set_flip_vertically_on_load(false);
+    }
+
     void Texture::setActive( 
         GLenum textureUnit
     ) {
