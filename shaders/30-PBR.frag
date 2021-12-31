@@ -36,6 +36,8 @@ uniform sampler2D AOTexture;
 
 uniform bool bUseIBL;
 uniform samplerCube IrradianceCubemap;
+uniform samplerCube PreFilteredCubemap;
+uniform sampler2D   BRDFLookUpTable; 
 
 
 uniform vec3 viewerPos;
@@ -137,6 +139,7 @@ void main() {
 
 	vec3 V = normalize(viewerPos - WorldPosition);
 	vec3 N = normalize(Normal);
+	vec3 R = reflect(-V, N);
 
 	vec3 F0 = vec3(0.04); // Reflectance at normal incidence (0.04 for dielectrics)
 	F0 = mix(F0, Albedo, Metallic);
@@ -169,12 +172,20 @@ void main() {
 
 	vec3 Ambient = vec3(0.0);
 	if (bUseIBL) {
-		vec3 Ks = FresnelSchlickRoughness(clamp(dot(N, V), 0.0, 1.0), F0, Roughness);
+		vec3 F = FresnelSchlickRoughness(clamp(dot(N, V), 0.0, 1.0), F0, Roughness);
+		vec3 Ks = F;
 		vec3 Kd = 1.0 - Ks;
 		Kd *= 1.0 - Metallic;
+
 		vec3 Irradiance = texture(IrradianceCubemap, N).rgb;
 		vec3 Diffuse = Irradiance * Albedo;
-		Ambient = Kd * Diffuse * AO;
+
+		const float MaxReflectionLOD = 4.0f;
+		vec3 PreFilteredColor = textureLod(PreFilteredCubemap, R, Roughness * MaxReflectionLOD).rgb;
+		vec2 BRDF = texture(BRDFLookUpTable, vec2(clamp(dot(N, V), 0.0, 1.0)), Roughness).xy;
+		vec3 Specular = PreFilteredColor * (F * BRDF.x + BRDF.y);
+
+		Ambient = (Kd * Diffuse + Specular) * AO;
 	}
 	else {
 		Ambient = vec3(0.03) * Albedo * AO;

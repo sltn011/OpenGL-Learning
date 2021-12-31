@@ -5,7 +5,7 @@ in vec3 texCoords;
 
 uniform samplerCube environmentMap;
 
-void main() {    
+void main() {
     vec3 envColor = texture(environmentMap, texCoords).rgb;
     
     envColor = envColor / (envColor + vec3(1.0));

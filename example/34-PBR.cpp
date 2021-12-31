@@ -36,10 +36,14 @@ bool bIsTextured = true;
 bool bUseIBL = true;
 int EnvironmentMapIndex = 0;
 
-constexpr int EnviroMapID = 10;
-constexpr int IrradianceMapID = 11;
+constexpr int EnviroMapID = 8;
+constexpr int IrradianceMapID = 9;
+constexpr int PreFilteredMapID = 10;
+constexpr int BRDFLUTID = 11;
+
 constexpr int CubemapSize = 1024;
 constexpr int IrradianceCubemapSize = 32;
+constexpr int PreFilteredCubemapSize = 128;
 
 struct CursorPos {
     double x;
@@ -196,7 +200,8 @@ OGL::Texture EnvironmentMapConvert(
     OGL::Texture &enviroTex,
     GLenum enviroTexType,
     int SkyboxSize,
-    OGL::Shader &shader
+    OGL::Shader &shader,
+    bool bGenerateMips
 ) {
     OGL::FrameBufferObject framebuffer;
     framebuffer.bind(GL_FRAMEBUFFER);
@@ -218,13 +223,12 @@ OGL::Texture EnvironmentMapConvert(
             GL_FLOAT,
             nullptr
         );
-
-        Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, bGenerateMips ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
     glm::mat4 captureViews[6] = {
@@ -262,11 +266,166 @@ OGL::Texture EnvironmentMapConvert(
         cube.draw(shader);
     }
 
+    if (bGenerateMips) {
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    }
+
     glEnable(GL_CULL_FACE);
     glViewport(0, 0, Screen::width, Screen::height);
     OGL::FrameBufferObject::unbind(GL_FRAMEBUFFER);
 
     return Cubemap;
+}
+
+OGL::Texture EnvironmentToPreFilteredConvert(
+    OGL::Cube &cube,
+    OGL::Texture &enviroTex,
+    GLenum enviroTexType,
+    int SkyboxSize,
+    int NumMips,
+    OGL::Shader &shader
+) {
+    OGL::FrameBufferObject framebuffer;
+    framebuffer.bind(GL_FRAMEBUFFER);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+    OGL::RenderBufferObject renderbuffer;
+    renderbuffer.allocateStorage(SkyboxSize, SkyboxSize, GL_DEPTH_COMPONENT24);
+    framebuffer.attachRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, std::move(renderbuffer));
+
+    OGL::Texture Cubemap;
+    Cubemap.bind(GL_TEXTURE_CUBE_MAP);
+    for (int i = 0; i < 6; ++i) {
+        Cubemap.allocate(
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+            SkyboxSize,
+            SkyboxSize,
+            GL_RGB16F,
+            GL_RGB,
+            GL_FLOAT,
+            nullptr
+        );
+    }
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    Cubemap.setParameter(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    glm::mat4 captureViews[6] = {
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+    };
+
+    glActiveTexture(GL_TEXTURE0 + EnviroMapID);
+    enviroTex.bind(enviroTexType);
+    glActiveTexture(GL_TEXTURE0);
+
+    glDisable(GL_CULL_FACE);
+
+    shader.use();
+    shader.setUniformMatrix4("projection", captureProjection);
+    shader.setUniformInt("environmentMap", EnviroMapID);
+    shader.setUniformInt("sourceResolution", CubemapSize);
+
+    int MipSize = SkyboxSize;
+    glViewport(0, 0, MipSize, MipSize);
+    for (int Mip = 0; Mip < NumMips; ++Mip) {
+
+        float Roughness = static_cast<float>(Mip) / static_cast<float>(NumMips);
+        shader.setUniformFloat("roughness", Roughness);
+
+        for (int i = 0; i < 6; ++i) {
+            shader.setUniformMatrix4("view", captureViews[i]);
+
+            glFramebufferTexture2D(
+                GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT0,
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                Cubemap.value(),
+                Mip
+            );
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            cube.draw(shader);
+        }
+
+        MipSize *= 0.5f;
+        framebuffer.getRenderBuffer().allocateStorage(MipSize, MipSize, GL_DEPTH_COMPONENT24);
+        glViewport(0, 0, MipSize, MipSize);
+    }
+
+    glEnable(GL_CULL_FACE);
+    glViewport(0, 0, Screen::width, Screen::height);
+    OGL::FrameBufferObject::unbind(GL_FRAMEBUFFER);
+
+    return Cubemap;
+}
+
+OGL::Texture ConvoluteBRDF(
+    int TextureSize,
+    OGL::Shader &shader
+) {
+    OGL::FrameBufferObject framebuffer;
+    framebuffer.bind(GL_FRAMEBUFFER);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+    OGL::RenderBufferObject renderbuffer;
+    renderbuffer.allocateStorage(TextureSize, TextureSize, GL_DEPTH_COMPONENT24);
+    framebuffer.attachRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, std::move(renderbuffer));
+
+    OGL::Texture BRDF;
+    BRDF.bind(GL_TEXTURE_2D);
+    BRDF.allocate(GL_TEXTURE_2D, TextureSize, TextureSize, GL_RG16F, GL_RG, GL_FLOAT, nullptr);
+    BRDF.setParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    BRDF.setParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    BRDF.setParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    BRDF.setParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    OGL::VertexArrayObject VAO;
+    OGL::VertexBufferObject VBO;
+    VAO.bind();
+    VBO.bind();
+    float QuadVertices[]{
+        -1.0f, -1.0f, // Bottom Left
+        +1.0f, -1.0f, // Bottom Right
+        +1.0f, +1.0f, // Top Right
+
+        -1.0f, -1.0f, // Bottom Left
+        +1.0f, +1.0f, // Top Right
+        -1.0f, +1.0f, // Top Left 
+    };
+    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(QuadVertices[0]), QuadVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(QuadVertices[0]), 0);
+    glEnableVertexAttribArray(0);
+
+    glViewport(0, 0, TextureSize, TextureSize);
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        BRDF.value(),
+        0
+    );
+
+    shader.use();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    OGL::VertexArrayObject::unbind();
+    OGL::FrameBufferObject::unbind(GL_FRAMEBUFFER);
+    OGL::Texture::unbind(GL_TEXTURE_2D);
+    glViewport(0, 0, Screen::width, Screen::height);
+
+    return BRDF;
 }
 
 void RenderCubemap(
@@ -322,7 +481,7 @@ void GenerateSphereData(
         }
     }
 
-    float RowRoughness[7] = { 0.01f, 0.05f, 0.1f, 0.15f, 0.25f, 0.5f, 1.0f };
+    float RowRoughness[7] = { 0.05f, 0.1f, 0.18f, 0.25f, 0.45f, 0.65f, 1.0f };
     for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
             Data[i * 7 + j].Roughness = RowRoughness[j];
@@ -331,7 +490,7 @@ void GenerateSphereData(
 
     for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
-            Data[i * 7 + j].Metallic = i > 3 ? 1.0f : 0.0f;
+            Data[i * 7 + j].Metallic = float(i) / 6.0f;
         }
     }
 }
@@ -387,12 +546,15 @@ int main(
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     // Shader
     OGL::Shader ShaderProgramm("shaders/30-PBR.vert", "shaders/30-PBR.frag");
     OGL::Shader EquirectangularToSkybox("shaders/EquirectangularToSkybox.vert", "shaders/EquirectangularToSkybox.frag");
     OGL::Shader EnvironmentSkyboxShader("shaders/EnvironmentSkybox.vert", "shaders/EnvironmentSkybox.frag");
     OGL::Shader EnvironmentToIrradianceShader("shaders/EnvironmentToIrradiance.vert", "shaders/EnvironmentToIrradiance.frag");
+    OGL::Shader EnvironmentPreFilterShader("shaders/EnvironmentPreFilter.vert", "shaders/EnvironmentPreFilter.frag");
+    OGL::Shader BRDFConvoluteShader("shaders/BRDFConvolute.vert", "shaders/BRDFConvolute.frag");
 
 
     // Rendered object
@@ -433,10 +595,10 @@ int main(
 
     // Light Source
     OGL::PointLight Lights[4] = {
-        {glm::vec3{ 8.0f, 8.0f, 8.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
-        {glm::vec3{ 2.0f, 0.0f, 10.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
-        {glm::vec3{ -4.0f, -2.0f, 5.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
-        {glm::vec3{ -1.0f, 4.0f, 5.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
+        {glm::vec3{ 8.0f, 8.0f, 18.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
+        {glm::vec3{ 2.0f, 0.0f, 20.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
+        {glm::vec3{ -4.0f, -2.0f, 15.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
+        {glm::vec3{ -1.0f, 4.0f, 7.0f }, glm::vec3{ 100.0f, 99.0f, 98.5f }},
     };
 
     ShaderProgramm.use();
@@ -446,19 +608,13 @@ int main(
     ShaderProgramm.setUniformInt("numPointLights", 4);
     ShaderProgramm.setUniformMatrix4("projection", freeCam.getProjectionMatrix());
 
-    for (int i = 0; i < 5; ++i) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        Textures[i]->bind(GL_TEXTURE_2D);
-        ShaderProgramm.setUniformInt(TextureNames[i], i);
-    }
-    glActiveTexture(GL_TEXTURE0);
-
     OGL::Texture EnvironmentCubemap1 = EnvironmentMapConvert(
         CubeModel,
         HDREnvironmentMap1,
         GL_TEXTURE_2D,
         CubemapSize,
-        EquirectangularToSkybox
+        EquirectangularToSkybox,
+        true
     );
 
     OGL::Texture EnvironmentCubemap2 = EnvironmentMapConvert(
@@ -466,7 +622,8 @@ int main(
         HDREnvironmentMap2,
         GL_TEXTURE_2D,
         CubemapSize,
-        EquirectangularToSkybox
+        EquirectangularToSkybox,
+        true
     );
 
     OGL::Texture IrradianceCubemap1 = EnvironmentMapConvert(
@@ -474,7 +631,8 @@ int main(
         EnvironmentCubemap1,
         GL_TEXTURE_CUBE_MAP,
         IrradianceCubemapSize,
-        EnvironmentToIrradianceShader
+        EnvironmentToIrradianceShader,
+        false
     );
 
     OGL::Texture IrradianceCubemap2 = EnvironmentMapConvert(
@@ -482,11 +640,44 @@ int main(
         EnvironmentCubemap2,
         GL_TEXTURE_CUBE_MAP,
         IrradianceCubemapSize,
-        EnvironmentToIrradianceShader
+        EnvironmentToIrradianceShader,
+        false
+    );
+
+    OGL::Texture PreFilteredCubemap1 = EnvironmentToPreFilteredConvert(
+        CubeModel,
+        EnvironmentCubemap1,
+        GL_TEXTURE_CUBE_MAP,
+        PreFilteredCubemapSize,
+        5,
+        EnvironmentPreFilterShader
+    );
+
+    OGL::Texture PreFilteredCubemap2 = EnvironmentToPreFilteredConvert(
+        CubeModel,
+        EnvironmentCubemap2,
+        GL_TEXTURE_CUBE_MAP,
+        PreFilteredCubemapSize,
+        5,
+        EnvironmentPreFilterShader
+    );
+
+    OGL::Texture BRDFLookUpTable = ConvoluteBRDF(
+        CubemapSize,
+        BRDFConvoluteShader
     );
 
     OGL::Texture *EnvironmentCubemap[2] = { &EnvironmentCubemap1, &EnvironmentCubemap2 };
     OGL::Texture *IrradianceCubemap[2] = { &IrradianceCubemap1, &IrradianceCubemap2 };
+    OGL::Texture *PreFilteredCubemap[2] = { &PreFilteredCubemap1, &PreFilteredCubemap2 };
+
+    ShaderProgramm.use();
+    for (int i = 0; i < 5; ++i) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        Textures[i]->bind(GL_TEXTURE_2D);
+        ShaderProgramm.setUniformInt(TextureNames[i], i);
+    }
+    glActiveTexture(GL_TEXTURE0);
 
     // 6. Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -499,13 +690,21 @@ int main(
 
         clearScreen();
 
-        ShaderProgramm.use();
 
         glActiveTexture(GL_TEXTURE0 + IrradianceMapID);
         IrradianceCubemap[EnvironmentMapIndex]->bind(GL_TEXTURE_CUBE_MAP);
+        glActiveTexture(GL_TEXTURE0 + PreFilteredMapID);
+        PreFilteredCubemap[EnvironmentMapIndex]->bind(GL_TEXTURE_CUBE_MAP);
+        glActiveTexture(GL_TEXTURE0 + BRDFLUTID);
+        BRDFLookUpTable.bind(GL_TEXTURE_2D);
         glActiveTexture(GL_TEXTURE0);
+
+
+        ShaderProgramm.use();
         ShaderProgramm.setUniformBool("bUseIBL", bUseIBL);
         ShaderProgramm.setUniformInt("IrradianceCubemap", IrradianceMapID);
+        ShaderProgramm.setUniformInt("PreFilteredCubemap", PreFilteredMapID);
+        ShaderProgramm.setUniformInt("BRDFLookUpTable", BRDFLUTID);
 
         // Draw Textured
         ShaderProgramm.setUniformVec3("viewerPos", freeCam.getPos());

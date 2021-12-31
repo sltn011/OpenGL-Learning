@@ -24,7 +24,7 @@ void main() {
         for (float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta) {
             vec3 tangentSample = vec3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
             vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal;
-            irradiance += texture(environmentMap, sampleVec).rgb * cos(theta) * sin(theta);
+            irradiance += textureLod(environmentMap, sampleVec, 0).rgb * cos(theta) * sin(theta);
             ++numSamples;
         }
     }
