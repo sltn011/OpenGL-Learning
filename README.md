@@ -4,8 +4,14 @@ My code from learning OpenGL with book from https://learnopengl.com/ + my own te
 Playground  
 ![Render](https://github.com/sltn011/OpenGL-Learning/blob/main/images/playground4.png)  
   
-PBR  
-![Render](https://github.com/sltn011/OpenGL-Learning/blob/main/images/PBRSpheresShowcase.png)  
+PBR Spheres  
+![PBR Spheres](https://github.com/sltn011/OpenGL-Learning/blob/main/images/PBRSpheresShowcase.png)  
+  
+IBL Environment 1  
+![IBL Environment 1](https://github.com/sltn011/OpenGL-Learning/blob/main/images/IBL1.png)  
+  
+IBL Environment 2  
+![IBL Environment 2](https://github.com/sltn011/OpenGL-Learning/blob/main/images/IBL2.png)  
   
 OpenGLTools is a library by me that encapsulates some of boilerplate OpenGL code  
 Engines folder right now contains my first OpenGL engine made by me for learning and testing purposes.  
