@@ -460,8 +460,8 @@ struct SphereData {
 void GenerateSphereData(
     SphereData Data[49]
 ) {
-    Data[0].Color  = glm::vec3{ 0.0f, 0.0f, 0.0f };
-    Data[6].Color  = glm::vec3{ 0.0f, 0.6f, 0.0f };
+    Data[0].Color = glm::vec3{ 0.0f, 0.0f, 0.0f };
+    Data[6].Color = glm::vec3{ 0.0f, 0.6f, 0.0f };
     Data[42].Color = glm::vec3{ 0.0f, 0.0f, 0.6f };
     Data[48].Color = glm::vec3{ 0.6f, 0.0f, 0.0f };
     for (int column = 1; column < 6; ++column) {
@@ -498,7 +498,7 @@ void GenerateSphereData(
 
 
 /*
- * PRESS 1 ON KEYBOARD TO TOGGLE GUI 
+ * PRESS 1 ON KEYBOARD TO TOGGLE GUI
  */
 int main(
 ) {

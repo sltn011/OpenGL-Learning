@@ -21,6 +21,7 @@
 
 OGL::Shader *ShaderPtr = nullptr;
 bool PerFragmentNormals = false;
+int texture = 0;
 
 enum Screen {
     width = 1920,
@@ -104,6 +105,17 @@ void keyboardCallback(
             PerFragmentNormals ^= true;
             ShaderPtr->use();
             ShaderPtr->setUniformBool("PerFragmentNormals", PerFragmentNormals);
+        }
+    }
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        if (ShaderPtr) {
+            texture = texture + 1;
+            if (texture == 3)
+            {
+                texture = 0;
+            }
+            ShaderPtr->use();
+            ShaderPtr->setUniformBool("UsedTexture", texture);
         }
     }
 }
@@ -194,7 +206,7 @@ int main(
         shaderProgramm.setUniformVec3("viewerPos", freeCam.getPos());
         shaderProgramm.setUniformMatrix4("view", freeCam.getViewMatrix());
         Wall.draw(shaderProgramm);
-        
+
         // Swap front and back buffers
         glfwSwapBuffers(window);
 

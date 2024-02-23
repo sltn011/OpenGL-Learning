@@ -87,6 +87,7 @@ namespace OGL {
      * @brief Class that represents part of Model
     */
     class Mesh {
+    public:
         /// VertexArrayObject used to render Mesh
         VertexArrayObject   m_VAO;
 
@@ -107,7 +108,7 @@ namespace OGL {
 
         /// Mesh material
         Material                  m_material;
-        
+
         /**
          * @brief Loads Mesh vertices and indices data into m_VAO, m_VBO, m_EBO
         */
@@ -122,8 +123,8 @@ namespace OGL {
             OGL::Shader &shader
         ) const;
 
-     public:
-        
+    public:
+
         /**
          * @brief Mesh constructor
          * @param vertices Vertex container of a Mesh
@@ -131,7 +132,7 @@ namespace OGL {
          * @param textures Container of Model textures used in Mesh
          * @param color Mesh material
         */
-        Mesh( 
+        Mesh(
             std::vector<Vertex> vertices,
             std::vector<unsigned int> indices,
             std::vector<ModelTexture> textures,
@@ -150,7 +151,7 @@ namespace OGL {
 
         Mesh &operator=(
             Mesh const &rhs
-        ) = delete;
+            ) = delete;
 
         /**
          * @brief Mesh move constructor
@@ -167,13 +168,13 @@ namespace OGL {
         */
         Mesh &operator=(
             Mesh &&rhs
-        ) noexcept;
+            ) noexcept;
 
         /**
          * @brief Fully renders Mesh with supplied Shader
          * @param shader Currently active Shader which is used to render Mesh
         */
-        void draw( 
+        void draw(
             OGL::Shader &shader
         ) const;
 
@@ -182,7 +183,7 @@ namespace OGL {
          * @param shader Currently active Shader which is used to render Mesh
          * @param amount Number of instances to be rendered
         */
-        void drawInstanced( 
+        void drawInstanced(
             OGL::Shader &shader,
             uint32_t amount
         ) const;
@@ -205,11 +206,15 @@ namespace OGL {
             uint32_t amount
         ) const;
 
+        void drawPatches(
+            Shader &shader
+        ) const;
+
         /**
          * @brief Enables vertex attribute for Mesh to pass Mat4x4 data into vertex Shader
          * @param attribLocation First location index used by Mat4x4 data - indexes from attribLocation to attribLocation + 3 will be occupied
         */
-        void setVertexAttribInstancedModelMat4( 
+        void setVertexAttribInstancedModelMat4(
             int attribLocation
         );
 

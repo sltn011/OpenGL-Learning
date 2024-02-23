@@ -7,9 +7,11 @@ in VS_OUT {
 	mat3 TBN;
 } fs_in;
 
+uniform mat4 view;
 uniform vec3 viewerPos;
 
 uniform bool PerFragmentNormals;
+uniform int UsedTexture;
 
 out vec4 fragColor;
 
@@ -79,23 +81,27 @@ void main() {
 	norm = PerFragmentNormals ? norm : normalize(fs_in.vertexNorm);
 	//=====
 
-	float attenuation = attenuationCoefficient(pointLight[0], fs_in.vertexPos);
+	vec3 n1 = vec3(texture(material.textureNormal[0], fs_in.vertexTex)) * 2.f - 1.f;
+	vec3 n2 = vec3(texture(material.textureDiffuse[0], fs_in.vertexTex)) * 2.f - 1.f;
 
-	vec3 amb  = ambientComponent(material, pointLight[0].color);
-	vec3 diff = attenuation * diffuseComponent(material, pointLight[0], fs_in.vertexPos, norm);
-	vec3 spec = attenuation * specularComponent(material, pointLight[0], fs_in.vertexPos, norm, viewDir);
-	ambient += amb;
-	diffuse += diff;
-	specular += spec * (diff == 0.0 ? 0 : 1);
+	vec3 n;
 
-	ambient *= diffuseCol;
-	diffuse *= diffuseCol;
-	specular *= specularCol;
+	if (!PerFragmentNormals)
+		{
+			n = normalize(n1 + n2);
+		}
+		else
+		{
+			n1 += vec3(0, 0, 1);
+			n2 *= vec3(-1, -1, 1);
+			n = n1*dot(n1, n2)/n1.z - n2; 
+			n = normalize(n);
+		}
 
-	vec3 result = ambient + diffuse + specular;
+	n = normalize(fs_in.TBN * n);
+	n = (view * vec4(n, 1)).xyz;
 
-	result = pow(result, vec3(1.0 / gamma));
-	fragColor = vec4(result, alpha);
+	fragColor = vec4(n * 0.5f + 0.5f, alpha);
 }
 
 vec3 calculateDirectLight(DirectionalLight light, vec3 normal, vec3 viewDir) {

@@ -2,8 +2,8 @@
 
 namespace OGL {
 
-    Shader::Shader( 
-        std::string vertexSourcePath, 
+    Shader::Shader(
+        std::string vertexSourcePath,
         std::string fragmentSourcePath
     ) {
         std::ifstream vertexShaderFile;
@@ -53,9 +53,9 @@ namespace OGL {
         m_showWarnings = false;
     }
 
-    Shader::Shader( 
-        std::string vertexSourcePath, 
-        std::string geometrySourcePath, 
+    Shader::Shader(
+        std::string vertexSourcePath,
+        std::string geometrySourcePath,
         std::string fragmentSourcePath
     ) {
         std::ifstream vertexShaderFile;
@@ -118,16 +118,95 @@ namespace OGL {
         m_showWarnings = false;
     }
 
-    Shader::Shader( 
+    Shader::Shader(
+        std::string vertexSourcePath,
+        std::string tessControlSourcePath,
+        std::string tessEvalSourcePath,
+        std::string fragmentSourcePath
+    ) {
+        std::ifstream vertexShaderFile;
+        std::ifstream tessControlShaderFile;
+        std::ifstream tessEvalShaderFile;
+        std::ifstream fragmentShaderFile;
+        std::string vertexShaderCode;
+        std::string tessControlShaderCode;
+        std::string tessEvalShaderCode;
+        std::string fragmentShaderCode;
+
+        vertexShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        tessControlShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        tessEvalShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        fragmentShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+        try {
+            vertexShaderFile.open(vertexSourcePath);
+            tessControlShaderFile.open(tessControlSourcePath);
+            tessEvalShaderFile.open(tessEvalSourcePath);
+            fragmentShaderFile.open(fragmentSourcePath);
+
+            std::stringstream ssVertexCode, ssTessControlCode, ssTessEvalCode, ssFragmentCode;
+            ssVertexCode << vertexShaderFile.rdbuf();
+            ssTessControlCode << tessControlShaderFile.rdbuf();
+            ssTessEvalCode << tessEvalShaderFile.rdbuf();
+            ssFragmentCode << fragmentShaderFile.rdbuf();
+
+            vertexShaderCode = ssVertexCode.str();
+            tessControlShaderCode = ssTessControlCode.str();
+            tessEvalShaderCode = ssTessEvalCode.str();
+            fragmentShaderCode = ssFragmentCode.str();
+        }
+        catch (std::ifstream::failure e) {
+            throw Exception("Error reading shader code from file!");
+        }
+
+        unsigned int vertexShaderID = compileGLShader(vertexShaderCode.c_str(), GL_VERTEX_SHADER);
+        if (!shaderCorrectlyCompiled(vertexShaderID)) {
+            reportShaderCompileError(vertexShaderID);
+        }
+
+        unsigned int tessControlShaderID = compileGLShader(tessControlShaderCode.c_str(), GL_TESS_CONTROL_SHADER);
+        if (!shaderCorrectlyCompiled(tessControlShaderID)) {
+            reportShaderCompileError(tessControlShaderID);
+        }
+
+        unsigned int tessEvalShaderID = compileGLShader(tessEvalShaderCode.c_str(), GL_TESS_EVALUATION_SHADER);
+        if (!shaderCorrectlyCompiled(tessEvalShaderID)) {
+            reportShaderCompileError(tessEvalShaderID);
+        }
+
+        unsigned int fragmentShaderID = compileGLShader(fragmentShaderCode.c_str(), GL_FRAGMENT_SHADER);
+        if (!shaderCorrectlyCompiled(fragmentShaderID)) {
+            reportShaderCompileError(fragmentShaderID);
+        }
+
+        m_programmID = glCreateProgram();
+        glAttachShader(m_programmID, vertexShaderID);
+        glAttachShader(m_programmID, tessControlShaderID);
+        glAttachShader(m_programmID, tessEvalShaderID);
+        glAttachShader(m_programmID, fragmentShaderID);
+        glLinkProgram(m_programmID);
+        if (!programmCorrectlyLinked(m_programmID)) {
+            reportProgrammLinkError(m_programmID);
+        }
+
+        glDeleteShader(vertexShaderID);
+        glDeleteShader(tessControlShaderID);
+        glDeleteShader(tessEvalShaderID);
+        glDeleteShader(fragmentShaderID);
+
+        m_showWarnings = false;
+    }
+
+    Shader::Shader(
         Shader &&rhs
-    ) noexcept : 
+    ) noexcept :
         m_programmID{ std::exchange(rhs.m_programmID, 0) },
         m_showWarnings{ rhs.m_showWarnings } {
     }
 
-    Shader &Shader::operator=( 
+    Shader &Shader::operator=(
         Shader &&rhs
-    ) noexcept {
+        ) noexcept {
         std::swap(m_programmID, rhs.m_programmID);
         std::swap(m_showWarnings, rhs.m_showWarnings);
         return *this;
@@ -143,19 +222,19 @@ namespace OGL {
         return m_programmID;
     }
 
-    void Shader::use (
+    void Shader::use(
     ) {
         glUseProgram(m_programmID);
     }
 
-    void Shader::showWarnings( 
+    void Shader::showWarnings(
         bool value
     ) {
         m_showWarnings = value;
     }
 
-    bool Shader::setUniformBool( 
-        std::string const &name, 
+    bool Shader::setUniformBool(
+        std::string const &name,
         bool val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
@@ -169,7 +248,7 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformInt( 
+    bool Shader::setUniformInt(
         std::string const &name,
         int val
     ) {
@@ -184,8 +263,8 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformFloat( 
-        std::string const &name, 
+    bool Shader::setUniformFloat(
+        std::string const &name,
         float val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
@@ -199,14 +278,14 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformMatrix4( 
-        std::string const &name, 
-        glm::mat4 const &val, 
+    bool Shader::setUniformMatrix4(
+        std::string const &name,
+        glm::mat4 const &val,
         bool doTranspose
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
         if (loc == -1) {
-            if(m_showWarnings) {
+            if (m_showWarnings) {
                 warnInvalidUniformLocation(name);
             }
             return false;
@@ -215,8 +294,8 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::setUniformVec3( 
-        std::string const &name, 
+    bool Shader::setUniformVec3(
+        std::string const &name,
         glm::vec3 const &val
     ) {
         GLint loc = glGetUniformLocation(m_programmID, name.c_str());
@@ -245,8 +324,8 @@ namespace OGL {
         return true;
     }
 
-    bool Shader::uniformBlockBinding( 
-        std::string const &blockName, 
+    bool Shader::uniformBlockBinding(
+        std::string const &blockName,
         size_t bindingPointIndex
     ) {
         unsigned int blockIndex = glGetUniformBlockIndex(m_programmID, blockName.c_str());
@@ -260,8 +339,8 @@ namespace OGL {
         return true;
     }
 
-    unsigned int Shader::compileGLShader( 
-        char const *sourceCode, 
+    unsigned int Shader::compileGLShader(
+        char const *sourceCode,
         int shaderType
     ) {
         unsigned int shaderId = glCreateShader(shaderType);
@@ -270,7 +349,7 @@ namespace OGL {
         return shaderId;
     }
 
-    bool Shader::shaderCorrectlyCompiled( 
+    bool Shader::shaderCorrectlyCompiled(
         unsigned int shaderId
     ) {
         int correctness;
@@ -278,15 +357,16 @@ namespace OGL {
         return correctness == GL_TRUE;
     }
 
-    void Shader::reportShaderCompileError( 
+    void Shader::reportShaderCompileError(
         unsigned int shaderId
     ) {
-        std::string infoLog(512, ' ');
+        std::string infoLog(1024, ' ');
         glGetShaderInfoLog(shaderId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
+        std::cerr << "SHADER ERROR: " << infoLog << std::endl;
         throw Exception(infoLog);
     }
 
-    bool Shader::programmCorrectlyLinked( 
+    bool Shader::programmCorrectlyLinked(
         unsigned int programmId
     ) {
         int correctness;
@@ -294,15 +374,16 @@ namespace OGL {
         return correctness == GL_TRUE;
     }
 
-    void Shader::reportProgrammLinkError( 
+    void Shader::reportProgrammLinkError(
         unsigned int programmId
     ) {
-        std::string infoLog(512, ' ');
+        std::string infoLog(1024, ' ');
         glGetProgramInfoLog(programmId, static_cast<GLsizei>(infoLog.size()), nullptr, infoLog.data());
+        std::cerr << "SHADER ERROR: " << infoLog << std::endl;
         throw Exception(infoLog);
     }
 
-    void Shader::warnInvalidUniformLocation( 
+    void Shader::warnInvalidUniformLocation(
         std::string const &name
     ) {
         std::cerr << "No uniform object with name \"" << name << "\" in shader " << m_programmID << std::endl;

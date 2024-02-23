@@ -37,8 +37,8 @@ namespace OGL {
          * @param shaderType Type of shader object
          * @return shader object ID
         */
-        unsigned int compileGLShader( 
-            char const *sourceCode, 
+        unsigned int compileGLShader(
+            char const *sourceCode,
             int shaderType
         );
 
@@ -47,7 +47,7 @@ namespace OGL {
          * @param shaderId ID of shader object
          * @return True if compiled shader object compiled correctly, False otherwise
         */
-        bool shaderCorrectlyCompiled( 
+        bool shaderCorrectlyCompiled(
             unsigned int shaderId
         );
 
@@ -55,7 +55,7 @@ namespace OGL {
          * @brief Throws Exception with shader object compile error message
          * @param shaderId ID of shader object
         */
-        [[noreturn]] void reportShaderCompileError( 
+        [[noreturn]] void reportShaderCompileError(
             unsigned int shaderId
         );
 
@@ -64,7 +64,7 @@ namespace OGL {
          * @param programmId ID of Shader programm
          * @return True if Shader programm linked correctly, False otherwise
         */
-        bool programmCorrectlyLinked( 
+        bool programmCorrectlyLinked(
             unsigned int programmId
         );
 
@@ -72,7 +72,7 @@ namespace OGL {
          * @brief Throws Exception with Shader programm link error message
          * @param programmId ID of Shader programm
         */
-        [[noreturn]] void reportProgrammLinkError( 
+        [[noreturn]] void reportProgrammLinkError(
             unsigned int programmId
         );
 
@@ -80,17 +80,17 @@ namespace OGL {
          * @brief Prints invalid uniform location message to std::cerr
          * @param name Name of invalid uniform variable
         */
-        void warnInvalidUniformLocation( 
+        void warnInvalidUniformLocation(
             std::string const &name
         );
 
-     public:
+    public:
         /**
          * @brief Creates Shader programm with vertex and fragment shaders
          * @param vertexSourcePath Path to file with vertex shader code
          * @param fragmentSourcePath Path to file with fragment shader code
         */
-        Shader( 
+        Shader(
             std::string vertexSourcePath,
             std::string fragmentSourcePath
         );
@@ -101,13 +101,20 @@ namespace OGL {
          * @param geometrySourcePath Path to file with geometry shader code
          * @param fragmentSourcePath Path to file with fragment shader code
         */
-        Shader( 
-            std::string vertexSourcePath, 
+        Shader(
+            std::string vertexSourcePath,
             std::string geometrySourcePath,
             std::string fragmentSourcePath
         );
 
-        Shader( 
+        Shader(
+            std::string vertexSourcePath,
+            std::string tessControlSourcePath,
+            std::string tessEvalSourcePath,
+            std::string fragmentSourcePath
+        );
+
+        Shader(
             Shader const &rhs
         ) = delete;
 
@@ -115,22 +122,22 @@ namespace OGL {
          * @brief Shader move constructor
          * @param rhs Moved value
         */
-        Shader( 
+        Shader(
             Shader &&rhs
         ) noexcept;
 
         Shader &operator=(
             Shader const &rhs
-        ) = delete;
+            ) = delete;
 
         /**
          * @brief Shader move assignment
          * @param rhs Moved value
          * @return Reference to *this
         */
-        Shader &operator=( 
+        Shader &operator=(
             Shader &&rhs
-        ) noexcept;
+            ) noexcept;
 
         /**
          * @brief Shader destructor
@@ -148,14 +155,14 @@ namespace OGL {
         /**
          * @brief Sets this Shader programm as active
         */
-        void use (
+        void use(
         );
 
         /**
          * @brief Select if Shader errors should be reported to std::cerr
          * @param value True if Shader errors should be reported to std::cerr
         */
-        void showWarnings( 
+        void showWarnings(
             bool value
         );
 
@@ -165,7 +172,7 @@ namespace OGL {
          * @param val Boolean value to be assigned to uniform variable
          * @return True if successful, False otherwise
         */
-        bool setUniformBool( 
+        bool setUniformBool(
             std::string const &name,
             bool val
         );
@@ -176,7 +183,7 @@ namespace OGL {
          * @param val Int value to be assigned to uniform variable
          * @return True if successful, False otherwise
         */
-        bool setUniformInt( 
+        bool setUniformInt(
             std::string const &name,
             int val
         );
@@ -188,7 +195,7 @@ namespace OGL {
          * @return True if successful, False otherwise
         */
         bool setUniformFloat(
-            std::string const &name, 
+            std::string const &name,
             float val
         );
 
@@ -199,7 +206,7 @@ namespace OGL {
          * @param doTranspose True if matrix should be transposed
          * @return True if successful, False otherwise
         */
-        bool setUniformMatrix4( 
+        bool setUniformMatrix4(
             std::string const &name,
             glm::mat4 const &val,
             bool doTranspose = false
@@ -211,8 +218,8 @@ namespace OGL {
          * @param val Vec3 value to be assigned to uniform variable
          * @return True if successful, False otherwise
         */
-        bool setUniformVec3( 
-            std::string const &name, 
+        bool setUniformVec3(
+            std::string const &name,
             glm::vec3 const &val
         );
 
@@ -231,10 +238,10 @@ namespace OGL {
          * @brief Assigns binding point to an active uniform block
          * @param blockName Name of uniform block
          * @param bindingPointIndex Index of a binding point
-         * @return 
+         * @return
         */
-        bool uniformBlockBinding( 
-            std::string const &blockName, 
+        bool uniformBlockBinding(
+            std::string const &blockName,
             size_t bindingPointIndex
         );
     };

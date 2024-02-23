@@ -39,6 +39,7 @@ in VS_OUT {
 	vec3 vertexNorm;
 	vec2 vertexTex;
 	mat3 TBN;
+	vec3 vertexNormSS;
 } fs_in;
 
 
@@ -96,7 +97,7 @@ void main() {
 	gAlbedoSpecular.rgb = texture(material.textureDiffuse[0], texCoord).rgb;
 	gAlbedoSpecular.a = texture(material.textureSpecular[0], texCoord).r;
 
-	gNormal = calculateNormalVector(texCoord);
+	gNormal = normalize(fs_in.vertexNorm);
 }
 
 

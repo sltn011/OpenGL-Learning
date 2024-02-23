@@ -109,9 +109,9 @@ void keyCallback(
     }
 }
 
-void mouseCallback( 
+void mouseCallback(
     GLFWwindow *window,
-    double xpos, 
+    double xpos,
     double ypos
 ) {
     float xOffset = static_cast<float>(xpos) - System::lastMouseXPos;
@@ -167,7 +167,13 @@ int main(
     normalsShader.uniformBlockBinding("Matrices", 0);
     ubo.unbind();
 
-    OGL::Model myModel("models/Backpack/backpack.obj", false);
+    OGL::Model myModel("models/Crate/crate.obj", false);
+
+    auto &ind = myModel.m_meshes[0].m_indices;
+    for (int i = 0; i < ind.size(); i += 3)
+    {
+        printf("%d, %d, %d,\n", ind[i], ind[i + 1], ind[i + 2]);
+    }
 
     OGL::Object myObject(&myModel);
     myObject.setPosition(glm::vec3{ 0.0f, 0.0f, -2.0f });

@@ -2,7 +2,7 @@
 
 namespace OGL {
 
-    void Model::loadModel( 
+    void Model::loadModel(
         std::string const &path,
         bool bFlipTexturesHorizontally
     ) {
@@ -34,7 +34,7 @@ namespace OGL {
         }
 
         tinyobj::attrib_t const &attrib = reader.GetAttrib();
-        std::vector<tinyobj::shape_t> const &shapes = reader.GetShapes(); 
+        std::vector<tinyobj::shape_t> const &shapes = reader.GetShapes();
         std::vector<tinyobj::material_t> const &materials = reader.GetMaterials();
 
         int maxMaterialID = 0;
@@ -277,14 +277,14 @@ namespace OGL {
         return glm::normalize(tangent);
     }
 
-    Model::Model( 
+    Model::Model(
         std::string const &path,
         bool bFlipTexturesHorizontally
     ) {
         loadModel(path, bFlipTexturesHorizontally);
     }
 
-    void Model::draw( 
+    void Model::draw(
         Shader &shader
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
@@ -292,7 +292,7 @@ namespace OGL {
         }
     }
 
-    void Model::drawInstanced( 
+    void Model::drawInstanced(
         Shader &shader,
         uint32_t amount
     ) const {
@@ -310,7 +310,7 @@ namespace OGL {
     }
 
     void Model::drawShapeInstanced(
-        Shader &shader, 
+        Shader &shader,
         uint32_t amount
     ) const {
         for (size_t i = 0; i < m_meshes.size(); ++i) {
@@ -318,7 +318,15 @@ namespace OGL {
         }
     }
 
-    void Model::setVertexAttribInstancedModelMat4( 
+    void Model::drawPatches(
+        Shader &shader
+    ) const {
+        for (size_t i = 0; i < m_meshes.size(); ++i) {
+            m_meshes[i].drawPatches(shader);
+        }
+    }
+
+    void Model::setVertexAttribInstancedModelMat4(
         int attribLocation
     ) {
         for (size_t i = 0; i < m_meshes.size(); ++i) {

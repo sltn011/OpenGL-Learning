@@ -18,12 +18,12 @@
 #include <unordered_map>
 
 namespace OGL {
-    
+
     /**
      * @brief Class used to load models from files and render them
     */
     class Model {
-    protected:
+    public:
 
         /// Container of Mesh objects of Model
         std::vector<Mesh>         m_meshes;
@@ -40,7 +40,7 @@ namespace OGL {
         /// Container of Model's textures
         std::vector<ModelTexture> m_loadedTextures;
 
-     public:
+    public:
         /**
          * @brief Empty Model default constructor
         */
@@ -53,8 +53,8 @@ namespace OGL {
          * @param bFlipTexturesHorizontally True if textures should be flipped horizontally
          * @param flags Assimp library flags to process Model - triangulate and calculate tangents by default
         */
-        explicit Model( 
-            std::string const &path, 
+        explicit Model(
+            std::string const &path,
             bool bFlipTexturesHorizontally = true
         );
 
@@ -62,7 +62,7 @@ namespace OGL {
          * @brief Renders every Mesh of a Model using supplied Shader
          * @param shader Currently active Shader used to render Model
         */
-        void draw( 
+        void draw(
             Shader &shader
         ) const;
 
@@ -71,8 +71,8 @@ namespace OGL {
          * @param shader Currently active Shader used to render Model
          * @param amount Number of instances
         */
-        void drawInstanced( 
-            Shader &shader, 
+        void drawInstanced(
+            Shader &shader,
             uint32_t amount
         ) const;
 
@@ -94,11 +94,15 @@ namespace OGL {
             uint32_t amount
         ) const;
 
+        void drawPatches(
+            Shader &shader
+        ) const;
+
         /**
          * @brief Enables vertex attribute for every Model's Mesh to pass Mat4x4 data into vertex Shader
          * @param attribLocation First location index used by Mat4x4 data - indexes from attribLocation to attribLocation + 3 will be occupied
         */
-        void setVertexAttribInstancedModelMat4( 
+        void setVertexAttribInstancedModelMat4(
             int attribLocation
         );
 
@@ -130,55 +134,55 @@ namespace OGL {
         std::string getFullPath(
         ) const;
 
-     protected:
+    protected:
 
-         /**
-          * @brief Loads Model from file
-          * @param path Path to Model file
-          * @param bFlipTexturesHorizontally True if textures should be flipped horizontally
-          * @param flags Assimp library flags to process Model - triangulate and calculate tangents by default
-         */
-         void loadModel(
-             std::string const &path,
-             bool bFlipTexturesHorizontally = true
-         );
+        /**
+         * @brief Loads Model from file
+         * @param path Path to Model file
+         * @param bFlipTexturesHorizontally True if textures should be flipped horizontally
+         * @param flags Assimp library flags to process Model - triangulate and calculate tangents by default
+        */
+        void loadModel(
+            std::string const &path,
+            bool bFlipTexturesHorizontally = true
+        );
 
-         Mesh processMesh(
-             tinyobj::mesh_t const &mesh,
-             tinyobj::attrib_t const &attrib,
-             std::vector<tinyobj::material_t> const &materials,
-             int materialID
-         );
+        Mesh processMesh(
+            tinyobj::mesh_t const &mesh,
+            tinyobj::attrib_t const &attrib,
+            std::vector<tinyobj::material_t> const &materials,
+            int materialID
+        );
 
-         std::vector<ModelTexture> loadMaterialTexture(
-             tinyobj::material_t const &materialData,
-             TextureType typeName
-         );
+        std::vector<ModelTexture> loadMaterialTexture(
+            tinyobj::material_t const &materialData,
+            TextureType typeName
+        );
 
-         Material loadMaterialParams(
-             tinyobj::material_t const &materialData
-         );
+        Material loadMaterialParams(
+            tinyobj::material_t const &materialData
+        );
 
-         /**
-          * @brief Loads texture from file and creates OpenGL texture id for it
-          * @param directory Directory with texture file
-          * @param path File name
-          * @return ID of OpenGL texture
-         */
-         static int textureFromFile(
-             std::string const &directory,
-             std::string const &path
-         );
+        /**
+         * @brief Loads texture from file and creates OpenGL texture id for it
+         * @param directory Directory with texture file
+         * @param path File name
+         * @return ID of OpenGL texture
+        */
+        static int textureFromFile(
+            std::string const &directory,
+            std::string const &path
+        );
 
-         static int textureFromFile(
-             std::string const &filename
-         );
+        static int textureFromFile(
+            std::string const &filename
+        );
 
-         glm::vec3 CalculateTangent(
-             Vertex const &v1,
-             Vertex const &v2,
-             Vertex const &v3
-         ) const;
+        glm::vec3 CalculateTangent(
+            Vertex const &v1,
+            Vertex const &v2,
+            Vertex const &v3
+        ) const;
 
     };
 

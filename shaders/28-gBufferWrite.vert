@@ -18,6 +18,7 @@ out VS_OUT {
 	vec3 vertexNorm;
 	vec2 vertexTex;
 	mat3 TBN;
+	vec3 vertexNormSS;
 } vs_out;
 
 
@@ -26,6 +27,8 @@ void main() {
 	vs_out.vertexPos = vec3(model * vec4(aPos, 1.0));
 	vs_out.vertexNorm = normalize(mat3(model) * aNorm);
 	vs_out.vertexTex = aTex;
+
+	vs_out.vertexNormSS = vec3(projection * view * model * vec4(aNorm, 0.0));
 
 	vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
 	vec3 N = vs_out.vertexNorm;

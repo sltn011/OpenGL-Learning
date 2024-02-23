@@ -11,6 +11,4 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd crateDiffuse.png
-map_Ks crateSpecular.png
-norm crateNormal.png
-map_Bump crateDepth.png
+map_Bump crateNormal.png

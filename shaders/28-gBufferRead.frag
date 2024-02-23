@@ -167,7 +167,7 @@ void main() {
 
     result = pow(result, vec3(1.0 / gamma));
 
-    fragColor = vec4(result, 1.0);
+    fragColor = vec4(normal, 1.0);
 }
 
 

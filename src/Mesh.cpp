@@ -2,14 +2,14 @@
 
 namespace OGL {
 
-    Mesh::Mesh( 
+    Mesh::Mesh(
         std::vector<Vertex> vertices,
         std::vector<unsigned int> indices,
         std::vector<ModelTexture> textures,
         Material material
-    ) : m_vertices{ std::move(vertices) }, 
-        m_indices { std::move(indices)  }, 
-        m_textures{ std::move(textures) }, 
+    ) : m_vertices{ std::move(vertices) },
+        m_indices{ std::move(indices) },
+        m_textures{ std::move(textures) },
         m_material{ material } {
         setup();
     }
@@ -42,13 +42,13 @@ namespace OGL {
 
     Mesh &Mesh::operator=(
         Mesh &&rhs
-    ) noexcept {
+        ) noexcept {
         m_VAO = std::move(rhs.m_VAO);
         m_VBO = std::move(rhs.m_VBO);
         m_EBO = std::move(rhs.m_EBO);
-        m_vertices   = std::move(rhs.m_vertices);
-        m_indices    = std::move(rhs.m_indices);
-        m_material   = std::move(rhs.m_material);
+        m_vertices = std::move(rhs.m_vertices);
+        m_indices = std::move(rhs.m_indices);
+        m_material = std::move(rhs.m_material);
 
         for (size_t i = 0; i < m_textures.size(); ++i) {
             glDeleteTextures(1, &(m_textures[i].m_id));
@@ -153,8 +153,8 @@ namespace OGL {
         VertexArrayObject::unbind();
     }
 
-    void Mesh::drawInstanced( 
-        OGL::Shader &shader, 
+    void Mesh::drawInstanced(
+        OGL::Shader &shader,
         uint32_t amount
     ) const {
         loadToShader(shader);
@@ -172,7 +172,7 @@ namespace OGL {
     }
 
     void Mesh::drawShapeInstanced(
-        Shader &shader, 
+        Shader &shader,
         uint32_t amount
     ) const {
         m_VAO.bind();
@@ -180,13 +180,22 @@ namespace OGL {
         VertexArrayObject::unbind();
     }
 
-    void Mesh::setVertexAttribInstancedModelMat4( 
+    void Mesh::drawPatches(
+        Shader &shader
+    ) const {
+        loadToShader(shader);
+        m_VAO.bind();
+        glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
+        VertexArrayObject::unbind();
+    }
+
+    void Mesh::setVertexAttribInstancedModelMat4(
         int attribLocation
     ) {
         m_VAO.bind();
         for (int i = 0; i < 4; ++i) {
             glEnableVertexAttribArray(attribLocation + i);
-            glVertexAttribPointer(attribLocation + i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(i * sizeof(glm::vec4)));
+            glVertexAttribPointer(attribLocation + i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void *)(i * sizeof(glm::vec4)));
             glVertexAttribDivisor(attribLocation + i, 1);
         }
         VertexArrayObject::unbind();
